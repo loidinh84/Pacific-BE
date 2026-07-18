@@ -1,0 +1,407 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                                      BigInt                    @id @default(autoincrement())
+  username                                String                    @unique @db.VarChar(50)
+  email                                   String                    @unique @db.VarChar(255)
+  password_hash                           String?                   @db.VarChar(255)
+  avatar_url                              String?
+  role                                    user_role                 @default(user)
+  status                                  user_status               @default(pending)
+  preferred_language_code                 String?                   @db.VarChar(10)
+  google_id                               String?                   @unique @db.VarChar(255)
+  email_verified_at                       DateTime?                 @db.Timestamptz(6)
+  locked_at                               DateTime?                 @db.Timestamptz(6)
+  locked_reason                           String?
+  last_login_at                           DateTime?                 @db.Timestamptz(6)
+  last_active_at                          DateTime?                 @db.Timestamptz(6)
+  created_at                              DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at                              DateTime                  @default(now()) @db.Timestamptz(6)
+  activity_logs                           activity_logs[]
+  admin_notes_admin_notes_admin_idTousers admin_notes[]             @relation("admin_notes_admin_idTousers")
+  admin_notes_admin_notes_user_idTousers  admin_notes[]             @relation("admin_notes_user_idTousers")
+  comment_reports                         comment_reports[]
+  comments                                comments[]
+  favorites                               favorites[]
+  login_sessions                          login_sessions[]
+  password_reset_tokens                   password_reset_tokens[]
+  search_logs                             search_logs[]
+  site_reviews                            site_reviews[]
+  species_views                           species_views[]
+  system_settings                         system_settings[]
+  user_explored_locations                 user_explored_locations[]
+  languages                               languages?                @relation(fields: [preferred_language_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([created_at], map: "idx_users_created_at")
+  @@index([status], map: "idx_users_status")
+  @@map("users")
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model Species {
+  id                     BigInt                 @id @default(autoincrement())
+  code                   String                 @unique @db.VarChar(30)
+  scientificName         String                 @map("scientific_name") @db.VarChar(255)
+  common_name            String                 @db.VarChar(255)
+  slug                   String                 @unique @db.VarChar(255)
+  group_id               BigInt?
+  conservation_status_id Int?
+  ocean_zone_id          Int?
+  description            String?
+  size_min_cm            Decimal?               @db.Decimal(10, 2)
+  size_max_cm            Decimal?               @db.Decimal(10, 2)
+  weight_min_kg          Decimal?               @db.Decimal(10, 2)
+  weight_max_kg          Decimal?               @db.Decimal(10, 2)
+  lifespan_years         Int?
+  diet                   String?
+  depth_min_m            Int?
+  depth_max_m            Int?
+  pressure_atm           Decimal?               @db.Decimal(6, 2)
+  temperature_min_c      Decimal?               @db.Decimal(5, 2)
+  temperature_max_c      Decimal?               @db.Decimal(5, 2)
+  light_level            String?                @db.VarChar(50)
+  visibility_m           Decimal?               @db.Decimal(6, 2)
+  dissolved_oxygen_mg_l  Decimal?               @db.Decimal(6, 2)
+  model_3d_url           String?
+  sound_url              String?
+  source_api_id          String?                @db.VarChar(100)
+  view_count             BigInt                 @default(0)
+  is_visible             Boolean                @default(true)
+  deleted_at             DateTime?              @db.Timestamptz(6)
+  created_at             DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime               @default(now()) @db.Timestamptz(6)
+  comments               comments[]
+  favorites              favorites[]
+  conservation_statuses  conservation_statuses? @relation(fields: [conservation_status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  species_groups         species_groups?        @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ocean_zones            ocean_zones?           @relation(fields: [ocean_zone_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  species_anatomy        species_anatomy[]
+  species_facts          species_facts[]
+  species_locations      species_locations[]
+  species_media          species_media[]
+  species_translations   species_translations[]
+  species_views          species_views[]
+
+  @@index([group_id], map: "idx_species_group")
+  @@index([conservation_status_id], map: "idx_species_status")
+  @@index([is_visible], map: "idx_species_visible", where: raw("(deleted_at IS NULL)"))
+  @@index([ocean_zone_id], map: "idx_species_zone")
+  @@map("species")
+}
+
+model activity_logs {
+  id          BigInt   @id @default(autoincrement())
+  actor_id    BigInt?
+  action      String   @db.VarChar(100)
+  target_type String?  @db.VarChar(50)
+  target_id   BigInt?
+  description String?
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  users       User?    @relation(fields: [actor_id], references: [id], onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)], map: "idx_activity_created")
+}
+
+model admin_notes {
+  id                                BigInt   @id @default(autoincrement())
+  user_id                           BigInt
+  admin_id                          BigInt
+  note                              String
+  created_at                        DateTime @default(now()) @db.Timestamptz(6)
+  users_admin_notes_admin_idTousers User     @relation("admin_notes_admin_idTousers", fields: [admin_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_admin_notes_user_idTousers  User     @relation("admin_notes_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model api_keys {
+  id                     BigInt    @id @default(autoincrement())
+  name                   String    @db.VarChar(150)
+  key_value              String
+  cloud_name             String?   @db.VarChar(150)
+  status                 String    @default("active") @db.VarChar(20)
+  sync_frequency_minutes Int?      @default(1440)
+  last_synced_at         DateTime? @db.Timestamptz(6)
+  last_checked_at        DateTime? @db.Timestamptz(6)
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime  @default(now()) @db.Timestamptz(6)
+}
+
+model comment_reports {
+  id          BigInt        @id @default(autoincrement())
+  comment_id  BigInt
+  reported_by BigInt
+  reason      String?       @db.VarChar(255)
+  status      report_status @default(pending)
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  comments    comments      @relation(fields: [comment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       User          @relation(fields: [reported_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([comment_id], map: "idx_comment_reports_comment")
+}
+
+model comments {
+  id              BigInt            @id @default(autoincrement())
+  species_id      BigInt
+  user_id         BigInt
+  parent_id       BigInt?
+  content         String
+  status          comment_status    @default(visible)
+  report_count    Int               @default(0)
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @default(now()) @db.Timestamptz(6)
+  deleted_at      DateTime?         @db.Timestamptz(6)
+  comment_reports comment_reports[]
+  comments        comments?         @relation("commentsTocomments", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  other_comments  comments[]        @relation("commentsTocomments")
+  species         Species           @relation(fields: [species_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users           User              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([created_at], map: "idx_comments_created")
+  @@index([species_id], map: "idx_comments_species")
+  @@index([status], map: "idx_comments_status")
+  @@index([user_id], map: "idx_comments_user")
+}
+
+model conservation_statuses {
+  id      Int       @id @default(autoincrement())
+  code    String    @unique @db.VarChar(10)
+  name    String    @db.VarChar(100)
+  species Species[]
+}
+
+model favorites {
+  user_id    BigInt
+  species_id BigInt
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  species    Species  @relation(fields: [species_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, species_id])
+}
+
+model languages {
+  code                 String                 @id @db.VarChar(10)
+  name                 String                 @db.VarChar(100)
+  is_active            Boolean                @default(true)
+  is_default           Boolean                @default(false)
+  species_translations species_translations[]
+  users                User[]
+}
+
+model locations {
+  id                      BigInt                    @id @default(autoincrement())
+  name                    String                    @db.VarChar(255)
+  slug                    String                    @unique @db.VarChar(255)
+  latitude                Decimal?                  @db.Decimal(9, 6)
+  longitude               Decimal?                  @db.Decimal(9, 6)
+  ocean_zone_id           Int?
+  description             String?
+  image_url               String?
+  is_featured             Boolean                   @default(false)
+  created_at              DateTime                  @default(now()) @db.Timestamptz(6)
+  ocean_zones             ocean_zones?              @relation(fields: [ocean_zone_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  species_locations       species_locations[]
+  user_explored_locations user_explored_locations[]
+}
+
+model login_sessions {
+  id            BigInt    @id @default(autoincrement())
+  user_id       BigInt
+  session_token String    @unique @db.VarChar(255)
+  ip_address    String?   @db.Inet
+  user_agent    String?
+  device_name   String?   @db.VarChar(255)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  expires_at    DateTime  @db.Timestamptz(6)
+  revoked_at    DateTime? @db.Timestamptz(6)
+  users         User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_sessions_user")
+}
+
+model ocean_zones {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(100)
+  depth_min_m Int?
+  depth_max_m Int?
+  description String?
+  locations   locations[]
+  species     Species[]
+}
+
+model password_reset_tokens {
+  id         BigInt    @id @default(autoincrement())
+  user_id    BigInt
+  token      String    @unique @db.VarChar(255)
+  expires_at DateTime  @db.Timestamptz(6)
+  used_at    DateTime? @db.Timestamptz(6)
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  users      User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model search_logs {
+  id           BigInt   @id @default(autoincrement())
+  user_id      BigInt?
+  keyword      String   @db.VarChar(255)
+  result_count Int?     @default(0)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  users        User?    @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([created_at], map: "idx_search_logs_created")
+  @@index([keyword], map: "idx_search_logs_keyword")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model site_reviews {
+  id         BigInt   @id @default(autoincrement())
+  user_id    BigInt?
+  rating     Int      @db.SmallInt
+  content    String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  users      User?    @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+}
+
+model social_links {
+  id         Int    @id @default(autoincrement())
+  platform   String @db.VarChar(50)
+  url        String
+  sort_order Int    @default(0)
+}
+
+model species_anatomy {
+  id          BigInt   @id @default(autoincrement())
+  species_id  BigInt
+  part_name   String   @db.VarChar(150)
+  description String?
+  image_url   String?
+  hotspot_x   Decimal? @db.Decimal(5, 2)
+  hotspot_y   Decimal? @db.Decimal(5, 2)
+  sort_order  Int      @default(0)
+  species     Species  @relation(fields: [species_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model species_facts {
+  id         BigInt  @id @default(autoincrement())
+  species_id BigInt
+  content    String
+  sort_order Int     @default(0)
+  species    Species @relation(fields: [species_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model species_groups {
+  id                   BigInt           @id @default(autoincrement())
+  parent_id            BigInt?
+  name                 String           @db.VarChar(150)
+  slug                 String           @unique @db.VarChar(150)
+  description          String?
+  image_url            String?
+  created_at           DateTime         @default(now()) @db.Timestamptz(6)
+  species              Species[]
+  species_groups       species_groups?  @relation("species_groupsTospecies_groups", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_species_groups species_groups[] @relation("species_groupsTospecies_groups")
+}
+
+model species_locations {
+  species_id  BigInt
+  location_id BigInt
+  locations   locations @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  species     Species   @relation(fields: [species_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([species_id, location_id])
+}
+
+model species_media {
+  id         BigInt     @id @default(autoincrement())
+  species_id BigInt
+  type       media_type
+  url        String
+  caption    String?    @db.VarChar(255)
+  is_primary Boolean    @default(false)
+  sort_order Int        @default(0)
+  created_at DateTime   @default(now()) @db.Timestamptz(6)
+  species    Species    @relation(fields: [species_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([species_id], map: "idx_species_media_species")
+}
+
+model species_translations {
+  id            BigInt    @id @default(autoincrement())
+  species_id    BigInt
+  language_code String    @db.VarChar(10)
+  common_name   String?   @db.VarChar(255)
+  description   String?
+  diet          String?
+  languages     languages @relation(fields: [language_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
+  species       Species   @relation(fields: [species_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([species_id, language_code])
+}
+
+model species_views {
+  id         BigInt   @id @default(autoincrement())
+  species_id BigInt
+  user_id    BigInt?
+  ip_address String?  @db.Inet
+  viewed_at  DateTime @default(now()) @db.Timestamptz(6)
+  species    Species  @relation(fields: [species_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      User?    @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([viewed_at], map: "idx_species_views_date")
+  @@index([species_id], map: "idx_species_views_species")
+}
+
+model system_settings {
+  setting_key   String   @id @db.VarChar(150)
+  setting_value Json
+  setting_group String?  @db.VarChar(100)
+  updated_by    BigInt?
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+  users         User?    @relation(fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_explored_locations {
+  user_id     BigInt
+  location_id BigInt
+  explored_at DateTime  @default(now()) @db.Timestamptz(6)
+  locations   locations @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, location_id])
+}
+
+enum comment_status {
+  visible
+  hidden
+  deleted
+}
+
+enum media_type {
+  image
+  video
+  sound
+  model_3d
+}
+
+enum report_status {
+  pending
+  reviewed
+  dismissed
+}
+
+enum user_role {
+  user
+  admin
+  super_admin
+}
+
+enum user_status {
+  active
+  pending
+  locked
+}
