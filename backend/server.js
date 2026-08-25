@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
+import "./src/utils/bigint.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,9 +13,11 @@ app.use(express.json());
 // Routes 
 import authRoutes from "./src/routes/auth.js";
 import speciesRoutes from "./src/routes/species.js";
+import adminRoutes from "./src/routes/admin.js";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/species", speciesRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -24,3 +27,4 @@ app.get("/api/health", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
