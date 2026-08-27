@@ -10,6 +10,10 @@ datasource db {
 model User {
   id                                      BigInt                    @id @default(autoincrement())
   username                                String                    @unique @db.VarChar(50)
+  full_name                               String?                   @db.VarChar(100)
+  bio                                     String?                   @db.VarChar(500)
+  phone_number                            String?                   @db.VarChar(20)
+  date_of_birth                           DateTime?                 @db.Date
   email                                   String                    @unique @db.VarChar(255)
   password_hash                           String?                   @db.VarChar(255)
   avatar_url                              String?

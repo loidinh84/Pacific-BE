@@ -14,10 +14,12 @@ app.use(express.json());
 import authRoutes from "./src/routes/auth.js";
 import speciesRoutes from "./src/routes/species.js";
 import adminRoutes from "./src/routes/admin.js";
+import userRoutes from "./src/routes/users.js";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/species", speciesRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/users", userRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
