@@ -38,11 +38,23 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Địa chỉ email này đã được sử dụng!" });
     }
 
+// Helper chuyển đổi tên Tiếng Việt có dấu thành Username sạch không dấu (VD: "Đinh Thành Lợi" -> "dinhthanhloi")
+function slugifyVietnamese(str) {
+  if (!str) return "";
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
     // Tạo username duy nhất
     let baseUsername =
       username ||
-      (fullName ? fullName.toLowerCase().replace(/[^a-z0-9]/g, "") : "") ||
-      cleanEmail.split("@")[0];
+      slugifyVietnamese(fullName) ||
+      cleanEmail.split("@")[0].replace(/[^a-z0-9_]/gi, "");
 
     if (!baseUsername || baseUsername.length < 3) {
       baseUsername = "user_" + Math.floor(1000 + Math.random() * 9000);
@@ -65,6 +77,7 @@ router.post("/register", async (req, res) => {
     const newUser = await prisma.user.create({
       data: {
         username: finalUsername,
+        full_name: fullName,
         email: cleanEmail,
         password_hash: hashedPassword,
         status: "active", // Hoặc "pending" nếu bắt buộc kích hoạt qua mail
@@ -121,11 +134,16 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Vui lòng nhập Email và Mật khẩu!" });
     }
 
-    const cleanEmail = email.toLowerCase().trim();
+    const cleanInput = email.trim();
 
-    // Tìm người dùng theo Email
-    const user = await prisma.user.findUnique({
-      where: { email: cleanEmail },
+    // Tìm người dùng theo Email hoặc Username (Khớp chính xác 100% từng chữ hoa/thường)
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: cleanInput },
+          { username: cleanInput },
+        ],
+      },
     });
 
     if (!user) {

@@ -19,6 +19,15 @@ router.get("/stats/overview", (req, res) => adminController.getOverviewStats(req
 // GET /api/admin/species - Danh sách sinh vật (cả bị ẩn) có phân trang & filter
 router.get("/species", (req, res) => speciesAdminController.getSpeciesList(req, res));
 
+// GET /api/admin/species/sync-status - Lấy trạng thái sức khỏe 3 API ngoài & sinh vật lỗi
+router.get("/species/sync-status", (req, res) => speciesAdminController.getSyncStatus(req, res));
+
+// POST /api/admin/species/sync-item/:id - Thử lại đồng bộ 1 sinh vật
+router.post("/species/sync-item/:id", (req, res) => speciesAdminController.retrySyncItem(req, res));
+
+// POST /api/admin/species/sync-all - Đồng bộ tất cả sinh vật lỗi
+router.post("/species/sync-all", (req, res) => speciesAdminController.syncAllIncomplete(req, res));
+
 // POST /api/admin/species/sync - Đồng bộ tự động từ API ngoài (Phải đặt trước /:id)
 router.post("/species/sync", (req, res) => speciesAdminController.syncFromExternalAPI(req, res));
 

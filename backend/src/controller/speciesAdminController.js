@@ -147,6 +147,66 @@ export class SpeciesAdminController {
       });
     }
   }
+
+  /**
+   * GET /api/admin/species/sync-status
+   * Lấy trạng thái sức khỏe API và sinh vật chưa hoàn thiện từ DB
+   */
+  async getSyncStatus(req, res) {
+    try {
+      const data = await speciesService.getSyncStatus();
+      return res.status(200).json({
+        success: true,
+        data,
+      });
+    } catch (error) {
+      console.error("Lỗi khi kiểm tra trạng thái API:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Không thể kiểm tra trạng thái API đồng bộ",
+      });
+    }
+  }
+
+  /**
+   * POST /api/admin/species/sync-item/:id
+   * Thử lại đồng bộ 1 sinh vật từ API ngoài
+   */
+  async retrySyncItem(req, res) {
+    try {
+      const updated = await speciesService.retrySyncItem(req.params.id);
+      return res.status(200).json({
+        success: true,
+        message: "Đồng bộ lại thành công",
+        data: updated,
+      });
+    } catch (error) {
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Lỗi khi đồng bộ lại sinh vật",
+      });
+    }
+  }
+
+  /**
+   * POST /api/admin/species/sync-all
+   * Đồng bộ tất cả sinh vật còn thiếu dữ liệu
+   */
+  async syncAllIncomplete(req, res) {
+    try {
+      const result = await speciesService.syncAllIncomplete();
+      return res.status(200).json({
+        success: true,
+        message: `Đã hoàn tất đồng bộ hàng loạt (${result.count} sinh vật)`,
+        data: result,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Lỗi khi đồng bộ hàng loạt",
+      });
+    }
+  }
 }
 
 export default new SpeciesAdminController();
