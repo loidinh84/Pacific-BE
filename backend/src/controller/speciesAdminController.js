@@ -1,7 +1,26 @@
 import speciesService from "../services/speciesService.js";
-
+import taxonomyService from "../services/taxonomyService.js";
 
 export class SpeciesAdminController {
+  /**
+   * GET /api/admin/species/taxonomy-search?q=...
+   * Tra cứu phân loại học sinh vật đại dương qua Backend Proxy Gateway
+   */
+  async searchTaxonomy(req, res) {
+    try {
+      const query = req.query.q || req.query.query || "";
+      const provider = req.query.provider || "auto";
+      const result = await taxonomyService.searchTaxonomy(query, provider);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error("Lỗi khi tra cứu taxonomy Backend:", error);
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Có lỗi xảy ra khi tra cứu taxonomy sinh vật",
+      });
+    }
+  }
+
   /**
    * GET /api/admin/species
    * Lấy danh sách tất cả sinh vật kèm bộ lọc và phân trang

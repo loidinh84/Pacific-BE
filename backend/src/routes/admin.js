@@ -16,8 +16,11 @@ router.get("/stats/overview", (req, res) => adminController.getOverviewStats(req
 /**
  * ── 2. QUẢN LÝ SINH VẬT ──
  */
-// GET /api/admin/species - Danh sách sinh vật (cả bị ẩn) có phân trang & filter
+// GET /api/admin/species - Danh sách sinh vật có phân trang & filter
 router.get("/species", (req, res) => speciesAdminController.getSpeciesList(req, res));
+
+// GET /api/admin/species/taxonomy-search - Tra cứu phân loại học đại dương từ Backend Proxy
+router.get("/species/taxonomy-search", (req, res) => speciesAdminController.searchTaxonomy(req, res));
 
 // GET /api/admin/species/sync-status - Lấy trạng thái sức khỏe 3 API ngoài & sinh vật lỗi
 router.get("/species/sync-status", (req, res) => speciesAdminController.getSyncStatus(req, res));
