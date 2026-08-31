@@ -94,11 +94,28 @@ export class SpeciesService {
       const zoneMap = { Sunlight: 1, Twilight: 2, Midnight: 3, Abyssal: 4, Hadal: 5 };
       oceanZoneId = zoneMap[dto.oceanZone] || parseInt(dto.oceanZone, 10) || null;
     }
+    if (oceanZoneId) {
+      const zoneExists = await prisma.ocean_zones.findUnique({ where: { id: oceanZoneId } });
+      if (!zoneExists) oceanZoneId = null;
+    }
 
     let conservationStatusId = dto.conservation_status_id ? parseInt(dto.conservation_status_id, 10) : null;
     if (!conservationStatusId && dto.conservationStatus) {
       const statusMap = { LC: 1, NT: 2, VU: 3, EN: 4, CR: 5, EW: 6, EX: 7, DD: 8, NE: 9 };
       conservationStatusId = statusMap[dto.conservationStatus] || parseInt(dto.conservationStatus, 10) || null;
+    }
+
+    let statusCode = "NE";
+    if (conservationStatusId) {
+      const statusRecord = await prisma.conservation_statuses.findUnique({
+        where: { id: conservationStatusId },
+        select: { code: true },
+      });
+      if (statusRecord?.code) {
+        statusCode = statusRecord.code;
+      } else {
+        conservationStatusId = null;
+      }
     }
 
     let groupId = dto.group_id || dto.groupId;
@@ -109,22 +126,26 @@ export class SpeciesService {
     if (groupId) {
       const groupRecord = await prisma.species_groups.findUnique({
         where: { id: groupId },
-        select: { name: true, slug: true },
+        select: { id: true, name: true, slug: true },
       });
       if (groupRecord) {
         groupCode = getGroupPrefix(groupRecord.slug || groupRecord.name);
+      } else {
+        // If specified groupId does not exist, fallback to first group or null
+        const firstGroup = await prisma.species_groups.findFirst();
+        if (firstGroup) {
+          groupId = firstGroup.id;
+          groupCode = getGroupPrefix(firstGroup.slug || firstGroup.name);
+        } else {
+          groupId = null;
+        }
       }
-    }
-
-    // 3. Tìm mã viết tắt của trạng thái bảo tồn (VD: VU, EN, CR, LC, NE...)
-    let statusCode = "NE";
-    if (conservationStatusId) {
-      const statusRecord = await prisma.conservation_statuses.findUnique({
-        where: { id: conservationStatusId },
-        select: { code: true },
-      });
-      if (statusRecord?.code) {
-        statusCode = statusRecord.code;
+    } else {
+      // Auto-detect group if not provided
+      const firstGroup = await prisma.species_groups.findFirst();
+      if (firstGroup) {
+        groupId = firstGroup.id;
+        groupCode = getGroupPrefix(firstGroup.slug || firstGroup.name);
       }
     }
 
@@ -259,18 +280,38 @@ export class SpeciesService {
     if (dto.is_visible !== undefined) dataToUpdate.is_visible = Boolean(dto.is_visible);
 
     const grp = dto.groupId !== undefined ? dto.groupId : dto.group_id;
-    if (grp !== undefined) dataToUpdate.group_id = grp ? BigInt(grp) : null;
+    if (grp !== undefined) {
+      const rawGrp = grp ? BigInt(grp) : null;
+      if (rawGrp) {
+        const groupExists = await prisma.species_groups.findUnique({ where: { id: rawGrp } });
+        dataToUpdate.group_id = groupExists ? rawGrp : null;
+      } else {
+        dataToUpdate.group_id = null;
+      }
+    }
 
     const cons = dto.conservationStatus !== undefined ? dto.conservationStatus : dto.conservation_status_id;
     if (cons !== undefined) {
       const statusMap = { LC: 1, NT: 2, VU: 3, EN: 4, CR: 5, EW: 6, EX: 7, DD: 8, NE: 9 };
-      dataToUpdate.conservation_status_id = statusMap[cons] || (cons ? parseInt(cons, 10) : null);
+      let sId = statusMap[cons] || (cons ? parseInt(cons, 10) : null);
+      if (sId) {
+        const statusExists = await prisma.conservation_statuses.findUnique({ where: { id: sId } });
+        dataToUpdate.conservation_status_id = statusExists ? sId : null;
+      } else {
+        dataToUpdate.conservation_status_id = null;
+      }
     }
 
     const zone = dto.oceanZone !== undefined ? dto.oceanZone : dto.ocean_zone_id;
     if (zone !== undefined) {
       const zoneMap = { Sunlight: 1, Twilight: 2, Midnight: 3, Abyssal: 4, Hadal: 5 };
-      dataToUpdate.ocean_zone_id = zoneMap[zone] || (zone ? parseInt(zone, 10) : null);
+      let zId = zoneMap[zone] || (zone ? parseInt(zone, 10) : null);
+      if (zId) {
+        const zoneExists = await prisma.ocean_zones.findUnique({ where: { id: zId } });
+        dataToUpdate.ocean_zone_id = zoneExists ? zId : null;
+      } else {
+        dataToUpdate.ocean_zone_id = null;
+      }
     }
 
     const updated = await speciesRepository.update(id, dataToUpdate);

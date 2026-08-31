@@ -8,12 +8,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware (Support up to 50mb for 3D models & audio files)
-app.use(cors({ origin: process.env.FRONTEND_URL }));
+app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// Serve static uploads
+// Serve static uploads & ocean sounds
 app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")));
+app.use("/sounds", express.static(path.join(process.cwd(), "public", "sounds")));
 
 // Routes 
 import authRoutes from "./src/routes/auth.js";
