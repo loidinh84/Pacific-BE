@@ -2,6 +2,7 @@ import { Router } from "express";
 import { checkAdmin } from "../middleware/checkAdmin.js";
 import adminController from "../controller/adminController.js";
 import speciesAdminController from "../controller/speciesAdminController.js";
+import speciesGroupsAdminController from "../controller/speciesGroupsAdminController.js";
 
 const router = Router();
 
@@ -49,5 +50,28 @@ router.patch("/species/:id/visibility", (req, res) => speciesAdminController.tog
 // DELETE /api/admin/species/:id - Xóa mềm (soft delete)
 router.delete("/species/:id", (req, res) => speciesAdminController.deleteSpecies(req, res));
 
-export default router;
+/**
+ * ── 3. QUẢN LÝ NHÓM SINH VẬT ──
+ */
+// GET /api/admin/species-groups - Danh sách nhóm kèm số lượng sinh vật
+router.get("/species-groups", (req, res) => speciesGroupsAdminController.getSpeciesGroups(req, res));
 
+// POST /api/admin/species-groups - Tạo nhóm sinh vật mới
+router.post("/species-groups", (req, res) => speciesGroupsAdminController.createSpeciesGroup(req, res));
+
+// PUT /api/admin/species-groups/:id - Cập nhật nhóm sinh vật
+router.put("/species-groups/:id", (req, res) => speciesGroupsAdminController.updateSpeciesGroup(req, res));
+
+// DELETE /api/admin/species-groups/:id - Xóa nhóm sinh vật (gỡ liên kết sinh vật)
+router.delete("/species-groups/:id", (req, res) => speciesGroupsAdminController.deleteSpeciesGroup(req, res));
+
+// POST /api/admin/species-groups/:id/species - Gán hàng loạt sinh vật vào nhóm
+router.post("/species-groups/:id/species", (req, res) => speciesGroupsAdminController.assignSpeciesToGroup(req, res));
+
+// DELETE /api/admin/species-groups/:id/species/:speciesId - Gỡ sinh vật khỏi nhóm
+router.delete("/species-groups/:id/species/:speciesId", (req, res) => speciesGroupsAdminController.removeSpeciesFromGroup(req, res));
+
+// GET /api/admin/species-groups/:id/species - Lấy danh sách sinh vật của 1 nhóm
+router.get("/species-groups/:id/species", (req, res) => speciesGroupsAdminController.getGroupSpecies(req, res));
+
+export default router;
