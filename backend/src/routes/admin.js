@@ -3,6 +3,7 @@ import { checkAdmin } from "../middleware/checkAdmin.js";
 import adminController from "../controller/adminController.js";
 import speciesAdminController from "../controller/speciesAdminController.js";
 import speciesGroupsAdminController from "../controller/speciesGroupsAdminController.js";
+import adminProfileController from "../controller/adminProfileController.js";
 
 const router = Router();
 
@@ -73,5 +74,33 @@ router.delete("/species-groups/:id/species/:speciesId", (req, res) => speciesGro
 
 // GET /api/admin/species-groups/:id/species - Lấy danh sách sinh vật của 1 nhóm
 router.get("/species-groups/:id/species", (req, res) => speciesGroupsAdminController.getGroupSpecies(req, res));
+
+
+/**
+ * ── 4. HỒ SƠ ADMIN (ADMIN PROFILE) ──
+ */
+// GET /api/admin/me - Lấy thông tin admin
+router.get("/me", (req, res) => adminProfileController.getAdminProfile(req, res));
+
+// PUT /api/admin/me - Cập nhật thông tin admin
+router.put("/me", (req, res) => adminProfileController.updateAdminProfile(req, res));
+
+// POST /api/admin/me/avatar - Cập nhật avatar
+router.post("/me/avatar", (req, res) => adminProfileController.updateAdminAvatar(req, res));
+
+// GET /api/admin/me/stats - Thống kê quản trị viên
+router.get("/me/stats", (req, res) => adminProfileController.getAdminStats(req, res));
+
+// GET /api/admin/me/activity - Lịch sử hoạt động của admin
+router.get("/me/activity", (req, res) => adminProfileController.getAdminActivity(req, res));
+
+// GET /api/admin/me/permissions - Danh sách quyền
+router.get("/me/permissions", (req, res) => adminProfileController.getAdminPermissions(req, res));
+
+// POST /api/admin/me/change-password - Đổi mật khẩu
+router.post("/me/change-password", (req, res) => adminProfileController.changeAdminPassword(req, res));
+
+// PUT /api/admin/me/settings - Tùy chọn cài đặt
+router.put("/me/settings", (req, res) => adminProfileController.updateAdminSettings(req, res));
 
 export default router;

@@ -86,7 +86,7 @@ function slugifyVietnamese(str) {
     });
 
     // Tạo JWT Token cho tự động đăng nhập sau khi đăng ký
-    const jwtSecret = process.env.JWT_SECRET || "pacific_secret_key";
+    const jwtSecret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
     const token = jwt.sign(
       {
         userId: newUser.id.toString(),
@@ -166,7 +166,7 @@ router.post("/login", async (req, res) => {
     }
 
     // Tạo JWT Token
-    const jwtSecret = process.env.JWT_SECRET || "pacific_secret_key";
+    const jwtSecret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
     const token = jwt.sign(
       {
         userId: user.id.toString(),
@@ -223,7 +223,7 @@ router.get("/me", async (req, res) => {
     }
 
     const token = authHeader.split(" ")[1];
-    const jwtSecret = process.env.JWT_SECRET || "pacific_secret_key";
+    const jwtSecret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
     const decoded = jwt.verify(token, jwtSecret);
 
     const user = await prisma.user.findUnique({
@@ -346,7 +346,7 @@ router.post("/google", async (req, res) => {
     }
 
     // Tạo JWT Token hệ thống
-    const jwtSecret = process.env.JWT_SECRET || "pacific_secret_key";
+    const jwtSecret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
     const token = jwt.sign(
       {
         userId: user.id.toString(),
@@ -486,7 +486,7 @@ router.post("/github", async (req, res) => {
     }
 
     // 4. Sinh JWT Token hệ thống
-    const jwtSecret = process.env.JWT_SECRET || "pacific_secret_key";
+    const jwtSecret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
     const token = jwt.sign(
       {
         userId: user.id.toString(),

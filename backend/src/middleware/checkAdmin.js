@@ -14,7 +14,7 @@ export const checkAdmin = (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-    const secret = process.env.JWT_SECRET || "pacific_secret_key_2026";
+    const secret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
 
     const decoded = jwt.verify(token, secret);
 
