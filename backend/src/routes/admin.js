@@ -4,6 +4,9 @@ import adminController from "../controller/adminController.js";
 import speciesAdminController from "../controller/speciesAdminController.js";
 import speciesGroupsAdminController from "../controller/speciesGroupsAdminController.js";
 import adminProfileController from "../controller/adminProfileController.js";
+import apiProviderController from "../controller/apiProviderController.js";
+import adminUserController from "../controller/adminUserController.js";
+import adminLocationsController from "../controller/adminLocationsController.js";
 
 const router = Router();
 
@@ -102,5 +105,62 @@ router.post("/me/change-password", (req, res) => adminProfileController.changeAd
 
 // PUT /api/admin/me/settings - Tùy chọn cài đặt
 router.put("/me/settings", (req, res) => adminProfileController.updateAdminSettings(req, res));
+
+/**
+ * ── 5. QUẢN LÝ NGUỒN API ĐỒNG BỘ (API PROVIDERS HUB) ──
+ */
+// GET /api/admin/api-providers - Danh sách tất cả API Providers
+router.get("/api-providers", (req, res) => apiProviderController.getProviders(req, res));
+
+// POST /api/admin/api-providers - Thêm nguồn API mới
+router.post("/api-providers", (req, res) => apiProviderController.createProvider(req, res));
+
+// PUT /api/admin/api-providers/:id - Cập nhật / Bật / Tắt nguồn API
+router.put("/api-providers/:id", (req, res) => apiProviderController.updateProvider(req, res));
+
+// DELETE /api/admin/api-providers/:id - Xóa nguồn API
+router.delete("/api-providers/:id", (req, res) => apiProviderController.deleteProvider(req, res));
+
+// POST /api/admin/api-providers/:id/test - Kiểm tra kết nối / Ping test
+router.post("/api-providers/:id/test", (req, res) => apiProviderController.testProvider(req, res));
+
+/**
+ * ── 6. QUẢN LÝ NGƯỜI DÙNG ──
+ */
+// GET /api/admin/users - Danh sách người dùng có phân trang, tìm kiếm, lọc theo role/status
+router.get("/users", (req, res) => adminUserController.getUserList(req, res));
+
+// GET /api/admin/users/:id - Chi tiết 1 người dùng
+router.get("/users/:id", (req, res) => adminUserController.getUserById(req, res));
+
+// PATCH /api/admin/users/:id/status - Cập nhật trạng thái (active/locked/pending)
+router.patch("/users/:id/status", (req, res) => adminUserController.updateUserStatus(req, res));
+
+// PATCH /api/admin/users/:id/role - Cập nhật vai trò (user/admin)
+router.patch("/users/:id/role", (req, res) => adminUserController.updateUserRole(req, res));
+
+// POST /api/admin/users/:id/reset-password - Đặt lại mật khẩu (admin)
+router.post("/users/:id/reset-password", (req, res) => adminUserController.resetUserPassword(req, res));
+
+/**
+ * ── 7. QUẢN LÝ ĐỊA ĐIỂM ──
+ */
+// GET /api/admin/locations - Danh sách địa điểm có phân trang, tìm kiếm, lọc
+router.get("/locations", (req, res) => adminLocationsController.getLocationList(req, res));
+
+// GET /api/admin/locations/:id - Chi tiết 1 địa điểm
+router.get("/locations/:id", (req, res) => adminLocationsController.getLocationById(req, res));
+
+// POST /api/admin/locations - Tạo địa điểm mới
+router.post("/locations", (req, res) => adminLocationsController.createLocation(req, res));
+
+// PUT /api/admin/locations/:id - Cập nhật địa điểm
+router.put("/locations/:id", (req, res) => adminLocationsController.updateLocation(req, res));
+
+// DELETE /api/admin/locations/:id - Xóa địa điểm
+router.delete("/locations/:id", (req, res) => adminLocationsController.deleteLocation(req, res));
+
+// PATCH /api/admin/locations/:id/featured - Bật/tắt nổi bật
+router.patch("/locations/:id/featured", (req, res) => adminLocationsController.toggleFeatured(req, res));
 
 export default router;

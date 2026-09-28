@@ -6,6 +6,8 @@ import {
 } from "../utils/speciesHelper.js";
 import prisma from "../lib/prisma.js";
 import axios from "axios";
+import taxonomyService from "./taxonomyService.js";
+import apiProviderService from "./apiProviderService.js";
 
 /**
  * SpeciesService - Tầng xử lý nghiệp vụ cho Sinh vật
@@ -50,8 +52,30 @@ export class SpeciesService {
         queryParams.is_visible === "true" || queryParams.is_visible === true;
     }
 
+    // Sắp xếp dữ liệu (Sort)
+    let orderBy = { id: "desc" };
+    if (queryParams.sortBy) {
+      const direction = queryParams.order === "asc" ? "asc" : "desc";
+      const validSortCols = {
+        id: "id",
+        code: "code",
+        name: "common_name",
+        common_name: "common_name",
+        scientificName: "scientificName",
+        scientific_name: "scientificName",
+        views: "view_count",
+        view_count: "view_count",
+        is_visible: "is_visible",
+        created_at: "created_at",
+      };
+      const targetCol = validSortCols[queryParams.sortBy];
+      if (targetCol) {
+        orderBy = { [targetCol]: direction };
+      }
+    }
+
     const [items, total] = await Promise.all([
-      speciesRepository.findAll({ where, skip, take: limit }),
+      speciesRepository.findAll({ where, skip, take: limit, orderBy }),
       speciesRepository.count(where),
     ]);
 
@@ -397,56 +421,33 @@ export class SpeciesService {
     });
   }
 
-  /**
-   * Lấy trạng thái sức khỏe kết nối 3 API ngoài và danh sách sinh vật bị thiếu dữ liệu/ảnh từ DB
-   */
+  
   async getSyncStatus() {
-    const checkPing = async (url) => {
-      try {
-        const start = Date.now();
-        await axios.get(url, { timeout: 6000 });
-        return {
-          status: "ok",
-          desc: "Hoạt động bình thường",
-          latencyMs: Date.now() - start,
-        };
-      } catch (err) {
-        return {
-          status: "error",
-          desc: `Lỗi kết nối (${err.message})`,
-          latencyMs: null,
-        };
-      }
-    };
+    const [providersWithPing, incompleteSpecies] = await Promise.all([
+      apiProviderService.getAllProviders(true),
+      prisma.species.findMany({
+        where: {
+          deleted_at: null,
+          OR: [{ species_media: { none: {} } }, { description: null }],
+        },
+        take: 10,
+        include: {
+          species_media: true,
+        },
+      }),
+    ]);
 
-    const [gbifStatus, inatStatus, obisStatus, incompleteSpecies] =
-      await Promise.all([
-        checkPing("https://api.gbif.org/v1/species/match?name=Carcharodon"),
-        checkPing("https://api.inaturalist.org/v1/taxa?q=Carcharodon"),
-        checkPing(
-          "https://api.obis.org/v3/taxon/search?scientificname=Carcharodon",
-        ),
-        prisma.species.findMany({
-          where: {
-            deleted_at: null,
-            OR: [{ species_media: { none: {} } }, { description: null }],
-          },
-          take: 10,
-          include: {
-            species_media: true,
-          },
-        }),
-      ]);
-
-    const apiStatuses = [
-      { name: "GBIF API", status: gbifStatus.status, desc: gbifStatus.desc },
-      {
-        name: "iNaturalist API",
-        status: inatStatus.status,
-        desc: inatStatus.desc,
-      },
-      { name: "OBIS API", status: obisStatus.status, desc: obisStatus.desc },
-    ];
+    // Active providers formatted for status card display
+    const apiStatuses = providersWithPing
+      .filter((p) => p.isEnabled)
+      .map((p) => ({
+        id: p.id,
+        name: p.name,
+        status: p.status,
+        desc: p.statusMessage || p.desc,
+        responseTimeMs: p.responseTimeMs,
+        category: p.category,
+      }));
 
     const failedSpecies = incompleteSpecies.map((item) => ({
       id: String(item.id),
@@ -460,11 +461,11 @@ export class SpeciesService {
         "https://images.unsplash.com/photo-1560275619-4662804300e8?auto=format&fit=crop&w=150&q=80",
     }));
 
-    return { apiStatuses, failedSpecies };
+    return { apiStatuses, failedSpecies, allProviders: providersWithPing };
   }
 
   /**
-   * Thử lại đồng bộ cho 1 sinh vật theo ID
+   * Thử lại đồng bộ cho 1 sinh vật theo ID (Tự động tìm kiếm ảnh & thông tin bổ sung)
    */
   async retrySyncItem(id) {
     const target = await speciesRepository.findById(id);
@@ -474,26 +475,60 @@ export class SpeciesService {
       throw error;
     }
 
-    const cleanName = target.scientificName || target.common_name || "";
-    let gbifData = null;
-    try {
-      const res = await axios.get(
-        `https://api.gbif.org/v1/species/match?name=${encodeURIComponent(cleanName)}`,
-      );
-      gbifData = res.data;
-    } catch {
-      // Fallback
+    const cleanName = target.common_name || target.scientificName || "";
+    const taxRes = await taxonomyService.searchTaxonomy(cleanName, "auto");
+
+    const dataToUpdate = {};
+    if (taxRes && taxRes.success && taxRes.data) {
+      const d = taxRes.data;
+      if (!target.scientificName || target.scientificName === target.common_name) {
+        dataToUpdate.scientificName = d.scientificName;
+      }
+      if (!target.description || target.description.trim() === "" || target.description.includes("PostgreSQL")) {
+        dataToUpdate.description = d.description;
+      }
+      if (target.size_min_cm === null && d.sizeMinCm) {
+        dataToUpdate.size_min_cm = parseFloat(d.sizeMinCm);
+      }
+      if (target.size_max_cm === null && d.sizeMaxCm) {
+        dataToUpdate.size_max_cm = parseFloat(d.sizeMaxCm);
+      }
+      if (target.depth_min_m === null && d.depthMin) {
+        dataToUpdate.depth_min_m = parseInt(d.depthMin, 10);
+      }
+      if (target.depth_max_m === null && d.depthMax) {
+        dataToUpdate.depth_max_m = parseInt(d.depthMax, 10);
+      }
+      if (!target.diet && d.diet) {
+        dataToUpdate.diet = d.diet;
+      }
+
+      // Add missing media photos into species_media table
+      if (Array.isArray(d.photos) && d.photos.length > 0) {
+        const existingMediaCount = await prisma.species_media.count({
+          where: { species_id: BigInt(id) },
+        });
+
+        if (existingMediaCount === 0) {
+          await prisma.species_media.createMany({
+            data: d.photos.map((url, idx) => ({
+              species_id: BigInt(id),
+              url,
+              type: "image",
+              sort_order: idx,
+              is_primary: idx === 0,
+              caption: target.common_name || d.name,
+            })),
+          });
+        }
+      }
     }
 
-    const matchedName = gbifData?.canonicalName || cleanName;
-    const desc =
-      target.description ||
-      `Đã cập nhật tự động từ GBIF API cho loài ${matchedName}.`;
+    if (Object.keys(dataToUpdate).length > 0) {
+      await speciesRepository.update(id, dataToUpdate);
+    }
 
-    return speciesRepository.update(id, {
-      scientificName: matchedName,
-      description: desc,
-    });
+    return speciesRepository.findById(id);
   }
 
   /**
@@ -501,7 +536,10 @@ export class SpeciesService {
    */
   async syncAllIncomplete() {
     const incomplete = await prisma.species.findMany({
-      where: { deleted_at: null },
+      where: {
+        deleted_at: null,
+        OR: [{ species_media: { none: {} } }, { description: null }],
+      },
       take: 20,
     });
 

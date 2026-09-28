@@ -1,7 +1,4 @@
-/**
- * aiTaxonomyService.js
- * AI-Powered Marine Taxonomy Microservice
- */
+import { translateMarineQuery, VIETNAMESE_MARINE_DICTIONARY } from "../config/marineDictionary.js";
 
 const KNOWN_FRESHWATER_SPECIES = {
   "lươn điện": { sciName: "Electrophorus electricus", commonVi: "Lươn điện (Electric Eel)", reasoning: "Lươn điện là loài cá chình điện nước ngọt lưu vực sông Amazon, không thuộc hệ sinh thái biển Thái Bình Dương." },
@@ -11,12 +8,24 @@ const KNOWN_FRESHWATER_SPECIES = {
 };
 
 const KNOWN_FICTIONAL_SPECIES = ["godzilla", "pikachu", "chocobo", "dragon", "rồng sấm", "người cá fiction", "super saiyan"];
-const KNOWN_TERRESTRIAL_SPECIES = ["con hổ", "hổ", "panthera", "tiger", "con voi", "elephant", "con ngựa", "horse", "chó", "sói", "mèo", "gấu"];
+
+// Terrestrial check with exact whole-word matching (avoids matching 'hổ' in 'khổng lồ')
+const TERRESTRIAL_REGEX = /(?:^|\s)(con\s+hổ|hổ\s+vằn|panthera\s+tigris|con\s+voi|con\s+ngựa|chó\s+nhà|mèo\s+nhà|chó\s+sói|con\s+gấu\s+bắc\s+cực|con\s+gấu\s+nâu)(?:$|\s)/i;
 
 export class AITaxonomyService {
   async analyzeWithAI(rawQuery) {
     const cleanQ = (rawQuery || "").trim().toLowerCase();
     console.log(`[AI TAXONOMY AGENT] Tra cứu từ khóa: "${rawQuery}"`);
+
+    // 0. Check Marine Dictionary first (Always prioritizes verified ocean creatures)
+    const isMarineInDict = Boolean(VIETNAMESE_MARINE_DICTIONARY[cleanQ]) ||
+      cleanQ.includes("bạch tuộc") ||
+      cleanQ.includes("cá mập") ||
+      cleanQ.includes("cá voi") ||
+      cleanQ.includes("cá heo") ||
+      cleanQ.includes("mực khổng lồ") ||
+      cleanQ.includes("sứa") ||
+      cleanQ.includes("san hô");
 
     // 1. Check Sci-Fi / Fictional Entities
     if (KNOWN_FICTIONAL_SPECIES.some((f) => cleanQ.includes(f))) {
@@ -30,8 +39,8 @@ export class AITaxonomyService {
       };
     }
 
-    // 2. Check Terrestrial (Land) Animals
-    if (KNOWN_TERRESTRIAL_SPECIES.some((t) => cleanQ.includes(t))) {
+    // 2. Check Terrestrial (Land) Animals (Only if NOT a known marine animal)
+    if (!isMarineInDict && TERRESTRIAL_REGEX.test(cleanQ)) {
       console.log(`[AI TAXONOMY AGENT] Nhận diện: Động vật trên cạn ("${rawQuery}")`);
       return {
         isValidCreature: true,
