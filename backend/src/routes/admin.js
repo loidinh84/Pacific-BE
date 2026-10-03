@@ -17,6 +17,9 @@ router.use(checkAdmin);
  * ── 1. THỐNG KÊ DASHBOARD ──
  */
 router.get("/stats/overview", (req, res) => adminController.getOverviewStats(req, res));
+router.get("/stats/charts", (req, res) => adminController.getChartStats(req, res));
+router.get("/stats/rankings", (req, res) => adminController.getRankingsStats(req, res));
+router.get("/stats/full", (req, res) => adminController.getFullDashboard(req, res));
 
 /**
  * ── 2. QUẢN LÝ SINH VẬT ──

@@ -12,7 +12,7 @@ export class AdminService {
       adminRepository.getUserStats(),
       adminRepository.getContentStats(),
       adminRepository.getCommentStats(),
-      adminRepository.getRecentActivities(5),
+      adminRepository.getRecentActivities(6),
     ]);
 
     return {
@@ -20,6 +20,47 @@ export class AdminService {
       contentAndView: contentStats,
       comments: commentStats,
       recentActivities,
+    };
+  }
+
+  /**
+   * Lấy dữ liệu biểu đồ lượt xem và người dùng mới theo ngày
+   */
+  async getChartStats(days = 7) {
+    return adminRepository.getChartStats(days);
+  }
+
+  /**
+   * Lấy các bảng xếp hạng & phân bố
+   */
+  async getRankingsStats() {
+    const [topSpecies, speciesByZone, topUsers] = await Promise.all([
+      adminRepository.getTopViewedSpecies(5),
+      adminRepository.getSpeciesByOceanZone(),
+      adminRepository.getTopActiveUsers(5),
+    ]);
+
+    return {
+      topSpecies,
+      speciesByZone,
+      topUsers,
+    };
+  }
+
+  /**
+   * Lấy toàn bộ dữ liệu Dashboard trong 1 request (tối ưu tải trang)
+   */
+  async getFullDashboardData(days = 7) {
+    const [overview, charts, rankings] = await Promise.all([
+      this.getOverviewStats(),
+      this.getChartStats(days),
+      this.getRankingsStats(),
+    ]);
+
+    return {
+      ...overview,
+      charts,
+      rankings,
     };
   }
 }
