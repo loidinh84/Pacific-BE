@@ -1,6 +1,7 @@
 import { Router } from "express";
 import taxonomyService from "../services/taxonomyService.js";
 import oceanAudioService from "../services/oceanAudioService.js";
+import authenticateToken from "../middleware/auth.js";
 
 const router = Router();
 
@@ -141,6 +142,206 @@ router.get("/locations", async (req, res) => {
       })),
     });
   } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/species/:idOrSlug/comments - Danh sách bình luận công khai của loài sinh vật
+router.get("/:idOrSlug/comments", async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    // Tìm loài sinh vật theo id (nếu là số) hoặc slug/code/common_name
+    let species = null;
+    const isNum = /^\d+$/.test(idOrSlug);
+    if (isNum) {
+      species = await prisma.species.findUnique({
+        where: { id: BigInt(idOrSlug) },
+        select: { id: true, slug: true, common_name: true },
+      });
+    }
+    if (!species) {
+      species = await prisma.species.findFirst({
+        where: {
+          OR: [
+            { slug: idOrSlug },
+            { code: idOrSlug },
+            { common_name: { equals: idOrSlug, mode: "insensitive" } },
+            { slug: { contains: idOrSlug, mode: "insensitive" } },
+          ],
+        },
+        select: { id: true, slug: true, common_name: true },
+      });
+    }
+
+    if (!species) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+
+    const comments = await prisma.comments.findMany({
+      where: {
+        species_id: species.id,
+        deleted_at: null,
+        status: "visible",
+      },
+      orderBy: { created_at: "desc" },
+      include: {
+        users: {
+          select: {
+            id: true,
+            username: true,
+            full_name: true,
+            avatar_url: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    const formatted = comments.map((c) => ({
+      id: c.id.toString(),
+      content: c.content,
+      createdAt: c.created_at,
+      user: c.users
+        ? {
+            id: c.users.id.toString(),
+            username: c.users.username,
+            fullName: c.users.full_name || c.users.username,
+            avatarUrl: c.users.avatar_url || "",
+            role: c.users.role,
+          }
+        : {
+            id: "0",
+            username: "Người dùng ẩn danh",
+            fullName: "Người dùng ẩn danh",
+            avatarUrl: "",
+            role: "user",
+          },
+    }));
+
+    return res.status(200).json({ success: true, data: formatted });
+  } catch (error) {
+    console.error("Lỗi lấy danh sách bình luận:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/species/:idOrSlug/comments - Gửi bình luận mới cho loài sinh vật
+router.post("/:idOrSlug/comments", authenticateToken, async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+    const { content } = req.body;
+    const userId = req.user?.userId;
+
+    if (!content || !content.trim()) {
+      return res.status(400).json({ success: false, message: "Nội dung bình luận không được để trống" });
+    }
+
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    let species = null;
+    const isNum = /^\d+$/.test(idOrSlug);
+    if (isNum) {
+      species = await prisma.species.findUnique({
+        where: { id: BigInt(idOrSlug) },
+        select: { id: true, slug: true, common_name: true },
+      });
+    }
+    if (!species) {
+      species = await prisma.species.findFirst({
+        where: {
+          OR: [
+            { slug: idOrSlug },
+            { code: idOrSlug },
+            { common_name: { equals: idOrSlug, mode: "insensitive" } },
+            { slug: { contains: idOrSlug, mode: "insensitive" } },
+          ],
+        },
+        select: { id: true, slug: true, common_name: true },
+      });
+    }
+
+    if (!species) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy loài sinh vật" });
+    }
+
+    const newComment = await prisma.comments.create({
+      data: {
+        species_id: species.id,
+        user_id: BigInt(userId),
+        content: content.trim(),
+        status: "visible",
+      },
+      include: {
+        users: {
+          select: {
+            id: true,
+            username: true,
+            full_name: true,
+            avatar_url: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Bình luận thành công",
+      data: {
+        id: newComment.id.toString(),
+        content: newComment.content,
+        createdAt: newComment.created_at,
+        user: newComment.users
+          ? {
+              id: newComment.users.id.toString(),
+              username: newComment.users.username,
+              fullName: newComment.users.full_name || newComment.users.username,
+              avatarUrl: newComment.users.avatar_url || "",
+              role: newComment.users.role,
+            }
+          : null,
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi đăng bình luận:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// DELETE /api/species/comments/:commentId - Xóa bình luận của chính mình hoặc admin xóa
+router.delete("/comments/:commentId", authenticateToken, async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const userId = req.user?.userId;
+    const role = req.user?.role;
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    const comment = await prisma.comments.findUnique({
+      where: { id: BigInt(commentId) },
+    });
+
+    if (!comment) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy bình luận" });
+    }
+
+    // Kiểm tra quyền: Admin / Super Admin hoặc chính người tạo
+    if (role !== "admin" && role !== "super_admin" && comment.user_id.toString() !== userId?.toString()) {
+      return res.status(403).json({ success: false, message: "Bạn không có quyền xóa bình luận này" });
+    }
+
+    await prisma.comments.update({
+      where: { id: BigInt(commentId) },
+      data: {
+        deleted_at: new Date(),
+        status: "deleted",
+      },
+    });
+
+    return res.status(200).json({ success: true, message: "Đã xóa bình luận thành công" });
+  } catch (error) {
+    console.error("Lỗi xóa bình luận:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 });
