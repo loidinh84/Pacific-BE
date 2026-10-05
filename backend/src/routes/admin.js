@@ -7,6 +7,7 @@ import adminProfileController from "../controller/adminProfileController.js";
 import apiProviderController from "../controller/apiProviderController.js";
 import adminUserController from "../controller/adminUserController.js";
 import adminLocationsController from "../controller/adminLocationsController.js";
+import adminCommentsController from "../controller/adminCommentsController.js";
 
 const router = Router();
 
@@ -165,5 +166,26 @@ router.delete("/locations/:id", (req, res) => adminLocationsController.deleteLoc
 
 // PATCH /api/admin/locations/:id/featured - Bật/tắt nổi bật
 router.patch("/locations/:id/featured", (req, res) => adminLocationsController.toggleFeatured(req, res));
+
+/**
+ * ── 8. QUẢN LÝ BÌNH LUẬN & KIỂM DUYỆT ──
+ */
+// GET /api/admin/comments - Danh sách bình luận theo tab, tìm kiếm, phân trang
+router.get("/comments", (req, res) => adminCommentsController.getCommentsList(req, res));
+
+// DELETE /api/admin/comments/:id - Xóa mềm bình luận
+router.delete("/comments/:id", (req, res) => adminCommentsController.deleteComment(req, res));
+
+// PATCH /api/admin/comments/:id/restore - Khôi phục bình luận
+router.patch("/comments/:id/restore", (req, res) => adminCommentsController.restoreComment(req, res));
+
+// POST /api/admin/comments/:id/reports/dismiss - Bác bỏ báo cáo (Giữ bình luận)
+router.post("/comments/:id/reports/dismiss", (req, res) => adminCommentsController.dismissReports(req, res));
+
+// PATCH /api/admin/comments/:id/toggle-hide - Tạm ẩn hoặc hiển thị lại
+router.patch("/comments/:id/toggle-hide", (req, res) => adminCommentsController.toggleHide(req, res));
+
+// DELETE /api/admin/comments/:id/permanent - Xóa vĩnh viễn khỏi DB
+router.delete("/comments/:id/permanent", (req, res) => adminCommentsController.permanentDeleteComment(req, res));
 
 export default router;
