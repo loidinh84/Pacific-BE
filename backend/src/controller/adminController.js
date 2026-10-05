@@ -1,4 +1,5 @@
 import adminService from "../services/adminService.js";
+import prisma from "../lib/prisma.js";
 
 /**
  * AdminController - Tầng tiếp nhận & phản hồi HTTP (Controller Layer) cho Admin
@@ -85,6 +86,34 @@ export class AdminController {
       return res.status(500).json({
         success: false,
         message: "Có lỗi xảy ra khi truy vấn toàn bộ dữ liệu dashboard",
+        error: error.message,
+      });
+    }
+  }
+  /**
+   * GET /api/admin/notifications
+   * Lấy số lượng thông báo chưa xử lý: report chờ duyệt, user chờ duyệt
+   */
+  async getNotifications(req, res) {
+    try {
+      const [pendingReports, pendingUsers] = await Promise.all([
+        prisma.comment_reports.count({ where: { status: "pending" } }),
+        prisma.user.count({ where: { status: "pending" } }),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          pendingReports,
+          pendingUsers,
+          total: pendingReports + pendingUsers,
+        },
+      });
+    } catch (error) {
+      console.error("Lỗi khi lấy thông báo admin:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Có lỗi xảy ra khi truy vấn thông báo",
         error: error.message,
       });
     }

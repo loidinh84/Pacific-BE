@@ -15,6 +15,11 @@ const router = Router();
 router.use(checkAdmin);
 
 /**
+ * ── 0. THÔNG BÁO ADMIN (NOTIFICATIONS) ──
+ */
+router.get("/notifications", (req, res) => adminController.getNotifications(req, res));
+
+/**
  * ── 1. THỐNG KÊ DASHBOARD ──
  */
 router.get("/stats/overview", (req, res) => adminController.getOverviewStats(req, res));
@@ -136,6 +141,9 @@ router.get("/users", (req, res) => adminUserController.getUserList(req, res));
 
 // GET /api/admin/users/:id - Chi tiết 1 người dùng
 router.get("/users/:id", (req, res) => adminUserController.getUserById(req, res));
+
+// GET /api/admin/users/:id/activity - Lịch sử hoạt động của 1 người dùng
+router.get("/users/:id/activity", (req, res) => adminUserController.getUserActivity(req, res));
 
 // PATCH /api/admin/users/:id/status - Cập nhật trạng thái (active/locked/pending)
 router.patch("/users/:id/status", (req, res) => adminUserController.updateUserStatus(req, res));

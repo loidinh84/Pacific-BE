@@ -167,6 +167,93 @@ class AdminUserController {
   }
 
   /**
+   * GET /api/admin/users/:id/activity
+   * Lịch sử hoạt động của người dùng (bình luận, yêu thích, địa điểm)
+   */
+  async getUserActivity(req, res) {
+    try {
+      const userId = BigInt(req.params.id);
+      const limit = Math.min(20, Math.max(1, parseInt(req.query.limit) || 10));
+
+      const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+      if (!user) {
+        return res.status(404).json({ success: false, error: "Không tìm thấy người dùng" });
+      }
+
+      // Lấy song song: bình luận, yêu thích, địa điểm đã khám phá gần đây
+      const [recentComments, recentFavorites, recentLocations] = await Promise.all([
+        prisma.comments.findMany({
+          where: { user_id: userId, deleted_at: null },
+          orderBy: { created_at: "desc" },
+          take: limit,
+          select: {
+            id: true,
+            content: true,
+            status: true,
+            created_at: true,
+            report_count: true,
+            species: {
+              select: { id: true, common_name: true, slug: true }
+            },
+          },
+        }),
+        prisma.favorites.findMany({
+          where: { user_id: userId },
+          orderBy: { created_at: "desc" },
+          take: limit,
+          select: {
+            created_at: true,
+            species: {
+              select: { id: true, common_name: true, slug: true, species_media: { take: 1, select: { url: true } } }
+            },
+          },
+        }),
+        prisma.user_explored_locations.findMany({
+          where: { user_id: userId },
+          orderBy: { explored_at: "desc" },
+          take: limit,
+          select: {
+            explored_at: true,
+            locations: {
+              select: { id: true, name: true, slug: true }
+            },
+          },
+        }),
+      ]);
+
+      return res.json({
+        success: true,
+        activity: {
+          recentComments: recentComments.map((c) => ({
+            id: c.id.toString(),
+            content: c.content.slice(0, 150),
+            status: c.status,
+            reportCount: c.report_count,
+            createdAt: c.created_at,
+            species: c.species ? { id: c.species.id.toString(), name: c.species.common_name, slug: c.species.slug } : null,
+          })),
+          recentFavorites: recentFavorites.map((f) => ({
+            createdAt: f.created_at,
+            species: f.species ? {
+              id: f.species.id.toString(),
+              name: f.species.common_name,
+              slug: f.species.slug,
+              image: f.species.species_media?.[0]?.url || null,
+            } : null,
+          })),
+          recentLocations: recentLocations.map((l) => ({
+            exploredAt: l.explored_at,
+            location: l.locations ? { id: l.locations.id.toString(), name: l.locations.name, slug: l.locations.slug } : null,
+          })),
+        },
+      });
+    } catch (error) {
+      console.error("adminUserController.getUserActivity error:", error);
+      return res.status(500).json({ success: false, error: "Lỗi hệ thống khi tải lịch sử hoạt động" });
+    }
+  }
+
+  /**
    * PATCH /api/admin/users/:id/status
    * Cập nhật trạng thái: active | locked | pending
    */
