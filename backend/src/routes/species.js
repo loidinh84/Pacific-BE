@@ -346,6 +346,91 @@ router.delete("/comments/:commentId", authenticateToken, async (req, res) => {
   }
 });
 
+// POST /api/species/:idOrSlug/view - Ghi nhận lượt xem sinh vật (tự động loại trừ Admin để tránh làm sai lệch số liệu)
+router.post("/:idOrSlug/view", async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+    const authHeader = req.headers.authorization;
+    let currentUser = null;
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.split(" ")[1];
+        const jwtSecret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
+        const decoded = (await import("jsonwebtoken")).default.verify(token, jwtSecret);
+        currentUser = decoded;
+      } catch {
+        // Token không hợp lệ hoặc hết hạn -> xử lý như khách vãng lai
+      }
+    }
+
+    // Nếu người xem là Admin hoặc Super Admin -> BỎ QUA không ghi nhận lượt xem
+    if (currentUser && (currentUser.role === "admin" || currentUser.role === "super_admin")) {
+      return res.status(200).json({
+        success: true,
+        message: "Lượt xem của quản trị viên được bỏ qua để giữ độ chính xác của số liệu phân tích.",
+        ignored: true,
+      });
+    }
+
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    let species = null;
+    const isNum = /^\d+$/.test(idOrSlug);
+    if (isNum) {
+      species = await prisma.species.findUnique({
+        where: { id: BigInt(idOrSlug) },
+        select: { id: true, view_count: true },
+      });
+    }
+    if (!species) {
+      species = await prisma.species.findFirst({
+        where: {
+          OR: [
+            { slug: idOrSlug },
+            { code: idOrSlug },
+            { common_name: { equals: idOrSlug, mode: "insensitive" } },
+          ],
+        },
+        select: { id: true, view_count: true },
+      });
+    }
+
+    if (!species) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy loài sinh vật" });
+    }
+
+    // Tăng view_count trên bảng species
+    await prisma.species.update({
+      where: { id: species.id },
+      data: {
+        view_count: { increment: 1 },
+      },
+    });
+
+    // Ghi log vào bảng species_views nếu có thể
+    try {
+      await prisma.species_views.create({
+        data: {
+          species_id: species.id,
+          user_id: currentUser?.userId ? BigInt(currentUser.userId) : null,
+        },
+      });
+    } catch {
+      // Bỏ qua lỗi log phụ
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Đã ghi nhận lượt xem",
+      ignored: false,
+    });
+  } catch (error) {
+    console.error("Lỗi ghi nhận view:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // GET /api/species
 router.get("/", async (req, res) => {
   res.json({ message: "Get all species - coming soon" });
