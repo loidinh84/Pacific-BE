@@ -8,6 +8,7 @@ const DEFAULT_SETTINGS = {
     websiteName: "Pacific Ocean Portal",
     seoDescription: "Cổng thông tin & tra cứu sinh vật biển Thái Bình Dương chuẩn khoa học",
     contactEmail: "admin@pacific.org",
+    logoUrl: "",
     socialLinks: [
       { id: "1", platform: "Facebook", url: "https://facebook.com/pacific.ocean" },
       { id: "2", platform: "Instagram", url: "https://instagram.com/pacific.ocean" },

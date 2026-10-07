@@ -31,10 +31,7 @@ class AdminCommentsController {
         where.deleted_at = { not: null };
       } else if (tab === "reported") {
         where.deleted_at = null;
-        where.OR = [
-          { report_count: { gt: 0 } },
-          { comment_reports: { some: { status: "pending" } } },
-        ];
+        where.comment_reports = { some: { status: "pending" } };
       } else if (tab === "today") {
         where.deleted_at = null;
         where.created_at = { gte: startOfToday };
@@ -107,14 +104,11 @@ class AdminCommentsController {
         }),
         // Đếm badge tab: Tất cả
         prisma.comments.count({ where: { deleted_at: null } }),
-        // Đếm badge tab: Bị báo cáo
+        // Đếm badge tab: Bị báo cáo (chỉ đếm các bình luận có báo cáo đang chờ duyệt)
         prisma.comments.count({
           where: {
             deleted_at: null,
-            OR: [
-              { report_count: { gt: 0 } },
-              { comment_reports: { some: { status: "pending" } } },
-            ],
+            comment_reports: { some: { status: "pending" } },
           },
         }),
         // Đếm badge tab: Đã xóa
@@ -130,9 +124,11 @@ class AdminCommentsController {
 
       const data = comments.map((c) => {
         const pendingReports = c.comment_reports.filter((r) => r.status === "pending");
-        // Gom lý do báo cáo và đếm số lượng người báo cáo
+        const dismissedReports = c.comment_reports.filter((r) => r.status === "dismissed");
+
+        // Chỉ gom lý do báo cáo của các báo cáo CHỜ DUYỆT (pending)
         const reportReasonMap = {};
-        c.comment_reports.forEach((r) => {
+        pendingReports.forEach((r) => {
           const reason = r.reason || "Bình luận vi phạm tiêu chuẩn cộng đồng";
           reportReasonMap[reason] = (reportReasonMap[reason] || 0) + 1;
         });
@@ -142,12 +138,18 @@ class AdminCommentsController {
           count,
         }));
 
+        const hasPendingReports = pendingReports.length > 0;
+        const isDismissed = !hasPendingReports && dismissedReports.length > 0;
+
         return {
           id: c.id.toString(),
           content: c.content,
           status: c.status,
-          reportCount: c.report_count || pendingReports.length,
-          hasPendingReports: pendingReports.length > 0 || c.report_count > 0,
+          reportCount: pendingReports.length,
+          hasPendingReports,
+          isDismissed,
+          dismissedCount: dismissedReports.length,
+          reportSummaries,
           createdAt: c.created_at,
           updatedAt: c.updated_at,
           deletedAt: c.deleted_at,
@@ -231,6 +233,7 @@ class AdminCommentsController {
           data: {
             deleted_at: new Date(),
             status: "deleted",
+            report_count: 0,
           },
         }),
         // Đánh dấu các báo cáo chưa xử lý là đã duyệt (reviewed)
