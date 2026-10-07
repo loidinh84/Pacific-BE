@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS = {
     defaultLanguage: "vi",
     enableAudioAutoPlay: false,
     enable3DViewer: true,
+    enableOceanEffects: true,
   },
   content: {
     autoModeration: true,
