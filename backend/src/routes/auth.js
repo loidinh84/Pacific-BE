@@ -23,8 +23,51 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Vui lòng điền đầy đủ Email và Mật khẩu!" });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ message: "Mật khẩu phải có ít nhất 6 ký tự!" });
+    // 1. Tải cấu hình tài khoản người dùng từ system_settings
+    let userSettings = {
+      allowRegistration: true,
+      requireEmailVerification: false,
+      defaultUserRole: "user",
+      requireApprovalForNewUsers: false,
+      minPasswordLength: 6,
+      requireSpecialChar: false,
+    };
+    try {
+      const settingRecord = await prisma.system_settings.findFirst({
+        where: { setting_key: { in: ["SYSTEM_CONFIG", "general_config"] } },
+      });
+      if (settingRecord?.setting_value) {
+        const parsed =
+          typeof settingRecord.setting_value === "string"
+            ? JSON.parse(settingRecord.setting_value)
+            : settingRecord.setting_value;
+        if (parsed?.users) {
+          userSettings = { ...userSettings, ...parsed.users };
+        }
+      }
+    } catch {}
+
+    // Kiểm tra chính sách cho phép đăng ký
+    if (userSettings.allowRegistration === false) {
+      return res.status(403).json({
+        message: "Hệ thống hiện đang tạm đóng chức năng đăng ký tài khoản mới!",
+      });
+    }
+
+    const minPassLen = Number(userSettings.minPasswordLength ?? 6);
+    if (minPassLen > 0 && password.length < minPassLen) {
+      return res.status(400).json({
+        message: `Mật khẩu phải có ít nhất ${minPassLen} ký tự theo quy định hệ thống!`,
+      });
+    }
+
+    if (userSettings.requireSpecialChar) {
+      const hasSpecialOrUpper = /[A-Z!@#$%^&*(),.?":{}|<>]/.test(password);
+      if (!hasSpecialOrUpper) {
+        return res.status(400).json({
+          message: "Mật khẩu phải chứa ít nhất 1 chữ hoa hoặc ký tự đặc biệt!",
+        });
+      }
     }
 
     const cleanEmail = email.toLowerCase().trim();
@@ -73,6 +116,9 @@ function slugifyVietnamese(str) {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    const initialStatus = userSettings.requireApprovalForNewUsers ? "pending" : "active";
+    const initialRole = userSettings.defaultUserRole || "user";
+
     // Lưu User mới vào CSDL
     const newUser = await prisma.user.create({
       data: {
@@ -80,10 +126,24 @@ function slugifyVietnamese(str) {
         full_name: fullName,
         email: cleanEmail,
         password_hash: hashedPassword,
-        status: "active", // Hoặc "pending" nếu bắt buộc kích hoạt qua mail
-        role: "user",
+        status: initialStatus,
+        role: initialRole,
       },
     });
+
+    if (userSettings.requireApprovalForNewUsers) {
+      return res.status(201).json({
+        message: "Đăng ký thành công! Tài khoản đang chờ quản trị viên phê duyệt trước khi có thể đăng nhập.",
+        requiresApproval: true,
+        user: {
+          id: newUser.id.toString(),
+          username: newUser.username,
+          email: newUser.email,
+          role: newUser.role,
+          status: newUser.status,
+        },
+      });
+    }
 
     // Tạo JWT Token cho tự động đăng nhập sau khi đăng ký
     const jwtSecret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";

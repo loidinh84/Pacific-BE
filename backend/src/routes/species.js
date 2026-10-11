@@ -2,6 +2,7 @@ import { Router } from "express";
 import taxonomyService from "../services/taxonomyService.js";
 import oceanAudioService from "../services/oceanAudioService.js";
 import authenticateToken from "../middleware/auth.js";
+import aiModerationService from "../services/aiModerationService.js";
 
 const router = Router();
 
@@ -266,12 +267,93 @@ router.post("/:idOrSlug/comments", authenticateToken, async (req, res) => {
       return res.status(404).json({ success: false, message: "Không tìm thấy loài sinh vật" });
     }
 
+    // 1. Tải cấu hình kiểm duyệt từ bảng system_settings
+    let settings = null;
+    try {
+      const settingRecord = await prisma.system_settings.findFirst({
+        where: { setting_key: "general_config" },
+      });
+      if (settingRecord?.setting_value) {
+        settings =
+          typeof settingRecord.setting_value === "string"
+            ? JSON.parse(settingRecord.setting_value)
+            : settingRecord.setting_value;
+      }
+    } catch {}
+    const contentSettings = settings?.content || {};
+
+    // 2. Kiểm tra Cooldown thời gian chờ giữa 2 lần bình luận
+    const cooldownSec = Number(contentSettings.commentCooldownSeconds ?? 0);
+    if (cooldownSec > 0) {
+      const lastComment = await prisma.comments.findFirst({
+        where: { user_id: BigInt(userId) },
+        orderBy: { created_at: "desc" },
+        select: { created_at: true },
+      });
+      if (lastComment) {
+        const diffSec = (Date.now() - new Date(lastComment.created_at).getTime()) / 1000;
+        if (diffSec < cooldownSec) {
+          const waitSec = Math.ceil(cooldownSec - diffSec);
+          return res.status(429).json({
+            success: false,
+            message: `Bạn đang bình luận quá nhanh. Vui lòng đợi ${waitSec} giây trước khi gửi tiếp.`,
+          });
+        }
+      }
+    }
+
+    let processedContent = content.trim();
+
+    // 3. Kiểm tra danh sách từ khóa cấm (Profanity Filter)
+    if (contentSettings.filterProfanity !== false) {
+      const bannedWords = Array.isArray(contentSettings.customBannedWords)
+        ? contentSettings.customBannedWords
+        : ["scam", "lừa đảo", "chửi bậy", "xúc phạm", "hack"];
+
+      const profanityAction = contentSettings.profanityAction || "mask";
+
+      for (const word of bannedWords) {
+        if (!word) continue;
+        const regex = new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+        if (regex.test(processedContent)) {
+          if (profanityAction === "reject") {
+            return res.status(400).json({
+              success: false,
+              message: "Bình luận chứa từ ngữ không phù hợp theo quy định cộng đồng. Vui lòng chỉnh sửa trước khi đăng.",
+            });
+          } else {
+            processedContent = processedContent.replace(regex, "*".repeat(word.length));
+          }
+        }
+      }
+    }
+
+    // 4. Kiểm duyệt tự động bằng AI (Google Gemini AI)
+    let initialStatus = contentSettings.requireApprovalFirst ? "pending" : "visible";
+    let aiFlagReason = "";
+
+    if (contentSettings.autoModeration !== false) {
+      try {
+        const aiCheck = await aiModerationService.moderateComment(
+          processedContent,
+          contentSettings.aiSensitivity || "medium"
+        );
+        if (aiCheck?.isFlagged) {
+          initialStatus = "hidden"; // Tự động tạm ẩn bình luận vi phạm
+          aiFlagReason = aiCheck.reason || "AI phát hiện vi phạm tiêu chuẩn cộng đồng";
+        }
+      } catch (err) {
+        console.warn("⚠️ [AI Moderation Check Skipped]:", err.message);
+      }
+    }
+
     const newComment = await prisma.comments.create({
       data: {
         species_id: species.id,
         user_id: BigInt(userId),
-        content: content.trim(),
-        status: "visible",
+        content: processedContent,
+        status: initialStatus,
+        report_count: aiFlagReason ? 1 : 0,
       },
       include: {
         users: {
@@ -285,6 +367,22 @@ router.post("/:idOrSlug/comments", authenticateToken, async (req, res) => {
         },
       },
     });
+
+    // Nếu AI gắn cờ vi phạm -> Tự động tạo 1 phiếu báo cáo để Admin kiểm duyệt tại /admin/comments
+    if (aiFlagReason) {
+      try {
+        await prisma.comment_reports.create({
+          data: {
+            comment_id: newComment.id,
+            reported_by: BigInt(userId),
+            reason: `[AI Gemini Gắn Cờ]: ${aiFlagReason}`,
+            status: "pending",
+          },
+        });
+      } catch (e) {
+        console.warn("Không thể ghi phiếu báo cáo AI:", e.message);
+      }
+    }
 
     return res.status(201).json({
       success: true,
