@@ -78,6 +78,11 @@ model Species {
   source_api_id          String?                @db.VarChar(100)
   view_count             BigInt                 @default(0)
   is_visible             Boolean                @default(true)
+  vietnam_red_list_status String?               @db.VarChar(20)
+  vietnam_protection_group String?              @db.VarChar(50)
+  cites_appendix         String?                @db.VarChar(20)
+  east_sea_zone          String?                @db.VarChar(100)
+  local_distribution     String?
   deleted_at             DateTime?              @db.Timestamptz(6)
   created_at             DateTime               @default(now()) @db.Timestamptz(6)
   updated_at             DateTime               @default(now()) @db.Timestamptz(6)
@@ -92,9 +97,13 @@ model Species {
   species_media          species_media[]
   species_translations   species_translations[]
   species_views          species_views[]
+  source_relationships   species_relationships[] @relation("species_source")
+  target_relationships   species_relationships[] @relation("species_target")
 
   @@index([group_id], map: "idx_species_group")
   @@index([conservation_status_id], map: "idx_species_status")
+  @@index([east_sea_zone], map: "idx_species_east_sea_zone")
+  @@index([vietnam_red_list_status], map: "idx_species_vn_red_list")
   @@index([is_visible], map: "idx_species_visible", where: raw("(deleted_at IS NULL)"))
   @@index([ocean_zone_id], map: "idx_species_zone")
   @@map("species")
@@ -408,10 +417,44 @@ enum user_role {
   user
   admin
   super_admin
+  moderator
+  expert
+  top_fan
 }
 
 enum user_status {
   active
   pending
   locked
+}
+
+enum relationship_type {
+  predator_prey
+  symbiosis
+  commensalism
+  parasitism
+  competitor
+  habitat_provider
+  herbivory
+}
+
+model species_relationships {
+  id                BigInt            @id @default(autoincrement())
+  source_species_id BigInt
+  target_species_id BigInt
+  relationship_type relationship_type
+  description       String?           @db.VarChar(500)
+  strength          Decimal?          @default(1.0) @db.Decimal(3, 2)
+  ecological_impact String?           @db.VarChar(255)
+  created_at        DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime          @default(now()) @db.Timestamptz(6)
+
+  source_species    Species           @relation("species_source", fields: [source_species_id], references: [id], onDelete: Cascade)
+  target_species    Species           @relation("species_target", fields: [target_species_id], references: [id], onDelete: Cascade)
+
+  @@unique([source_species_id, target_species_id, relationship_type], map: "uq_species_relationship")
+  @@index([source_species_id], map: "idx_species_rel_source")
+  @@index([target_species_id], map: "idx_species_rel_target")
+  @@index([relationship_type], map: "idx_species_rel_type")
+  @@map("species_relationships")
 }

@@ -107,31 +107,57 @@ class AdminUserController {
   async getUserById(req, res) {
     try {
       const userId = BigInt(req.params.id);
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          username: true,
-          full_name: true,
-          email: true,
-          avatar_url: true,
-          bio: true,
-          phone_number: true,
-          date_of_birth: true,
-          role: true,
-          status: true,
-          created_at: true,
-          last_login_at: true,
-          _count: {
-            select: {
-              favorites: true,
-              species_views: true,
-              user_explored_locations: true,
-              comments: true,
+      let user = null;
+      try {
+        user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            id: true,
+            username: true,
+            full_name: true,
+            email: true,
+            avatar_url: true,
+            bio: true,
+            phone_number: true,
+            date_of_birth: true,
+            role: true,
+            status: true,
+            created_at: true,
+            last_login_at: true,
+            _count: {
+              select: {
+                favorites: true,
+                species_views: true,
+                user_explored_locations: true,
+                comments: true,
+              },
             },
           },
-        },
-      });
+        });
+      } catch (prismaSelectErr) {
+        console.warn("Lỗi select chi tiết người dùng, fallback query cơ bản:", prismaSelectErr.message);
+        user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            id: true,
+            username: true,
+            full_name: true,
+            email: true,
+            avatar_url: true,
+            role: true,
+            status: true,
+            created_at: true,
+            last_login_at: true,
+            _count: {
+              select: {
+                favorites: true,
+                species_views: true,
+                comments: true,
+              },
+            },
+          },
+        });
+      }
 
       if (!user) {
         return res.status(404).json({ success: false, error: "Không tìm thấy người dùng" });
@@ -153,10 +179,10 @@ class AdminUserController {
           joinedDate: user.created_at,
           lastLogin: user.last_login_at || null,
           stats: {
-            totalFavorites: user._count.favorites,
-            totalViews: user._count.species_views,
-            totalLocations: user._count.user_explored_locations,
-            totalComments: user._count.comments,
+            totalFavorites: user._count?.favorites || 0,
+            totalViews: user._count?.species_views || 0,
+            totalLocations: user._count?.user_explored_locations || 0,
+            totalComments: user._count?.comments || 0,
           },
         },
       });
@@ -313,15 +339,15 @@ class AdminUserController {
 
   /**
    * PATCH /api/admin/users/:id/role
-   * Cập nhật vai trò: user | admin
+   * Cập nhật vai trò người dùng (user, top_fan, expert, moderator, admin, super_admin)
    */
   async updateUserRole(req, res) {
     try {
       const adminId = BigInt(req.user.userId);
       const userId = BigInt(req.params.id);
-      const { role } = req.body;
+      const { role, confirmPassword } = req.body;
 
-      const validRoles = ["user", "admin"];
+      const validRoles = ["user", "top_fan", "expert", "moderator", "admin", "super_admin"];
       if (!role || !validRoles.includes(role)) {
         return res.status(400).json({
           success: false,
@@ -329,14 +355,46 @@ class AdminUserController {
         });
       }
 
-      // Không cho phép admin tự hạ cấp mình
-      if (userId === adminId && role === "user") {
-        return res.status(400).json({ success: false, error: "Không thể tự hạ cấp vai trò của chính mình" });
+      const currentAdmin = await prisma.user.findUnique({ where: { id: adminId } });
+      if (!currentAdmin) {
+        return res.status(401).json({ success: false, error: "Tài khoản quản trị không hợp lệ" });
       }
 
-      const user = await prisma.user.findUnique({ where: { id: userId } });
-      if (!user) {
+      const targetUser = await prisma.user.findUnique({ where: { id: userId } });
+      if (!targetUser) {
         return res.status(404).json({ success: false, error: "Không tìm thấy người dùng" });
+      }
+
+      // Không cho phép tự thay đổi vai trò của chính mình
+      if (userId === adminId && role !== currentAdmin.role) {
+        return res.status(400).json({ success: false, error: "Không thể tự thay đổi vai trò của chính mình" });
+      }
+
+      // Nếu cấp hoặc thu hồi quyền admin/super_admin: Bắt buộc người thao tác phải là super_admin
+      const isPrivilegedAction =
+        role === "admin" ||
+        role === "super_admin" ||
+        targetUser.role === "admin" ||
+        targetUser.role === "super_admin";
+
+      if (isPrivilegedAction && currentAdmin.role !== "super_admin") {
+        return res.status(403).json({
+          success: false,
+          error: "Chỉ Tổng quản trị (Super Admin) mới có quyền cấp hoặc thu hồi vai trò Quản trị viên.",
+        });
+      }
+
+      // Yêu cầu xác thực mật khẩu của Admin nếu thực hiện hành động nhạy cảm
+      if (isPrivilegedAction && confirmPassword) {
+        if (currentAdmin.password_hash) {
+          const isPasswordValid = await bcrypt.compare(confirmPassword, currentAdmin.password_hash);
+          if (!isPasswordValid) {
+            return res.status(400).json({
+              success: false,
+              error: "Mật khẩu xác nhận của Quản trị viên không chính xác.",
+            });
+          }
+        }
       }
 
       const updated = await prisma.user.update({
@@ -353,7 +411,7 @@ class AdminUserController {
             action: "UPDATE_USER_ROLE",
             target_type: "USER",
             target_id: userId,
-            description: `Admin đã cập nhật vai trò người dùng "${user.username}" → ${role}`,
+            description: `Admin "${currentAdmin.username}" đã cập nhật vai trò người dùng "${targetUser.username}": ${targetUser.role} → ${role}`,
           },
         });
       } catch (_) {}

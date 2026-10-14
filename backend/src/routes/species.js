@@ -3,6 +3,7 @@ import taxonomyService from "../services/taxonomyService.js";
 import oceanAudioService from "../services/oceanAudioService.js";
 import authenticateToken from "../middleware/auth.js";
 import aiModerationService from "../services/aiModerationService.js";
+import ecosystemService from "../services/ecosystemService.js";
 
 const router = Router();
 
@@ -143,6 +144,42 @@ router.get("/locations", async (req, res) => {
       })),
     });
   } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/species/ecosystem/graph - Đồ thị Tri thức Đa dạng sinh thái Biển Đông (Nodes & Links)
+router.get("/ecosystem/graph", async (req, res) => {
+  try {
+    const result = await ecosystemService.getKnowledgeGraph(req.query);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Lỗi lấy đồ thị sinh thái:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/species/ecosystem/stats - Thống kê đa dạng sinh học & Sách Đỏ Biển Đông
+router.get("/ecosystem/stats", async (req, res) => {
+  try {
+    const result = await ecosystemService.getEastSeaStats();
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Lỗi lấy thống kê Biển Đông:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/species/:idOrSlug/ecosystem - Hệ sinh thái & Chuỗi thức ăn của 1 loài (Ego Network)
+router.get("/:idOrSlug/ecosystem", async (req, res) => {
+  try {
+    const result = await ecosystemService.getSpeciesEcosystem(req.params.idOrSlug);
+    if (!result.success) {
+      return res.status(404).json(result);
+    }
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Lỗi lấy hệ sinh thái loài:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -529,19 +566,199 @@ router.post("/:idOrSlug/view", async (req, res) => {
   }
 });
 
-// GET /api/species
+// GET /api/species - Lấy danh sách loài sinh vật biển (hỗ trợ phân trang, tìm kiếm & bộ lọc Biển Đông)
 router.get("/", async (req, res) => {
-  res.json({ message: "Get all species - coming soon" });
+  try {
+    const { default: prisma } = await import("../lib/prisma.js");
+    const {
+      page = 1,
+      limit = 20,
+      search = "",
+      zone = "",
+      redList = "",
+      groupId = "",
+    } = req.query;
+
+    const skip = (Math.max(1, parseInt(page, 10)) - 1) * Math.min(100, parseInt(limit, 10));
+    const take = Math.min(100, parseInt(limit, 10));
+
+    const where = {
+      deleted_at: null,
+      is_visible: true,
+    };
+
+    if (search && search.trim() !== "") {
+      const q = search.trim();
+      where.OR = [
+        { common_name: { contains: q, mode: "insensitive" } },
+        { scientificName: { contains: q, mode: "insensitive" } },
+        { code: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
+    if (zone && zone.trim() !== "") {
+      where.east_sea_zone = { contains: zone.trim(), mode: "insensitive" };
+    }
+
+    if (redList && redList.trim() !== "") {
+      where.vietnam_red_list_status = redList.trim();
+    }
+
+    if (groupId) {
+      where.group_id = BigInt(groupId);
+    }
+
+    const [total, speciesList] = await Promise.all([
+      prisma.species.count({ where }),
+      prisma.species.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { id: "asc" },
+        include: {
+          species_groups: { select: { id: true, name: true, slug: true } },
+          conservation_statuses: { select: { id: true, code: true, name: true } },
+          ocean_zones: { select: { id: true, name: true } },
+          species_media: {
+            where: { is_primary: true },
+            select: { url: true, caption: true },
+            take: 1,
+          },
+        },
+      }),
+    ]);
+
+    const formatted = speciesList.map((s) => ({
+      id: s.id.toString(),
+      code: s.code,
+      commonName: s.common_name,
+      scientificName: s.scientificName,
+      slug: s.slug,
+      group: s.species_groups ? { id: s.species_groups.id.toString(), name: s.species_groups.name } : null,
+      conservationStatus: s.conservation_statuses ? s.conservation_statuses.code : null,
+      vietnamRedListStatus: s.vietnam_red_list_status,
+      vietnamProtectionGroup: s.vietnam_protection_group,
+      citesAppendix: s.cites_appendix,
+      eastSeaZone: s.east_sea_zone,
+      localDistribution: s.local_distribution,
+      oceanZone: s.ocean_zones ? s.ocean_zones.name : null,
+      depthMin: s.depth_min_m,
+      depthMax: s.depth_max_m,
+      image: s.species_media?.[0]?.url || "",
+      viewCount: Number(s.view_count || 0),
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: formatted,
+      pagination: {
+        page: parseInt(page, 10),
+        limit: take,
+        total,
+        totalPages: Math.ceil(total / take),
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi lấy danh sách sinh vật:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
 });
 
-// GET /api/species/:id
-router.get("/:id", async (req, res) => {
-  res.json({ message: `Get species ${req.params.id} - coming soon` });
-});
+// GET /api/species/:idOrSlug - Chi tiết một loài sinh vật biển
+router.get("/:idOrSlug", async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+    const { default: prisma } = await import("../lib/prisma.js");
 
-// POST /api/species
-router.post("/", async (req, res) => {
-  res.json({ message: "Create species - coming soon" });
+    let species = null;
+    const isNum = /^\d+$/.test(idOrSlug);
+
+    if (isNum) {
+      species = await prisma.species.findUnique({
+        where: { id: BigInt(idOrSlug) },
+        include: {
+          species_groups: true,
+          conservation_statuses: true,
+          ocean_zones: true,
+          species_media: true,
+          species_facts: true,
+        },
+      });
+    }
+
+    if (!species) {
+      species = await prisma.species.findFirst({
+        where: {
+          OR: [
+            { slug: idOrSlug },
+            { code: idOrSlug },
+            { common_name: { equals: idOrSlug, mode: "insensitive" } },
+          ],
+        },
+        include: {
+          species_groups: true,
+          conservation_statuses: true,
+          ocean_zones: true,
+          species_media: true,
+          species_facts: true,
+        },
+      });
+    }
+
+    if (!species) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy loài sinh vật" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        id: species.id.toString(),
+        code: species.code,
+        commonName: species.common_name,
+        scientificName: species.scientificName,
+        slug: species.slug,
+        description: species.description,
+        diet: species.diet,
+        sizeMinCm: species.size_min_cm,
+        sizeMaxCm: species.size_max_cm,
+        weightMinKg: species.weight_min_kg,
+        weightMaxKg: species.weight_max_kg,
+        depthMinM: species.depth_min_m,
+        depthMaxM: species.depth_max_m,
+        lifespanYears: species.lifespan_years,
+        vietnamRedListStatus: species.vietnam_red_list_status,
+        vietnamProtectionGroup: species.vietnam_protection_group,
+        citesAppendix: species.cites_appendix,
+        eastSeaZone: species.east_sea_zone,
+        localDistribution: species.local_distribution,
+        group: species.species_groups
+          ? { id: species.species_groups.id.toString(), name: species.species_groups.name, slug: species.species_groups.slug }
+          : null,
+        conservationStatus: species.conservation_statuses
+          ? { id: species.conservation_statuses.id, code: species.conservation_statuses.code, name: species.conservation_statuses.name }
+          : null,
+        oceanZone: species.ocean_zones
+          ? { id: species.ocean_zones.id, name: species.ocean_zones.name }
+          : null,
+        media: species.species_media.map((m) => ({
+          id: m.id.toString(),
+          type: m.type,
+          url: m.url,
+          caption: m.caption,
+          isPrimary: m.is_primary,
+        })),
+        facts: species.species_facts.map((f) => ({
+          id: f.id.toString(),
+          content: f.content,
+        })),
+        viewCount: Number(species.view_count || 0),
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi lấy chi tiết loài:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 export default router;
+
