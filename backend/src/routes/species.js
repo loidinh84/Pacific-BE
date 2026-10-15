@@ -664,6 +664,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+// GET /api/species/:id/anatomy - Lấy danh sách bộ phận giải phẫu sinh vật
+router.get("/:id/anatomy", async (req, res) => {
+  try {
+    const { default: anatomyController } = await import("../controller/anatomyController.js");
+    return anatomyController.getAnatomyBySpecies(req, res);
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // GET /api/species/:idOrSlug - Chi tiết một loài sinh vật biển
 router.get("/:idOrSlug", async (req, res) => {
   try {

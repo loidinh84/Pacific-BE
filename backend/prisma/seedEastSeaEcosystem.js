@@ -131,7 +131,7 @@ async function main() {
       depth_min_m: 1,
       depth_max_m: 15,
       lifespan_years: 70,
-      imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Dugong_Marsa_Alam.jpg",
     },
     // 2. Cỏ biển Halodule
     {
@@ -157,7 +157,7 @@ async function main() {
       depth_min_m: 0,
       depth_max_m: 12,
       lifespan_years: 5,
-      imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/8/87/Posidonia_oceanica.jpg",
     },
     // 3. Rùa xanh
     {
@@ -183,7 +183,7 @@ async function main() {
       depth_min_m: 0,
       depth_max_m: 50,
       lifespan_years: 80,
-      imageUrl: "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Green_Sea_Turtle_grazing_seagrass.jpg",
     },
     // 4. Rạn san hô cành Acropora
     {
@@ -209,7 +209,7 @@ async function main() {
       depth_min_m: 2,
       depth_max_m: 30,
       lifespan_years: 100,
-      imageUrl: "https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/18/Acropora_millepora_%28Staghorn_coral%29.jpg",
     },
     // 5. Sao biển gai
     {
@@ -235,7 +235,7 @@ async function main() {
       depth_min_m: 1,
       depth_max_m: 40,
       lifespan_years: 8,
-      imageUrl: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/07/Crown_of_Thorns_Starfish_Acanthaster_planci.jpg",
     },
     // 6. Ốc tù và
     {
@@ -261,7 +261,7 @@ async function main() {
       depth_min_m: 3,
       depth_max_m: 50,
       lifespan_years: 25,
-      imageUrl: "https://images.unsplash.com/photo-1534043464124-3be32fe00099?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/0f/Charonia_tritonis_01.jpg",
     },
     // 7. Cá hề Ocellaris
     {
@@ -287,7 +287,7 @@ async function main() {
       depth_min_m: 1,
       depth_max_m: 18,
       lifespan_years: 12,
-      imageUrl: "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Amphiprion_ocellaris_%28Clown_anemonefish%29_by_Nick_Hobgood.jpg",
     },
     // 8. Hải quỳ khổng lồ
     {
@@ -313,7 +313,7 @@ async function main() {
       depth_min_m: 1,
       depth_max_m: 30,
       lifespan_years: 100,
-      imageUrl: "https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/8/87/Heteractis_magnifica_anemone.jpg",
     },
     // 9. Cá vẹt hoa xanh
     {
@@ -339,7 +339,7 @@ async function main() {
       depth_min_m: 2,
       depth_max_m: 35,
       lifespan_years: 20,
-      imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f5/Chlorurus_microrhinos_by_Robert_Mugford.jpg",
     },
     // 10. Cá mập voi
     {
@@ -365,7 +365,7 @@ async function main() {
       depth_min_m: 0,
       depth_max_m: 700,
       lifespan_years: 100,
-      imageUrl: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Whale_shark_Georgia_aquarium.jpg",
     },
     // 11. Cá nhám búa
     {
@@ -391,7 +391,7 @@ async function main() {
       depth_min_m: 1,
       depth_max_m: 500,
       lifespan_years: 35,
-      imageUrl: "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/45/Sphyrna_lewini_malpelo.jpg",
     },
     // 12. Tôm hùm bông
     {
@@ -417,7 +417,7 @@ async function main() {
       depth_min_m: 3,
       depth_max_m: 50,
       lifespan_years: 20,
-      imageUrl: "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Panulirus_ornatus.jpg",
     },
     // 13. Hải sâm vú
     {
@@ -443,7 +443,7 @@ async function main() {
       depth_min_m: 2,
       depth_max_m: 40,
       lifespan_years: 15,
-      imageUrl: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/2/25/Holothuria_nobilis.jpg",
     },
     // 14. Cá heo không vây (Cá nược)
     {
@@ -469,7 +469,7 @@ async function main() {
       depth_min_m: 2,
       depth_max_m: 50,
       lifespan_years: 30,
-      imageUrl: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Finless_porpoise_%28cropped%29.jpg",
     },
     // 15. Trai tai tượng khổng lồ
     {
@@ -495,7 +495,7 @@ async function main() {
       depth_min_m: 2,
       depth_max_m: 20,
       lifespan_years: 100,
-      imageUrl: "https://images.unsplash.com/photo-1534043464124-3be32fe00099?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/8/8c/Tridacna_gigas_Great_Barrier_Reef.jpg",
     },
     // 16. Cây Đước Đôi
     {
@@ -521,7 +521,7 @@ async function main() {
       depth_min_m: 0,
       depth_max_m: 2,
       lifespan_years: 80,
-      imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/05/Rhizophora_mangle_roots.jpg",
     },
     // 17. Cá ngừ vây vàng
     {
@@ -547,7 +547,7 @@ async function main() {
       depth_min_m: 1,
       depth_max_m: 250,
       lifespan_years: 9,
-      imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Thunnus_albacares.png",
     },
     // 18. Cá trích mai
     {
@@ -573,7 +573,7 @@ async function main() {
       depth_min_m: 0,
       depth_max_m: 40,
       lifespan_years: 4,
-      imageUrl: "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/5/52/Dussumieria_acuta.jpg",
     },
     // 19. Cua Huỳnh Đế
     {
@@ -599,7 +599,7 @@ async function main() {
       depth_min_m: 10,
       depth_max_m: 100,
       lifespan_years: 10,
-      imageUrl: "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ranina_ranina.jpg",
     },
     // 20. San hô não
     {
@@ -625,7 +625,7 @@ async function main() {
       depth_min_m: 3,
       depth_max_m: 35,
       lifespan_years: 250,
-      imageUrl: "https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/00/Brain_coral_at_the_Red_Sea.jpg",
     },
     // 21. Cá ngựa gai
     {
@@ -651,7 +651,7 @@ async function main() {
       depth_min_m: 5,
       depth_max_m: 30,
       lifespan_years: 5,
-      imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b5/Hippocampus_histrix_%28Thorny_seahorse%29.jpg",
     },
     // 22. Rắn biển mũi hếch
     {
@@ -677,7 +677,7 @@ async function main() {
       depth_min_m: 2,
       depth_max_m: 30,
       lifespan_years: 10,
-      imageUrl: "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Enhydrina_schistosa.jpg",
     },
     // 23. Đồi mồi
     {
@@ -703,7 +703,7 @@ async function main() {
       depth_min_m: 2,
       depth_max_m: 40,
       lifespan_years: 60,
-      imageUrl: "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Eretmochelys_imbricata_01.jpg",
     },
     // 24. Trai ngọc môi vàng
     {
@@ -729,7 +729,7 @@ async function main() {
       depth_min_m: 5,
       depth_max_m: 35,
       lifespan_years: 30,
-      imageUrl: "https://images.unsplash.com/photo-1534043464124-3be32fe00099?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/8/87/Pinctada_maxima_01.jpg",
     },
     // 25. Sinh vật phù du
     {
@@ -755,7 +755,7 @@ async function main() {
       depth_min_m: 0,
       depth_max_m: 100,
       lifespan_years: 1,
-      imageUrl: "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800&auto=format&fit=crop",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Diatoms_through_the_microscope.jpg",
     },
   ];
 
