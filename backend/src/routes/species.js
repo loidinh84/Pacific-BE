@@ -184,6 +184,18 @@ router.get("/:idOrSlug/ecosystem", async (req, res) => {
   }
 });
 
+// GET /api/species/search/semantic - Tìm kiếm Ngữ nghĩa Sinh thái Biển Đông
+router.get("/search/semantic", async (req, res) => {
+  try {
+    const query = req.query.q || req.query.query || "";
+    const result = await ecosystemService.searchSemantic(query);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Lỗi tìm kiếm ngữ nghĩa:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // GET /api/species/:idOrSlug/comments - Danh sách bình luận công khai của loài sinh vật
 router.get("/:idOrSlug/comments", async (req, res) => {
   try {

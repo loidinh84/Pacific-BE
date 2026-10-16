@@ -10,6 +10,7 @@ import adminLocationsController from "../controller/adminLocationsController.js"
 import adminCommentsController from "../controller/adminCommentsController.js";
 import adminSettingsController from "../controller/adminSettingsController.js";
 import adminQuizController from "../controller/adminQuizController.js";
+import adminRelationshipsController from "../controller/adminRelationshipsController.js";
 
 const router = Router();
 
@@ -88,6 +89,21 @@ router.delete("/species-groups/:id/species/:speciesId", (req, res) => speciesGro
 
 // GET /api/admin/species-groups/:id/species - Lấy danh sách sinh vật của 1 nhóm
 router.get("/species-groups/:id/species", (req, res) => speciesGroupsAdminController.getGroupSpecies(req, res));
+
+/**
+ * ── 3.5. QUẢN LÝ QUAN HỆ SINH THÁI (SPECIES RELATIONSHIPS CMS) ──
+ */
+// GET /api/admin/relationships - Danh sách quan hệ kèm tìm kiếm & lọc
+router.get("/relationships", (req, res) => adminRelationshipsController.getRelationships(req, res));
+
+// POST /api/admin/relationships - Tạo mới quan hệ sinh thái giữa 2 loài
+router.post("/relationships", (req, res) => adminRelationshipsController.createRelationship(req, res));
+
+// PUT /api/admin/relationships/:id - Cập nhật quan hệ sinh thái
+router.put("/relationships/:id", (req, res) => adminRelationshipsController.updateRelationship(req, res));
+
+// DELETE /api/admin/relationships/:id - Xóa quan hệ sinh thái
+router.delete("/relationships/:id", (req, res) => adminRelationshipsController.deleteRelationship(req, res));
 
 
 /**

@@ -68,6 +68,17 @@ export const GROUP_COLORS = {
   6: "#6366f1", // Biển sâu - Tím đậm
 };
 
+// Hàm loại bỏ dấu tiếng Việt để tìm kiếm ngữ nghĩa linh hoạt
+const removeDiacritics = (str = "") => {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "d")
+    .toLowerCase()
+    .trim();
+};
+
 class EcosystemService {
   /**
    * Lấy toàn bộ hoặc một phần Đồ thị Tri thức (Knowledge Graph) phục vụ ECharts / D3.js
@@ -460,6 +471,530 @@ class EcosystemService {
           count: z._count.id,
         })),
       },
+    };
+  }
+
+  /**
+   * ─── 4. BỘ MÁY TÌM KIẾM NGỮ NGHĨA (SEMANTIC SEARCH ENGINE) ─────────────
+   * Nhận diện ngôn ngữ tự nhiên về chuỗi thức ăn, quan hệ sinh học và phân vùng Biển Đông
+   */
+  async searchSemantic(rawQuery) {
+    if (!rawQuery || typeof rawQuery !== "string" || !rawQuery.trim()) {
+      return {
+        success: true,
+        query: "",
+        detectedIntent: null,
+        data: [],
+        suggestions: [
+          "Thiên địch của sao biển gai",
+          "Cộng sinh với hải quỳ",
+          "Sinh vật cực kỳ nguy cấp ở Côn Đảo",
+          "Loài ăn san hô ở Biển Đông",
+          "Loài ăn cỏ biển ở Phú Quốc",
+          "Sinh vật tạo nơi cư trú",
+          "Cá mập săn mồi đại dương",
+        ],
+      };
+    }
+
+    const q = rawQuery.trim().toLowerCase();
+    const qClean = removeDiacritics(q);
+
+    // 1. Phân tích ngữ nghĩa (Intent Detection)
+    let relType = null;
+    let isLookingForPredator = false;
+    let isLookingForPrey = false;
+
+    if (qClean.includes("thien dich") || qClean.includes("khac tinh")) {
+      relType = "predator_prey";
+      isLookingForPredator = true;
+    } else if (qClean.includes("ke san moi") || qClean.includes("san moi") || qClean.includes("san bat") || qClean.includes("an thit")) {
+      relType = "predator_prey";
+      isLookingForPredator = true;
+    } else if (qClean.includes("con moi") || qClean.includes("thuc an cua") || qClean.includes("an con gi") || qClean.includes("bi an")) {
+      relType = "predator_prey";
+      isLookingForPrey = true;
+    } else if (qClean.includes("cong sinh") || qClean.includes("tuong ho") || qClean.includes("symbiosis")) {
+      relType = "symbiosis";
+    } else if (qClean.includes("co bien") || qClean.includes("an co") || qClean.includes("thuc vat") || qClean.includes("gam co")) {
+      relType = "herbivory";
+    } else if (qClean.includes("noi o") || qClean.includes("cu tru") || qClean.includes("sinh canh") || qClean.includes("nuong tua")) {
+      relType = "habitat_provider";
+    } else if (qClean.includes("ky sinh")) {
+      relType = "parasitism";
+    }
+
+    // Nhận diện Sách Đỏ với regex từ nguyên vẹn
+    let redListStatus = null;
+    if (qClean.includes("cuc ky nguy cap") || /\bcr\b/i.test(qClean)) {
+      redListStatus = "CR";
+    } else if (qClean.includes("nguy cap") || /\ben\b/i.test(qClean)) {
+      redListStatus = "EN";
+    } else if (qClean.includes("sap nguy cap") || /\bvu\b/i.test(qClean)) {
+      redListStatus = "VU";
+    }
+
+    // Nhận diện Phân vùng Biển Đông
+    let detectedZone = null;
+    const zonesList = [
+      { name: "Côn Đảo", clean: "con dao" },
+      { name: "Trường Sa", clean: "truong sa" },
+      { name: "Hoàng Sa", clean: "hoang sa" },
+      { name: "Nha Trang", clean: "nha trang" },
+      { name: "Cù Lao Chàm", clean: "cu lao cham" },
+      { name: "Phú Quốc", clean: "phu quoc" },
+      { name: "Cần Giờ", clean: "can gio" },
+      { name: "Bạch Long Vĩ", clean: "bach long vi" },
+    ];
+    for (const z of zonesList) {
+      if (qClean.includes(z.clean)) {
+        detectedZone = z.name;
+        break;
+      }
+    }
+
+    // 2. Lấy toàn bộ sinh vật để đối chiếu tên & thực thể
+    const allSpecies = await prisma.species.findMany({
+      where: { deleted_at: null },
+      select: {
+        id: true,
+        code: true,
+        common_name: true,
+        scientificName: true,
+        slug: true,
+        group_id: true,
+        vietnam_red_list_status: true,
+        vietnam_protection_group: true,
+        east_sea_zone: true,
+        local_distribution: true,
+        diet: true,
+        species_media: {
+          where: { is_primary: true },
+          select: { url: true },
+          take: 1,
+        },
+      },
+    });
+
+    let targetFocusSpecies = null;
+    for (const sp of allSpecies) {
+      const nameVi = (sp.common_name || "").toLowerCase();
+      const nameClean = removeDiacritics(sp.common_name || "");
+      const sciName = (sp.scientificName || "").toLowerCase();
+
+      // Kiểm tra cả có dấu lẫn không dấu
+      if (nameClean.length >= 4 && qClean.includes(nameClean)) {
+        targetFocusSpecies = sp;
+        break;
+      }
+      if (nameVi.length >= 3 && q.includes(nameVi)) {
+        targetFocusSpecies = sp;
+        break;
+      }
+      if (sciName.length >= 4 && q.includes(sciName)) {
+        targetFocusSpecies = sp;
+        break;
+      }
+    }
+
+    // Nhận diện theo từ khóa đặc trưng nếu chưa tìm thấy loài
+    if (!targetFocusSpecies) {
+      const keywords = [
+        { kw: "sao bien", name: "sao bien gai" },
+        { kw: "hai quy", name: "hai quy" },
+        { kw: "san ho", name: "san ho" },
+        { kw: "ca he", name: "ca he" },
+        { kw: "bo bien", name: "bo bien" },
+        { kw: "ca map", name: "ca map" },
+        { kw: "doi moi", name: "doi moi" },
+        { kw: "rua bien", name: "rua" },
+        { kw: "oc tu va", name: "oc tu va" },
+        { kw: "tom hum", name: "tom hum" },
+      ];
+      for (const k of keywords) {
+        if (qClean.includes(k.kw)) {
+          targetFocusSpecies = allSpecies.find((sp) =>
+            removeDiacritics(sp.common_name || "").includes(k.name)
+          );
+          if (targetFocusSpecies) break;
+        }
+      }
+    }
+
+    const results = [];
+    const addedSpeciesIds = new Set();
+
+    // 3. Nếu người dùng hỏi về quan hệ của 1 loài cụ thể (e.g. "thiên địch của sao biển gai", "cộng sinh với hải quỳ")
+    if (targetFocusSpecies) {
+      const rels = await prisma.species_relationships.findMany({
+        where: {
+          OR: [
+            { source_species_id: targetFocusSpecies.id },
+            { target_species_id: targetFocusSpecies.id },
+          ],
+          ...(relType ? { relationship_type: relType } : {}),
+        },
+        include: {
+          source_species: {
+            include: {
+              species_media: { where: { is_primary: true }, take: 1 },
+              species_groups: { select: { name: true } },
+            },
+          },
+          target_species: {
+            include: {
+              species_media: { where: { is_primary: true }, take: 1 },
+              species_groups: { select: { name: true } },
+            },
+          },
+        },
+      });
+
+      for (const r of rels) {
+        const isSource = r.source_species_id === targetFocusSpecies.id;
+        const matched = isSource ? r.target_species : r.source_species;
+
+        if (!addedSpeciesIds.has(matched.id.toString())) {
+          addedSpeciesIds.add(matched.id.toString());
+
+          let roleLabel = "Quan hệ sinh thái";
+          let semanticReason = r.description || r.ecological_impact;
+
+          if (r.relationship_type === "predator_prey") {
+            if (isSource) {
+              roleLabel = "Con mồi / Thức ăn";
+              semanticReason = `${targetFocusSpecies.common_name} săn bắt ${matched.common_name}. ${r.ecological_impact || ""}`;
+            } else {
+              roleLabel = "Thiên địch / Kẻ săn mồi";
+              semanticReason = `${matched.common_name} là thiên địch săn bắt ${targetFocusSpecies.common_name}. ${r.ecological_impact || ""}`;
+            }
+          } else if (r.relationship_type === "symbiosis") {
+            roleLabel = "Cộng sinh tương hỗ";
+            semanticReason = `${matched.common_name} cộng sinh tương hỗ chặt chẽ với ${targetFocusSpecies.common_name}. ${r.description || ""}`;
+          } else if (r.relationship_type === "habitat_provider") {
+            if (isSource) {
+              roleLabel = "Cung cấp nơi ở";
+              semanticReason = `${targetFocusSpecies.common_name} tạo rạn/nơi ở cho ${matched.common_name}.`;
+            } else {
+              roleLabel = "Nơi cư trú";
+              semanticReason = `${matched.common_name} tạo môi trường cư trú cho ${targetFocusSpecies.common_name}.`;
+            }
+          }
+
+          results.push({
+            id: matched.id.toString(),
+            code: matched.code,
+            commonName: matched.common_name,
+            scientificName: matched.scientificName,
+            slug: matched.slug,
+            image: matched.species_media?.[0]?.url || "",
+            groupName: matched.species_groups?.name || "Sinh vật biển",
+            redList: matched.vietnam_red_list_status || "LC",
+            zone: matched.east_sea_zone || "Biển Đông",
+            role: roleLabel,
+            semanticReason: (semanticReason || "").trim(),
+            relationshipType: r.relationship_type,
+            strength: Number(r.strength || 1.0),
+          });
+        }
+      }
+    }
+
+    // 4. Nếu hỏi theo loại quan hệ tổng quát (ví dụ: "loài ăn cỏ biển", "sinh vật tạo nơi ở")
+    if (relType && results.length < 10) {
+      const typeRels = await prisma.species_relationships.findMany({
+        where: { relationship_type: relType },
+        take: 12,
+        include: {
+          source_species: {
+            include: {
+              species_media: { where: { is_primary: true }, take: 1 },
+              species_groups: { select: { name: true } },
+            },
+          },
+          target_species: {
+            include: {
+              species_media: { where: { is_primary: true }, take: 1 },
+              species_groups: { select: { name: true } },
+            },
+          },
+        },
+      });
+
+      for (const r of typeRels) {
+        const candidate = isLookingForPrey ? r.target_species : r.source_species;
+        const other = isLookingForPrey ? r.source_species : r.target_species;
+
+        if (!addedSpeciesIds.has(candidate.id.toString())) {
+          addedSpeciesIds.add(candidate.id.toString());
+
+          let roleTitle = RELATIONSHIP_META[r.relationship_type]?.label || "Quan hệ sinh học";
+          let explanation = r.description || r.ecological_impact;
+          if (!explanation) {
+            explanation = `${candidate.common_name} có quan hệ ${RELATIONSHIP_META[r.relationship_type]?.verb || "liên kết"} với ${other.common_name}.`;
+          }
+
+          results.push({
+            id: candidate.id.toString(),
+            code: candidate.code,
+            commonName: candidate.common_name,
+            scientificName: candidate.scientificName,
+            slug: candidate.slug,
+            image: candidate.species_media?.[0]?.url || "",
+            groupName: candidate.species_groups?.name || "Sinh vật biển",
+            redList: candidate.vietnam_red_list_status || "LC",
+            zone: candidate.east_sea_zone || "Biển Đông",
+            role: roleTitle,
+            semanticReason: explanation,
+            relationshipType: r.relationship_type,
+            strength: Number(r.strength || 1.0),
+          });
+        }
+      }
+    }
+
+    // 5. Nếu có tiêu chí Khu vực bảo tồn hoặc Sách Đỏ
+    if (detectedZone || redListStatus) {
+      for (const sp of allSpecies) {
+        if (addedSpeciesIds.has(sp.id.toString())) continue;
+
+        const matchZone = detectedZone
+          ? (sp.east_sea_zone || "").toLowerCase().includes(detectedZone.toLowerCase())
+          : true;
+        const matchRedList = redListStatus
+          ? (sp.vietnam_red_list_status || "").toUpperCase() === redListStatus
+          : true;
+
+        if (matchZone && matchRedList) {
+          addedSpeciesIds.add(sp.id.toString());
+          results.push({
+            id: sp.id.toString(),
+            code: sp.code,
+            commonName: sp.common_name,
+            scientificName: sp.scientificName,
+            slug: sp.slug,
+            image: sp.species_media?.[0]?.url || "",
+            groupName: "Sinh vật Biển Đông",
+            redList: sp.vietnam_red_list_status || "LC",
+            zone: sp.east_sea_zone || "Biển Đông",
+            role: redListStatus ? `Sách Đỏ VN: ${sp.vietnam_red_list_status}` : `Khu bảo tồn: ${detectedZone}`,
+            semanticReason: `Phân bố tại vùng biển ${sp.east_sea_zone || "Biển Đông"}. ${sp.local_distribution ? `Địa phương: ${sp.local_distribution}.` : ""}`,
+            relationshipType: "habitat_provider",
+            strength: 0.9,
+          });
+        }
+      }
+    }
+
+    // 6. Fallback từ khóa
+    if (results.length === 0) {
+      for (const sp of allSpecies) {
+        if (addedSpeciesIds.has(sp.id.toString())) continue;
+        const nameVi = (sp.common_name || "").toLowerCase();
+        const sciName = (sp.scientificName || "").toLowerCase();
+        const zone = (sp.east_sea_zone || "").toLowerCase();
+        const diet = (sp.diet || "").toLowerCase();
+
+        if (nameVi.includes(q) || sciName.includes(q) || zone.includes(q) || diet.includes(q)) {
+          addedSpeciesIds.add(sp.id.toString());
+          results.push({
+            id: sp.id.toString(),
+            code: sp.code,
+            commonName: sp.common_name,
+            scientificName: sp.scientificName,
+            slug: sp.slug,
+            image: sp.species_media?.[0]?.url || "",
+            groupName: "Sinh vật Biển Đông",
+            redList: sp.vietnam_red_list_status || "LC",
+            zone: sp.east_sea_zone || "Biển Đông",
+            role: "Trùng khớp dữ liệu",
+            semanticReason: `Tập tính & Sinh cảnh: ${sp.diet || sp.local_distribution || "Phân bố tự nhiên tại vùng Biển Đông"}`,
+            relationshipType: null,
+            strength: 0.8,
+          });
+        }
+      }
+    }
+
+    return {
+      success: true,
+      query: rawQuery,
+      detectedIntent: {
+        relationshipType: relType,
+        targetSpecies: targetFocusSpecies ? targetFocusSpecies.common_name : null,
+        zone: detectedZone,
+        redList: redListStatus,
+      },
+      count: results.length,
+      data: results,
+      suggestions: [
+        "Thiên địch của sao biển gai",
+        "Cộng sinh với hải quỳ",
+        "Sinh vật cực kỳ nguy cấp ở Côn Đảo",
+        "Loài ăn san hô ở Biển Đông",
+        "Loài ăn cỏ biển ở Phú Quốc",
+        "Sinh vật tạo nơi cư trú",
+      ],
+    };
+  }
+
+  /**
+   * ─── 5. QUẢN TRỊ MỐI QUAN HỆ SINH THÁI (ADMIN RELATIONSHIP CMS) ───────────
+   */
+  async getAdminRelationships(params = {}) {
+    const { page = 1, limit = 15, search = "", type = "" } = params;
+    const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+    const take = parseInt(limit, 10);
+
+    const where = {};
+    if (type && type.trim() !== "") {
+      where.relationship_type = type.trim();
+    }
+
+    if (search && search.trim() !== "") {
+      const term = search.trim();
+      where.OR = [
+        { source_species: { common_name: { contains: term, mode: "insensitive" } } },
+        { target_species: { common_name: { contains: term, mode: "insensitive" } } },
+        { description: { contains: term, mode: "insensitive" } },
+        { ecological_impact: { contains: term, mode: "insensitive" } },
+      ];
+    }
+
+    const [total, items] = await Promise.all([
+      prisma.species_relationships.count({ where }),
+      prisma.species_relationships.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { id: "desc" },
+        include: {
+          source_species: {
+            select: {
+              id: true,
+              code: true,
+              common_name: true,
+              scientificName: true,
+              slug: true,
+              species_media: { where: { is_primary: true }, select: { url: true }, take: 1 },
+            },
+          },
+          target_species: {
+            select: {
+              id: true,
+              code: true,
+              common_name: true,
+              scientificName: true,
+              slug: true,
+              species_media: { where: { is_primary: true }, select: { url: true }, take: 1 },
+            },
+          },
+        },
+      }),
+    ]);
+
+    const formatted = items.map((r) => ({
+      id: r.id.toString(),
+      sourceSpeciesId: r.source_species_id.toString(),
+      sourceSpecies: {
+        id: r.source_species.id.toString(),
+        code: r.source_species.code,
+        commonName: r.source_species.common_name,
+        scientificName: r.source_species.scientificName,
+        image: r.source_species.species_media?.[0]?.url || "",
+      },
+      targetSpeciesId: r.target_species_id.toString(),
+      targetSpecies: {
+        id: r.target_species.id.toString(),
+        code: r.target_species.code,
+        commonName: r.target_species.common_name,
+        scientificName: r.target_species.scientificName,
+        image: r.target_species.species_media?.[0]?.url || "",
+      },
+      relationshipType: r.relationship_type,
+      relationshipMeta: RELATIONSHIP_META[r.relationship_type] || {},
+      strength: Number(r.strength || 1.0),
+      description: r.description,
+      ecologicalImpact: r.ecological_impact,
+      createdAt: r.created_at,
+    }));
+
+    return {
+      success: true,
+      data: formatted,
+      pagination: {
+        page: parseInt(page, 10),
+        limit: take,
+        total,
+        totalPages: Math.ceil(total / take),
+      },
+    };
+  }
+
+  async createRelationship(data) {
+    const { sourceSpeciesId, targetSpeciesId, relationshipType, strength, description, ecologicalImpact } = data;
+
+    if (!sourceSpeciesId || !targetSpeciesId || !relationshipType) {
+      throw new Error("Thiếu thông tin bắt buộc: Loài nguồn, loài đích hoặc kiểu quan hệ.");
+    }
+
+    if (sourceSpeciesId.toString() === targetSpeciesId.toString()) {
+      throw new Error("Loài nguồn và loài đích không thể trùng nhau.");
+    }
+
+    const created = await prisma.species_relationships.create({
+      data: {
+        source_species_id: BigInt(sourceSpeciesId),
+        target_species_id: BigInt(targetSpeciesId),
+        relationship_type: relationshipType,
+        strength: strength ? parseFloat(strength) : 1.0,
+        description: description || null,
+        ecological_impact: ecologicalImpact || null,
+      },
+      include: {
+        source_species: { select: { common_name: true } },
+        target_species: { select: { common_name: true } },
+      },
+    });
+
+    return {
+      success: true,
+      message: `Đã thiết lập quan hệ thành công giữa ${created.source_species.common_name} và ${created.target_species.common_name}`,
+      data: {
+        id: created.id.toString(),
+      },
+    };
+  }
+
+  async updateRelationship(id, data) {
+    const { relationshipType, strength, description, ecologicalImpact } = data;
+
+    const updated = await prisma.species_relationships.update({
+      where: { id: BigInt(id) },
+      data: {
+        ...(relationshipType ? { relationship_type: relationshipType } : {}),
+        ...(strength !== undefined ? { strength: parseFloat(strength) } : {}),
+        ...(description !== undefined ? { description } : {}),
+        ...(ecologicalImpact !== undefined ? { ecological_impact: ecologicalImpact } : {}),
+        updated_at: new Date(),
+      },
+    });
+
+    return {
+      success: true,
+      message: "Cập nhật quan hệ sinh thái thành công",
+      data: { id: updated.id.toString() },
+    };
+  }
+
+  async deleteRelationship(id) {
+    await prisma.species_relationships.delete({
+      where: { id: BigInt(id) },
+    });
+
+    return {
+      success: true,
+      message: "Đã xóa mối quan hệ sinh thái",
     };
   }
 }
