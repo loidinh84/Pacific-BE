@@ -7,6 +7,20 @@ import ecosystemService from "../services/ecosystemService.js";
 
 const router = Router();
 
+// Mapping các slug / id phổ biến từ mockup hoặc tiếng Anh sang slug chuẩn trong CSDL
+const SLUG_ALIASES = {
+  "giant-octopus-3": "bach-tuoc-khong-lo",
+  "octopus": "bach-tuoc-khong-lo",
+  "whale-shark": "ca-map-voi-nham-voi",
+  "whale-shark-2": "ca-map-voi-nham-voi",
+  "bluefin-tuna-1": "ca-ngu-vay-vang-dai-duong",
+  "great-white-shark-1": "great-white-shark-1",
+};
+
+const resolveSpeciesSlug = (slugOrId = "") => {
+  return SLUG_ALIASES[slugOrId] || slugOrId;
+};
+
 // GET /api/species/taxonomy-search - Tra cứu phân loại học đại dương
 router.get("/taxonomy-search", async (req, res) => {
   try {
@@ -203,11 +217,12 @@ router.get("/:idOrSlug/comments", async (req, res) => {
     const { default: prisma } = await import("../lib/prisma.js");
 
     // Tìm loài sinh vật theo id (nếu là số) hoặc slug/code/common_name
+    const targetSlug = resolveSpeciesSlug(idOrSlug);
     let species = null;
-    const isNum = /^\d+$/.test(idOrSlug);
+    const isNum = /^\d+$/.test(targetSlug);
     if (isNum) {
       species = await prisma.species.findUnique({
-        where: { id: BigInt(idOrSlug) },
+        where: { id: BigInt(targetSlug) },
         select: { id: true, slug: true, common_name: true },
       });
     }
@@ -215,10 +230,12 @@ router.get("/:idOrSlug/comments", async (req, res) => {
       species = await prisma.species.findFirst({
         where: {
           OR: [
+            { slug: targetSlug },
             { slug: idOrSlug },
             { code: idOrSlug },
             { common_name: { equals: idOrSlug, mode: "insensitive" } },
             { slug: { contains: idOrSlug, mode: "insensitive" } },
+            { scientificName: { contains: idOrSlug, mode: "insensitive" } },
           ],
         },
         select: { id: true, slug: true, common_name: true },
@@ -522,11 +539,12 @@ router.post("/:idOrSlug/view", async (req, res) => {
 
     const { default: prisma } = await import("../lib/prisma.js");
 
+    const targetSlug = resolveSpeciesSlug(idOrSlug);
     let species = null;
-    const isNum = /^\d+$/.test(idOrSlug);
+    const isNum = /^\d+$/.test(targetSlug);
     if (isNum) {
       species = await prisma.species.findUnique({
-        where: { id: BigInt(idOrSlug) },
+        where: { id: BigInt(targetSlug) },
         select: { id: true, view_count: true },
       });
     }
@@ -534,9 +552,12 @@ router.post("/:idOrSlug/view", async (req, res) => {
       species = await prisma.species.findFirst({
         where: {
           OR: [
+            { slug: targetSlug },
             { slug: idOrSlug },
             { code: idOrSlug },
             { common_name: { equals: idOrSlug, mode: "insensitive" } },
+            { slug: { contains: idOrSlug, mode: "insensitive" } },
+            { scientificName: { contains: idOrSlug, mode: "insensitive" } },
           ],
         },
         select: { id: true, view_count: true },
@@ -692,12 +713,13 @@ router.get("/:idOrSlug", async (req, res) => {
     const { idOrSlug } = req.params;
     const { default: prisma } = await import("../lib/prisma.js");
 
+    const targetSlug = resolveSpeciesSlug(idOrSlug);
     let species = null;
-    const isNum = /^\d+$/.test(idOrSlug);
+    const isNum = /^\d+$/.test(targetSlug);
 
     if (isNum) {
       species = await prisma.species.findUnique({
-        where: { id: BigInt(idOrSlug) },
+        where: { id: BigInt(targetSlug) },
         include: {
           species_groups: true,
           conservation_statuses: true,
@@ -712,9 +734,12 @@ router.get("/:idOrSlug", async (req, res) => {
       species = await prisma.species.findFirst({
         where: {
           OR: [
+            { slug: targetSlug },
             { slug: idOrSlug },
             { code: idOrSlug },
             { common_name: { equals: idOrSlug, mode: "insensitive" } },
+            { slug: { contains: idOrSlug, mode: "insensitive" } },
+            { scientificName: { contains: idOrSlug, mode: "insensitive" } },
           ],
         },
         include: {

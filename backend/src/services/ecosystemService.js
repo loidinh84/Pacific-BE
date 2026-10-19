@@ -219,13 +219,23 @@ class EcosystemService {
    * Lấy hệ sinh thái & quan hệ mạng lưới của một loài cụ thể (Ego Network)
    */
   async getSpeciesEcosystem(idOrSlug) {
-    // 1. Tìm thông tin loài
+    // 1. Tìm thông tin loài (hỗ trợ alias từ mockup / tiếng Anh)
+    const SLUG_ALIASES = {
+      "giant-octopus-3": "bach-tuoc-khong-lo",
+      "octopus": "bach-tuoc-khong-lo",
+      "whale-shark": "ca-map-voi-nham-voi",
+      "whale-shark-2": "ca-map-voi-nham-voi",
+      "bluefin-tuna-1": "ca-ngu-vay-vang-dai-duong",
+      "great-white-shark-1": "great-white-shark-1",
+    };
+    const targetSlug = SLUG_ALIASES[idOrSlug] || idOrSlug;
+
     let species = null;
-    const isNum = /^\d+$/.test(idOrSlug);
+    const isNum = /^\d+$/.test(targetSlug);
 
     if (isNum) {
       species = await prisma.species.findUnique({
-        where: { id: BigInt(idOrSlug) },
+        where: { id: BigInt(targetSlug) },
         include: {
           species_groups: true,
           conservation_statuses: true,
@@ -238,9 +248,12 @@ class EcosystemService {
       species = await prisma.species.findFirst({
         where: {
           OR: [
+            { slug: targetSlug },
             { slug: idOrSlug },
             { code: idOrSlug },
             { common_name: { equals: idOrSlug, mode: "insensitive" } },
+            { slug: { contains: idOrSlug, mode: "insensitive" } },
+            { scientificName: { contains: idOrSlug, mode: "insensitive" } },
           ],
         },
         include: {
