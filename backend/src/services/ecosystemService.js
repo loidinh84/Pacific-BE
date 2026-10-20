@@ -8,14 +8,14 @@ import prisma from "../lib/prisma.js";
 // Định nghĩa nhãn & màu sắc trực quan cho các loại quan hệ sinh thái
 export const RELATIONSHIP_META = {
   predator_prey: {
-    label: "Ăn thịt / Con mồi",
-    verb: "săn bắt / ăn",
-    reverseVerb: "bị ăn bởi",
+    label: "Vật dữ - Con mồi",
+    verb: "săn bắt",
+    reverseVerb: "bị săn bắt bởi",
     color: "#ef4444", // Đỏ cảnh báo
     lineStyle: "solid",
   },
   herbivory: {
-    label: "Ăn thực vật / Gặm cỏ",
+    label: "Ăn thực vật",
     verb: "ăn thực vật",
     reverseVerb: "là nguồn thức ăn cho",
     color: "#84cc16", // Xanh lá mạ
@@ -50,7 +50,7 @@ export const RELATIONSHIP_META = {
     lineStyle: "dashed",
   },
   habitat_provider: {
-    label: "Cung cấp nơi ở / Sinh cảnh",
+    label: "Kiến tạo sinh cảnh",
     verb: "tạo nơi cư trú cho",
     reverseVerb: "nương tựa vào",
     color: "#10b981", // Xanh lục ngọc
@@ -145,7 +145,11 @@ class EcosystemService {
       if (!species || nodesMap.has(species.id.toString())) return;
 
       // Áp dụng bộ lọc tùy chọn nếu có
-      if (zone && species.east_sea_zone && !species.east_sea_zone.toLowerCase().includes(zone.toLowerCase())) {
+      if (
+        zone &&
+        species.east_sea_zone &&
+        !species.east_sea_zone.toLowerCase().includes(zone.toLowerCase())
+      ) {
         return;
       }
       if (groupId && species.group_id?.toString() !== groupId.toString()) {
@@ -222,7 +226,7 @@ class EcosystemService {
     // 1. Tìm thông tin loài (hỗ trợ alias từ mockup / tiếng Anh)
     const SLUG_ALIASES = {
       "giant-octopus-3": "bach-tuoc-khong-lo",
-      "octopus": "bach-tuoc-khong-lo",
+      octopus: "bach-tuoc-khong-lo",
       "whale-shark": "ca-map-voi-nham-voi",
       "whale-shark-2": "ca-map-voi-nham-voi",
       "bluefin-tuna-1": "ca-ngu-vay-vang-dai-duong",
@@ -294,72 +298,55 @@ class EcosystemService {
       }),
     ]);
 
-    // 3. Phân loại theo vai trò sinh thái
-    const prey = []; // Thức ăn / loài bị loài này ăn
-    const predators = []; // Kẻ săn mồi ăn loài này
-    const symbionts = []; // Cộng sinh / tương hỗ
-    const habitats = []; // Môi trường / sinh cảnh
-    const competitors = []; // Cạnh tranh
+    // 3. Phân loại theo vai trò sinh thái bằng ROLE_MAP nhất quán
+    const roles = {
+      prey: [],
+      predators: [],
+      symbionts: [],
+      habitats: [],
+      competitors: [],
+      parasites: [],
+      hosts: [],
+      dwellers: [],
+    };
 
-    // Xử lý outgoing: Species -> Target
-    for (const r of outgoing) {
-      const tgt = r.target_species;
-      const item = {
-        relationshipId: r.id.toString(),
-        speciesId: tgt.id.toString(),
-        name: tgt.common_name,
-        scientificName: tgt.scientificName,
-        slug: tgt.slug,
-        groupName: tgt.species_groups?.name || "Khác",
-        redList: tgt.vietnam_red_list_status || "LC",
-        image: tgt.species_media?.[0]?.url || "",
-        relationshipType: r.relationship_type,
-        relationshipLabel: RELATIONSHIP_META[r.relationship_type]?.label || r.relationship_type,
-        description: r.description,
-        ecologicalImpact: r.ecological_impact,
-        direction: "outgoing",
-      };
+    const ROLE_MAP = {
+      predator_prey: { outgoing: "prey", incoming: "predators" },
+      herbivory: { outgoing: "prey", incoming: "predators" },
+      parasitism: { outgoing: "hosts", incoming: "parasites" },
+      symbiosis: { outgoing: "symbionts", incoming: "symbionts" },
+      commensalism: { outgoing: "symbionts", incoming: "symbionts" },
+      habitat_provider: { outgoing: "dwellers", incoming: "habitats" },
+      competitor: { outgoing: "competitors", incoming: "competitors" },
+    };
 
-      if (r.relationship_type === "predator_prey" || r.relationship_type === "herbivory") {
-        prey.push(item);
-      } else if (r.relationship_type === "symbiosis" || r.relationship_type === "commensalism") {
-        symbionts.push(item);
-      } else if (r.relationship_type === "habitat_provider") {
-        habitats.push(item);
-      } else if (r.relationship_type === "competitor") {
-        competitors.push(item);
+    const toRoleItem = (r, other, dir) => ({
+      relationshipId: r.id.toString(),
+      speciesId: other.id.toString(),
+      name: other.common_name,
+      scientificName: other.scientificName,
+      slug: other.slug,
+      groupName: other.species_groups?.name || "Khác",
+      redList: other.vietnam_red_list_status ?? "NE",
+      image: other.species_media?.[0]?.url || "",
+      relationshipType: r.relationship_type,
+      relationshipLabel:
+        RELATIONSHIP_META[r.relationship_type]?.label || r.relationship_type,
+      description: r.description,
+      ecologicalImpact: r.ecological_impact,
+      strength: r.strength ? parseFloat(r.strength) : 1,
+      direction: dir,
+    });
+
+    const pushRole = (rel, other, dir) => {
+      const bucket = ROLE_MAP[rel.relationship_type]?.[dir];
+      if (bucket && roles[bucket]) {
+        roles[bucket].push(toRoleItem(rel, other, dir));
       }
-    }
+    };
 
-    // Xử lý incoming: Source -> Species
-    for (const r of incoming) {
-      const src = r.source_species;
-      const item = {
-        relationshipId: r.id.toString(),
-        speciesId: src.id.toString(),
-        name: src.common_name,
-        scientificName: src.scientificName,
-        slug: src.slug,
-        groupName: src.species_groups?.name || "Khác",
-        redList: src.vietnam_red_list_status || "LC",
-        image: src.species_media?.[0]?.url || "",
-        relationshipType: r.relationship_type,
-        relationshipLabel: RELATIONSHIP_META[r.relationship_type]?.label || r.relationship_type,
-        description: r.description,
-        ecologicalImpact: r.ecological_impact,
-        direction: "incoming",
-      };
-
-      if (r.relationship_type === "predator_prey") {
-        predators.push(item);
-      } else if (r.relationship_type === "symbiosis" || r.relationship_type === "commensalism") {
-        symbionts.push(item);
-      } else if (r.relationship_type === "habitat_provider") {
-        habitats.push(item);
-      } else if (r.relationship_type === "competitor") {
-        competitors.push(item);
-      }
-    }
+    outgoing.forEach((r) => pushRole(r, r.target_species, "outgoing"));
+    incoming.forEach((r) => pushRole(r, r.source_species, "incoming"));
 
     // 4. Tạo Ego Graph nhỏ sẵn sàng cho Frontend vẽ đồ thị
     const egoNodes = [
@@ -371,7 +358,7 @@ class EcosystemService {
         slug: species.slug,
         isCenter: true,
         groupId: Number(species.group_id || 1),
-        redList: species.vietnam_red_list_status || "Chưa đánh giá",
+        redList: species.vietnam_red_list_status ?? "NE",
         image: species.species_media?.[0]?.url || "",
         color: "#3b82f6",
         symbolSize: 52,
@@ -394,7 +381,7 @@ class EcosystemService {
           slug: otherSpecies.slug,
           isCenter: false,
           groupId: gId,
-          redList: otherSpecies.vietnam_red_list_status || "LC",
+          redList: otherSpecies.vietnam_red_list_status ?? "NE",
           image: otherSpecies.species_media?.[0]?.url || "",
           color: GROUP_COLORS[gId] || "#94a3b8",
           symbolSize: 36,
@@ -410,6 +397,7 @@ class EcosystemService {
         label: meta.label || rel.relationship_type,
         description: rel.description,
         ecologicalImpact: rel.ecological_impact,
+        strength: rel.strength ? parseFloat(rel.strength) : 1,
         lineColor: meta.color || "#64748b",
         lineStyle: meta.lineStyle || "solid",
       });
@@ -427,20 +415,24 @@ class EcosystemService {
           commonName: species.common_name,
           scientificName: species.scientificName,
           slug: species.slug,
-          vietnamRedListStatus: species.vietnam_red_list_status,
+          vietnamRedListStatus: species.vietnam_red_list_status ?? "NE",
           vietnamProtectionGroup: species.vietnam_protection_group,
           citesAppendix: species.cites_appendix,
           eastSeaZone: species.east_sea_zone,
           localDistribution: species.local_distribution,
           diet: species.diet,
         },
-        ecologicalRoles: {
-          prey,
-          predators,
-          symbionts,
-          habitats,
-          competitors,
+        centerSpecies: {
+          id: species.id.toString(),
+          name: species.common_name,
+          scientificName: species.scientificName,
+          slug: species.slug,
+          code: species.code,
+          redList: species.vietnam_red_list_status ?? "NE",
+          image: species.species_media?.[0]?.url || "",
+          eastSeaZone: species.east_sea_zone || "Biển Đông",
         },
+        ecologicalRoles: roles,
         graph: {
           nodes: egoNodes,
           links: egoLinks,
@@ -453,22 +445,23 @@ class EcosystemService {
    * Thống kê tổng hợp đa dạng sinh học Biển Đông
    */
   async getEastSeaStats() {
-    const [totalSpecies, redListGroups, zones, totalRelationships] = await Promise.all([
-      prisma.species.count({
-        where: { east_sea_zone: { not: null }, deleted_at: null },
-      }),
-      prisma.species.groupBy({
-        by: ["vietnam_red_list_status"],
-        where: { east_sea_zone: { not: null }, deleted_at: null },
-        _count: { id: true },
-      }),
-      prisma.species.groupBy({
-        by: ["east_sea_zone"],
-        where: { east_sea_zone: { not: null }, deleted_at: null },
-        _count: { id: true },
-      }),
-      prisma.species_relationships.count(),
-    ]);
+    const [totalSpecies, redListGroups, zones, totalRelationships] =
+      await Promise.all([
+        prisma.species.count({
+          where: { east_sea_zone: { not: null }, deleted_at: null },
+        }),
+        prisma.species.groupBy({
+          by: ["vietnam_red_list_status"],
+          where: { east_sea_zone: { not: null }, deleted_at: null },
+          _count: { id: true },
+        }),
+        prisma.species.groupBy({
+          by: ["east_sea_zone"],
+          where: { east_sea_zone: { not: null }, deleted_at: null },
+          _count: { id: true },
+        }),
+        prisma.species_relationships.count(),
+      ]);
 
     return {
       success: true,
@@ -521,31 +514,54 @@ class EcosystemService {
     if (qClean.includes("thien dich") || qClean.includes("khac tinh")) {
       relType = "predator_prey";
       isLookingForPredator = true;
-    } else if (qClean.includes("ke san moi") || qClean.includes("san moi") || qClean.includes("san bat") || qClean.includes("an thit")) {
+    } else if (
+      qClean.includes("ke san moi") ||
+      qClean.includes("san moi") ||
+      qClean.includes("san bat") ||
+      qClean.includes("an thit")
+    ) {
       relType = "predator_prey";
       isLookingForPredator = true;
-    } else if (qClean.includes("con moi") || qClean.includes("thuc an cua") || qClean.includes("an con gi") || qClean.includes("bi an")) {
+    } else if (
+      qClean.includes("con moi") ||
+      qClean.includes("thuc an cua") ||
+      qClean.includes("an con gi") ||
+      qClean.includes("bi an")
+    ) {
       relType = "predator_prey";
       isLookingForPrey = true;
-    } else if (qClean.includes("cong sinh") || qClean.includes("tuong ho") || qClean.includes("symbiosis")) {
+    } else if (
+      qClean.includes("cong sinh") ||
+      qClean.includes("tuong ho") ||
+      qClean.includes("symbiosis")
+    ) {
       relType = "symbiosis";
-    } else if (qClean.includes("co bien") || qClean.includes("an co") || qClean.includes("thuc vat") || qClean.includes("gam co")) {
+    } else if (
+      qClean.includes("co bien") ||
+      qClean.includes("an co") ||
+      qClean.includes("thuc vat") ||
+      qClean.includes("gam co")
+    ) {
       relType = "herbivory";
-    } else if (qClean.includes("noi o") || qClean.includes("cu tru") || qClean.includes("sinh canh") || qClean.includes("nuong tua")) {
+    } else if (
+      qClean.includes("noi o") ||
+      qClean.includes("cu tru") ||
+      qClean.includes("sinh canh") ||
+      qClean.includes("nuong tua")
+    ) {
       relType = "habitat_provider";
     } else if (qClean.includes("ky sinh")) {
       relType = "parasitism";
     }
 
-    // Nhận diện Sách Đỏ với regex từ nguyên vẹn
+    // Nhận diện Sách Đỏ với regex từ nguyên vẹn (ưu tiên kiểm tra cụm dài trước)
     let redListStatus = null;
-    if (qClean.includes("cuc ky nguy cap") || /\bcr\b/i.test(qClean)) {
-      redListStatus = "CR";
-    } else if (qClean.includes("nguy cap") || /\ben\b/i.test(qClean)) {
-      redListStatus = "EN";
-    } else if (qClean.includes("sap nguy cap") || /\bvu\b/i.test(qClean)) {
-      redListStatus = "VU";
-    }
+    const hasWord = (p) => new RegExp(`(^|\\s)${p}(\\s|$)`, "i").test(qClean);
+    if (hasWord("cuc ky nguy cap") || hasWord("cr")) redListStatus = "CR";
+    else if (hasWord("sap nguy cap") || hasWord("vu")) redListStatus = "VU";
+    else if (hasWord("nguy cap") || hasWord("en")) redListStatus = "EN";
+    else if (hasWord("gan bi de doa") || hasWord("nt")) redListStatus = "NT";
+    else if (hasWord("it quan tam") || hasWord("lc")) redListStatus = "LC";
 
     // Nhận diện Phân vùng Biển Đông
     let detectedZone = null;
@@ -589,24 +605,24 @@ class EcosystemService {
       },
     });
 
+    // Nhận diện loài ưu tiên tên dài nhất (tránh "cá mập trắng lớn" bị khớp nhầm "cá mập")
     let targetFocusSpecies = null;
+    let bestLen = 0;
     for (const sp of allSpecies) {
       const nameVi = (sp.common_name || "").toLowerCase();
       const nameClean = removeDiacritics(sp.common_name || "");
       const sciName = (sp.scientificName || "").toLowerCase();
 
-      // Kiểm tra cả có dấu lẫn không dấu
-      if (nameClean.length >= 4 && qClean.includes(nameClean)) {
-        targetFocusSpecies = sp;
-        break;
-      }
-      if (nameVi.length >= 3 && q.includes(nameVi)) {
-        targetFocusSpecies = sp;
-        break;
-      }
-      if (sciName.length >= 4 && q.includes(sciName)) {
-        targetFocusSpecies = sp;
-        break;
+      for (const candidate of [nameClean, nameVi, sciName]) {
+        if (
+          candidate.length >= 3 &&
+          (qClean.includes(candidate) || q.toLowerCase().includes(candidate))
+        ) {
+          if (candidate.length > bestLen) {
+            targetFocusSpecies = sp;
+            bestLen = candidate.length;
+          }
+        }
       }
     }
 
@@ -627,7 +643,7 @@ class EcosystemService {
       for (const k of keywords) {
         if (qClean.includes(k.kw)) {
           targetFocusSpecies = allSpecies.find((sp) =>
-            removeDiacritics(sp.common_name || "").includes(k.name)
+            removeDiacritics(sp.common_name || "").includes(k.name),
           );
           if (targetFocusSpecies) break;
         }
@@ -639,12 +655,21 @@ class EcosystemService {
 
     // 3. Nếu người dùng hỏi về quan hệ của 1 loài cụ thể (e.g. "thiên địch của sao biển gai", "cộng sinh với hải quỳ")
     if (targetFocusSpecies) {
+      const directionCondition =
+        relType === "predator_prey" && isLookingForPredator
+          ? { target_species_id: targetFocusSpecies.id }
+          : relType === "predator_prey" && isLookingForPrey
+            ? { source_species_id: targetFocusSpecies.id }
+            : {
+                OR: [
+                  { source_species_id: targetFocusSpecies.id },
+                  { target_species_id: targetFocusSpecies.id },
+                ],
+              };
+
       const rels = await prisma.species_relationships.findMany({
         where: {
-          OR: [
-            { source_species_id: targetFocusSpecies.id },
-            { target_species_id: targetFocusSpecies.id },
-          ],
+          ...directionCondition,
           ...(relType ? { relationship_type: relType } : {}),
         },
         include: {
@@ -735,13 +760,16 @@ class EcosystemService {
       });
 
       for (const r of typeRels) {
-        const candidate = isLookingForPrey ? r.target_species : r.source_species;
+        const candidate = isLookingForPrey
+          ? r.target_species
+          : r.source_species;
         const other = isLookingForPrey ? r.source_species : r.target_species;
 
         if (!addedSpeciesIds.has(candidate.id.toString())) {
           addedSpeciesIds.add(candidate.id.toString());
 
-          let roleTitle = RELATIONSHIP_META[r.relationship_type]?.label || "Quan hệ sinh học";
+          let roleTitle =
+            RELATIONSHIP_META[r.relationship_type]?.label || "Quan hệ sinh học";
           let explanation = r.description || r.ecological_impact;
           if (!explanation) {
             explanation = `${candidate.common_name} có quan hệ ${RELATIONSHIP_META[r.relationship_type]?.verb || "liên kết"} với ${other.common_name}.`;
@@ -772,7 +800,9 @@ class EcosystemService {
         if (addedSpeciesIds.has(sp.id.toString())) continue;
 
         const matchZone = detectedZone
-          ? (sp.east_sea_zone || "").toLowerCase().includes(detectedZone.toLowerCase())
+          ? (sp.east_sea_zone || "")
+              .toLowerCase()
+              .includes(detectedZone.toLowerCase())
           : true;
         const matchRedList = redListStatus
           ? (sp.vietnam_red_list_status || "").toUpperCase() === redListStatus
@@ -790,7 +820,9 @@ class EcosystemService {
             groupName: "Sinh vật Biển Đông",
             redList: sp.vietnam_red_list_status || "LC",
             zone: sp.east_sea_zone || "Biển Đông",
-            role: redListStatus ? `Sách Đỏ VN: ${sp.vietnam_red_list_status}` : `Khu bảo tồn: ${detectedZone}`,
+            role: redListStatus
+              ? `Sách Đỏ VN: ${sp.vietnam_red_list_status}`
+              : `Khu bảo tồn: ${detectedZone}`,
             semanticReason: `Phân bố tại vùng biển ${sp.east_sea_zone || "Biển Đông"}. ${sp.local_distribution ? `Địa phương: ${sp.local_distribution}.` : ""}`,
             relationshipType: "habitat_provider",
             strength: 0.9,
@@ -808,7 +840,12 @@ class EcosystemService {
         const zone = (sp.east_sea_zone || "").toLowerCase();
         const diet = (sp.diet || "").toLowerCase();
 
-        if (nameVi.includes(q) || sciName.includes(q) || zone.includes(q) || diet.includes(q)) {
+        if (
+          nameVi.includes(q) ||
+          sciName.includes(q) ||
+          zone.includes(q) ||
+          diet.includes(q)
+        ) {
           addedSpeciesIds.add(sp.id.toString());
           results.push({
             id: sp.id.toString(),
@@ -834,7 +871,9 @@ class EcosystemService {
       query: rawQuery,
       detectedIntent: {
         relationshipType: relType,
-        targetSpecies: targetFocusSpecies ? targetFocusSpecies.common_name : null,
+        targetSpecies: targetFocusSpecies
+          ? targetFocusSpecies.common_name
+          : null,
         zone: detectedZone,
         redList: redListStatus,
       },
@@ -867,8 +906,16 @@ class EcosystemService {
     if (search && search.trim() !== "") {
       const term = search.trim();
       where.OR = [
-        { source_species: { common_name: { contains: term, mode: "insensitive" } } },
-        { target_species: { common_name: { contains: term, mode: "insensitive" } } },
+        {
+          source_species: {
+            common_name: { contains: term, mode: "insensitive" },
+          },
+        },
+        {
+          target_species: {
+            common_name: { contains: term, mode: "insensitive" },
+          },
+        },
         { description: { contains: term, mode: "insensitive" } },
         { ecological_impact: { contains: term, mode: "insensitive" } },
       ];
@@ -889,7 +936,11 @@ class EcosystemService {
               common_name: true,
               scientificName: true,
               slug: true,
-              species_media: { where: { is_primary: true }, select: { url: true }, take: 1 },
+              species_media: {
+                where: { is_primary: true },
+                select: { url: true },
+                take: 1,
+              },
             },
           },
           target_species: {
@@ -899,7 +950,11 @@ class EcosystemService {
               common_name: true,
               scientificName: true,
               slug: true,
-              species_media: { where: { is_primary: true }, select: { url: true }, take: 1 },
+              species_media: {
+                where: { is_primary: true },
+                select: { url: true },
+                take: 1,
+              },
             },
           },
         },
@@ -945,10 +1000,19 @@ class EcosystemService {
   }
 
   async createRelationship(data) {
-    const { sourceSpeciesId, targetSpeciesId, relationshipType, strength, description, ecologicalImpact } = data;
+    const {
+      sourceSpeciesId,
+      targetSpeciesId,
+      relationshipType,
+      strength,
+      description,
+      ecologicalImpact,
+    } = data;
 
     if (!sourceSpeciesId || !targetSpeciesId || !relationshipType) {
-      throw new Error("Thiếu thông tin bắt buộc: Loài nguồn, loài đích hoặc kiểu quan hệ.");
+      throw new Error(
+        "Thiếu thông tin bắt buộc: Loài nguồn, loài đích hoặc kiểu quan hệ.",
+      );
     }
 
     if (sourceSpeciesId.toString() === targetSpeciesId.toString()) {
@@ -988,7 +1052,9 @@ class EcosystemService {
         ...(relationshipType ? { relationship_type: relationshipType } : {}),
         ...(strength !== undefined ? { strength: parseFloat(strength) } : {}),
         ...(description !== undefined ? { description } : {}),
-        ...(ecologicalImpact !== undefined ? { ecological_impact: ecologicalImpact } : {}),
+        ...(ecologicalImpact !== undefined
+          ? { ecological_impact: ecologicalImpact }
+          : {}),
         updated_at: new Date(),
       },
     });

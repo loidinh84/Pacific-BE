@@ -966,6 +966,87 @@ async function main() {
       strength: 0.70,
       ecological_impact: "Tạo cấu trúc phân tầng rạn san hô đa dạng tầng nước nông - sâu",
     },
+    // 21. Cá mập trắng lớn săn bắt Cá ngừ vây vàng
+    {
+      source_species_id: 1n,
+      target_species_id: 27n,
+      relationship_type: "predator_prey",
+      description: "Cá mập trắng lớn săn đuổi các đàn cá ngừ vây vàng bơi nhanh ở tầng nước mặt khơi xa.",
+      strength: 0.92,
+      ecological_impact: "Kiểm soát các loài săn mồi bậc trung, duy trì cân bằng năng lượng sinh khối đại dương",
+    },
+    // 22. Cá mập trắng lớn săn bắt Cá trích mai
+    {
+      source_species_id: 1n,
+      target_species_id: 28n,
+      relationship_type: "predator_prey",
+      description: "Săn bắt đàn cá trích mai khi cá mập non và trưởng thành đi qua các vùng nước trồi giàu dinh dưỡng.",
+      strength: 0.85,
+      ecological_impact: "Điều hòa dòng sinh khối động vật tầng mặt",
+    },
+    // 23. Cá mập trắng lớn săn bắt Rùa xanh
+    {
+      source_species_id: 1n,
+      target_species_id: 13n,
+      relationship_type: "predator_prey",
+      description: "Hàm răng sắc bén có lực cắn cực mạnh nghiền nát mai rùa xanh và rùa biển lớn khi kiếm ăn ven rạn.",
+      strength: 0.90,
+      ecological_impact: "Điều tiết số lượng bò sát biển, duy trì tính ổn định của thảm cỏ biển",
+    },
+    // 24. Cá mập trắng lớn săn bắt Bạch tuộc khổng lồ
+    {
+      source_species_id: 1n,
+      target_species_id: 2n,
+      relationship_type: "predator_prey",
+      description: "Săn bắt các loài thân mềm chân đầu kích thước lớn ở tầng nước sâu và sườn dốc lục địa.",
+      strength: 0.88,
+      ecological_impact: "Mắt xích liên kết dinh dưỡng giữa tầng mặt và vùng biển sâu",
+    },
+    // 25. Cá mập trắng lớn cạnh tranh với Cá nhám búa
+    {
+      source_species_id: 1n,
+      target_species_id: 21n,
+      relationship_type: "competitor",
+      description: "Cạnh tranh vị trí kẻ săn mồi đỉnh bảng tại các vùng biển mở quanh quần đảo Hoàng Sa và Trường Sa.",
+      strength: 0.80,
+      ecological_impact: "Phân chia không gian săn mồi và cân bằng cấu trúc quần xã sinh thái biển khơi",
+    },
+    // 26. Bạch tuộc khổng lồ săn bắt Cua huỳnh đế
+    {
+      source_species_id: 2n,
+      target_species_id: 29n,
+      relationship_type: "predator_prey",
+      description: "Dùng các giác hút mạnh mẽ và mỏ sừng sắc bén phá vỡ mai cứng của cua huỳnh đế tầng đáy.",
+      strength: 0.86,
+      ecological_impact: "Điều hòa số lượng động vật giáp xác đáy",
+    },
+    // 27. Bạch tuộc khổng lồ săn bắt Tôm hùm bông
+    {
+      source_species_id: 2n,
+      target_species_id: 22n,
+      relationship_type: "predator_prey",
+      description: "Phục kích bắt tôm hùm trong các hang hốc đá và rạn san hô sườn lục địa.",
+      strength: 0.84,
+      ecological_impact: "Kiểm soát động vật ăn đáy, duy trì cân bằng chuỗi thức ăn rạn",
+    },
+    // 28. Cá voi lưng gù lọc Sinh vật phù du
+    {
+      source_species_id: 5n,
+      target_species_id: 35n,
+      relationship_type: "predator_prey",
+      description: "Sử dụng các tấm sừng hàm lọc hàng triệu sinh vật phù du và nhuyễn thể khi di cư qua Biển Đông.",
+      strength: 0.95,
+      ecological_impact: "Tạo dòng luân chuyển dinh dưỡng thẳng đứng khổng lồ từ tầng sâu lên tầng mặt",
+    },
+    // 29. Cá voi lưng gù ăn Cá trích mai
+    {
+      source_species_id: 5n,
+      target_species_id: 28n,
+      relationship_type: "predator_prey",
+      description: "Hợp sức tạo cột bọt khí dồn các đàn cá trích mai lại để cùng nhau đớp mồi.",
+      strength: 0.88,
+      ecological_impact: "Điều hòa các đàn cá nhỏ bơi theo đàn ở vùng khơi",
+    },
   ];
 
   for (const rel of relationships) {
