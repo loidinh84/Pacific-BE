@@ -11,6 +11,7 @@ import adminCommentsController from "../controller/adminCommentsController.js";
 import adminSettingsController from "../controller/adminSettingsController.js";
 import adminQuizController from "../controller/adminQuizController.js";
 import adminRelationshipsController from "../controller/adminRelationshipsController.js";
+import adminFeedbackController from "../controller/adminFeedbackController.js";
 
 const router = Router();
 
@@ -240,6 +241,15 @@ router.delete("/quiz/:id", (req, res) => adminQuizController.deleteQuestion(req,
 
 // PATCH /api/admin/quiz/:id/toggle - Bật/tắt trạng thái câu hỏi
 router.patch("/quiz/:id/toggle", (req, res) => adminQuizController.toggleQuestion(req, res));
+
+/**
+ * ── 11. QUẢN LÝ Ý KIẾN ĐÓNG GÓP (SITE REVIEWS / FEEDBACK) ──
+ */
+// GET /api/admin/feedback - Lấy danh sách ý kiến đóng góp kèm tìm kiếm, lọc, phân trang
+router.get("/feedback", (req, res) => adminFeedbackController.getFeedbackList(req, res));
+
+// DELETE /api/admin/feedback/:id - Xóa 1 ý kiến đóng góp
+router.delete("/feedback/:id", (req, res) => adminFeedbackController.deleteFeedback(req, res));
 
 export default router;
 

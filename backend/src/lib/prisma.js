@@ -3,7 +3,8 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import pg from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/client";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -23,12 +23,14 @@ import speciesRoutes from "./src/routes/species.js";
 import adminRoutes from "./src/routes/admin.js";
 import userRoutes from "./src/routes/users.js";
 import uploadRoutes from "./src/routes/upload.js";
+import feedbackRoutes from "./src/routes/feedback.js";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/species", speciesRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/feedback", feedbackRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
