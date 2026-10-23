@@ -1,9 +1,9 @@
 import { translateMarineQuery, VIETNAMESE_MARINE_DICTIONARY } from "../config/marineDictionary.js";
 
 const KNOWN_FRESHWATER_SPECIES = {
-  "lươn điện": { sciName: "Electrophorus electricus", commonVi: "Lươn điện (Electric Eel)", reasoning: "Lươn điện là loài cá chình điện nước ngọt lưu vực sông Amazon, không thuộc hệ sinh thái biển Thái Bình Dương." },
-  "luon dien": { sciName: "Electrophorus electricus", commonVi: "Lươn điện (Electric Eel)", reasoning: "Lươn điện là loài cá chình điện nước ngọt lưu vực sông Amazon, không thuộc hệ sinh thái biển Thái Bình Dương." },
-  "cá rồng": { sciName: "Osteoglossidae", commonVi: "Cá rồng (Arowana)", reasoning: "Cá rồng là loài cá nước ngọt nhiệt đới, không thuộc hệ sinh thái biển Thái Bình Dương." },
+  "lươn điện": { sciName: "Electrophorus electricus", commonVi: "Lươn điện (Electric Eel)", reasoning: "Lươn điện là loài cá chình điện nước ngọt lưu vực sông Amazon, không thuộc hệ sinh thái Biển Đông." },
+  "luon dien": { sciName: "Electrophorus electricus", commonVi: "Lươn điện (Electric Eel)", reasoning: "Lươn điện là loài cá chình điện nước ngọt lưu vực sông Amazon, không thuộc hệ sinh thái Biển Đông." },
+  "cá rồng": { sciName: "Osteoglossidae", commonVi: "Cá rồng (Arowana)", reasoning: "Cá rồng là loài cá nước ngọt nhiệt đới, không thuộc hệ sinh thái Biển Đông." },
   "cá lóc": { sciName: "Channa striata", commonVi: "Cá lóc (Snakehead)", reasoning: "Cá lóc là loài cá nước ngọt đầm lầy, không thuộc hệ sinh thái đại dương." },
 };
 

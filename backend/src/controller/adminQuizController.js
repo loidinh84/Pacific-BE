@@ -64,7 +64,7 @@ const DEFAULT_QUESTIONS = [
   {
     id: "quiz-5",
     question: "Loài sinh vật biển nào có khả năng phát quang sinh học (bioluminescence) để săn mồi hoặc phòng vệ?",
-    options: ["Cá vây chân (Anglerfish)", "Rùa biển xanh", "Cá hồi Thái Bình Dương", "Hải mã"],
+    options: ["Cá vây chân (Anglerfish)", "Rùa biển xanh", "Cá ngừ đại dương", "Hải mã"],
     correctAnswerIndex: 0,
     category: "Sinh vật biển",
     difficulty: "easy",

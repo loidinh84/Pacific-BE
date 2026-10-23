@@ -6,7 +6,7 @@ const SETTING_GROUP = "GENERAL";
 const DEFAULT_SETTINGS = {
   general: {
     websiteName: "Pacific Ocean Portal",
-    seoDescription: "Cổng thông tin & tra cứu sinh vật biển Thái Bình Dương chuẩn khoa học",
+    seoDescription: "Cổng thông tin & tra cứu sinh vật biển Biển Đông chuẩn khoa học",
     contactEmail: "admin@pacific.org",
     logoUrl: "",
     socialLinks: [

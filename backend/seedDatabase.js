@@ -181,7 +181,7 @@ async function seed() {
       longitude: 142.5917,
       ocean_zone_id: 5,
       is_featured: true,
-      description: "Điểm sâu nhất được biết đến trên bề mặt Trái Đất thuộc vùng tây Thái Bình Dương.",
+      description: "Điểm sâu nhất được biết đến trên bề mặt Trái Đất thuộc vùng biển sâu đại dương.",
       image_url: "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=600&auto=format&fit=crop",
     },
     {
@@ -192,7 +192,7 @@ async function seed() {
       longitude: -90.9656,
       ocean_zone_id: 1,
       is_featured: true,
-      description: "Thiên đường đa dạng sinh học độc nhất vô nhị ở Thái Bình Dương thuộc Ecuador.",
+      description: "Thiên đường đa dạng sinh học độc nhất vô nhị thuộc Ecuador.",
       image_url: "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=600&auto=format&fit=crop",
     },
     {
@@ -225,7 +225,7 @@ async function seed() {
       longitude: -170.0,
       ocean_zone_id: 1,
       is_featured: true,
-      description: "Một trong những khu bảo tồn sinh vật biển lớn nhất thế giới ở Thái Bình Dương.",
+      description: "Một trong những khu bảo tồn sinh vật biển lớn nhất thế giới.",
       image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop",
     },
   ];
