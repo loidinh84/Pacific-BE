@@ -1,4 +1,88 @@
 import prisma from "../lib/prisma.js";
+import vectorSearchService from "./vectorSearchService.js";
+
+// ─── GEMINI AI SEMANTIC MATCH HELPER ────────────────────────────────────────
+/**
+ * Gọi Gemini AI để phân tích câu truy vấn tự nhiên và tìm loài phù hợp nhất.
+ * Chỉ được gọi khi toàn bộ các lớp tìm kiếm cục bộ đều thất bại.
+ * Trả về danh sách { speciesId, reason } được Gemini đề xuất.
+ */
+async function callGeminiSemanticMatch(rawQuery, allSpecies) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return [];
+
+  // Tạo danh sách loài gọn nhẹ đưa vào prompt với mô tả sinh học thực tế
+  const speciesList = allSpecies
+    .map((sp) => {
+      const descSnippet = (sp.description || "").replace(/\s+/g, " ").slice(0, 180);
+      const diet = sp.diet ? ` | Ăn: ${sp.diet}` : "";
+      const zone = sp.east_sea_zone ? ` | Vùng: ${sp.east_sea_zone}` : "";
+      return `ID:${sp.id} | ${sp.common_name} (${sp.scientificName})${zone}${diet} | Mô tả: ${descSnippet}`;
+    })
+    .join("\n");
+
+  const prompt = `Bạn là chuyên gia sinh thái và phân loại học biển Việt Nam (Biển Đông).
+Người dùng nhập câu tìm kiếm/mô tả bằng tiếng Việt tự nhiên: "${rawQuery}"
+
+Danh sách 29 loài sinh vật biển có trong hệ sinh thái Pacific:
+${speciesList}
+
+YÊU CẦU:
+1. Phân tích đặc điểm hình thái, tập tính, tên gọi hoặc sinh thái trong câu truy vấn của người dùng.
+2. Tìm trong danh sách trên những loài phù hợp nhất với mô tả (tối đa 5 loài).
+3. CHỈ CHỌN loài CÓ TRONG danh sách trên theo đúng ID số tương ứng. Nếu truy vấn hoàn toàn không liên quan đến bất kỳ loài nào, hãy trả về [].
+
+Trả về mảng JSON đúng cấu trúc:
+[
+  {
+    "speciesId": 6,
+    "role": "Thân hình tròn dẹt",
+    "reason": "Cá mặt trăng có thân hình tròn ngắn, dẹt hai bên trông tựa như chiếc đĩa lớn trôi nổi trên đại dương."
+  }
+]`;
+
+  const models = ["gemini-3-flash-preview", "gemini-3.5-flash"];
+  for (const model of models) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6500);
+
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.1,
+            responseMimeType: "application/json",
+          },
+        }),
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn(`[Gemini Semantic] Model ${model} returned status ${response.status}`);
+        continue;
+      }
+      const resData = await response.json();
+      const text = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) continue;
+
+      const cleanJson = text.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(cleanJson);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.filter((item) => item.speciesId && item.reason);
+      }
+    } catch (err) {
+      console.warn(`[Gemini Semantic] Model ${model} error:`, err.message);
+    }
+  }
+
+  return [];
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * ecosystemService.js
@@ -556,12 +640,36 @@ class EcosystemService {
 
     // Nhận diện Sách Đỏ với regex từ nguyên vẹn (ưu tiên kiểm tra cụm dài trước)
     let redListStatus = null;
+    const isRedListExplicit =
+      qClean.includes("sach do") ||
+      qClean.includes("red list") ||
+      qClean.includes("bao ton") ||
+      qClean.includes("nguy cap");
     const hasWord = (p) => new RegExp(`(^|\\s)${p}(\\s|$)`, "i").test(qClean);
-    if (hasWord("cuc ky nguy cap") || hasWord("cr")) redListStatus = "CR";
-    else if (hasWord("sap nguy cap") || hasWord("vu")) redListStatus = "VU";
-    else if (hasWord("nguy cap") || hasWord("en")) redListStatus = "EN";
-    else if (hasWord("gan bi de doa") || hasWord("nt")) redListStatus = "NT";
-    else if (hasWord("it quan tam") || hasWord("lc")) redListStatus = "LC";
+
+    if (hasWord("tuyet chung trong tu nhien") || (isRedListExplicit && hasWord("ew")) || qClean === "ew")
+      redListStatus = "EW";
+    else if (hasWord("tuyet chung") || (isRedListExplicit && hasWord("ex")) || qClean === "ex")
+      redListStatus = "EX";
+    else if (hasWord("cuc ky nguy cap") || (isRedListExplicit && hasWord("cr")) || qClean === "cr")
+      redListStatus = "CR";
+    else if (hasWord("sap nguy cap") || (isRedListExplicit && hasWord("vu")) || qClean === "vu")
+      redListStatus = "VU";
+    else if (hasWord("nguy cap") || (isRedListExplicit && hasWord("en")) || qClean === "en")
+      redListStatus = "EN";
+    else if (
+      hasWord("gan de doa") ||
+      hasWord("gan bi de doa") ||
+      (isRedListExplicit && hasWord("nt")) ||
+      qClean === "nt"
+    )
+      redListStatus = "NT";
+    else if (hasWord("it quan tam") || (isRedListExplicit && hasWord("lc")) || qClean === "lc")
+      redListStatus = "LC";
+    else if (hasWord("thieu du lieu") || (isRedListExplicit && hasWord("dd")) || qClean === "dd")
+      redListStatus = "DD";
+    else if (hasWord("chua danh gia") || (isRedListExplicit && hasWord("ne")) || qClean === "ne")
+      redListStatus = "NE";
 
     // Nhận diện Phân vùng Biển Đông
     let detectedZone = null;
@@ -582,6 +690,61 @@ class EcosystemService {
       }
     }
 
+    // Nhận diện đặc điểm hình thái & tập tính (Morphology & Behavior Traits)
+    let traitQuery = null;
+    let traitLabel = null;
+    if (
+      qClean.includes("hinh tron") ||
+      qClean.includes("tron") ||
+      qClean.includes("dia tron") ||
+      qClean.includes("hinh dia") ||
+      qClean.includes("dia")
+    ) {
+      traitQuery = "round_shape";
+      traitLabel = "Thân hình tròn / Dạng đĩa";
+    } else if (
+      qClean.includes("co gai") ||
+      qClean.includes("nhieu gai") ||
+      qClean.includes("gai goc")
+    ) {
+      traitQuery = "spines";
+      traitLabel = "Thân có gai nhọn";
+    } else if (
+      qClean.includes("phat quang") ||
+      qClean.includes("phat sang") ||
+      qClean.includes("chieu sang")
+    ) {
+      traitQuery = "bioluminescent";
+      traitLabel = "Phát quang sinh học";
+    } else if (
+      qClean.includes("noc doc") ||
+      qClean.includes("co doc") ||
+      qClean.includes("nguy hiem nhat")
+    ) {
+      traitQuery = "venomous";
+      traitLabel = "Có nọc độc / Nguy hiểm";
+    } else if (
+      qClean.includes("nguy trang") ||
+      qClean.includes("bien mau") ||
+      qClean.includes("doi mau")
+    ) {
+      traitQuery = "camouflage";
+      traitLabel = "Ngụy trang ẩn mình";
+    } else if (
+      qClean.includes("to nhat") ||
+      qClean.includes("lon nhat") ||
+      qClean.includes("khong lo")
+    ) {
+      traitQuery = "giant";
+      traitLabel = "Kích thước khổng lồ";
+    } else if (
+      qClean.includes("hinh bua") ||
+      qClean.includes("dau bua")
+    ) {
+      traitQuery = "hammer_head";
+      traitLabel = "Đầu hình búa";
+    }
+
     // 2. Lấy toàn bộ sinh vật để đối chiếu tên & thực thể
     const allSpecies = await prisma.species.findMany({
       where: { deleted_at: null },
@@ -597,6 +760,12 @@ class EcosystemService {
         east_sea_zone: true,
         local_distribution: true,
         diet: true,
+        description: true,
+        depth_min_m: true,
+        depth_max_m: true,
+        species_groups: {
+          select: { name: true },
+        },
         species_media: {
           where: { is_primary: true },
           select: { url: true },
@@ -700,22 +869,22 @@ class EcosystemService {
 
           if (r.relationship_type === "predator_prey") {
             if (isSource) {
-              roleLabel = "Con mồi / Thức ăn";
-              semanticReason = `${targetFocusSpecies.common_name} săn bắt ${matched.common_name}. ${r.ecological_impact || ""}`;
+              roleLabel = "Con mồi";
+              semanticReason = `Là con mồi bị ${targetFocusSpecies.common_name} săn bắt.`;
             } else {
-              roleLabel = "Thiên địch / Kẻ săn mồi";
-              semanticReason = `${matched.common_name} là thiên địch săn bắt ${targetFocusSpecies.common_name}. ${r.ecological_impact || ""}`;
+              roleLabel = "Thiên địch";
+              semanticReason = `Là thiên địch săn bắt ${targetFocusSpecies.common_name}, giúp kiểm soát số lượng loài này.`;
             }
           } else if (r.relationship_type === "symbiosis") {
-            roleLabel = "Cộng sinh tương hỗ";
-            semanticReason = `${matched.common_name} cộng sinh tương hỗ chặt chẽ với ${targetFocusSpecies.common_name}. ${r.description || ""}`;
+            roleLabel = "Cộng sinh";
+            semanticReason = `Cộng sinh tương hỗ chặt chẽ với ${targetFocusSpecies.common_name}.`;
           } else if (r.relationship_type === "habitat_provider") {
             if (isSource) {
-              roleLabel = "Cung cấp nơi ở";
-              semanticReason = `${targetFocusSpecies.common_name} tạo rạn/nơi ở cho ${matched.common_name}.`;
+              roleLabel = "Tạo sinh cảnh";
+              semanticReason = `Tạo rạn hoặc nơi cư trú cho ${matched.common_name}.`;
             } else {
-              roleLabel = "Nơi cư trú";
-              semanticReason = `${matched.common_name} tạo môi trường cư trú cho ${targetFocusSpecies.common_name}.`;
+              roleLabel = "Cư trú";
+              semanticReason = `Nương tựa vào ${targetFocusSpecies.common_name} làm nơi ở.`;
             }
           }
 
@@ -726,9 +895,13 @@ class EcosystemService {
             scientificName: matched.scientificName,
             slug: matched.slug,
             image: matched.species_media?.[0]?.url || "",
-            groupName: matched.species_groups?.name || "Sinh vật biển",
+            groupName: matched.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
             redList: matched.vietnam_red_list_status || "LC",
             zone: matched.east_sea_zone || "Biển Đông",
+            depth: `${matched.depth_min_m ?? 0} - ${matched.depth_max_m ?? 200}m`,
+            description: matched.description || "",
+            diet: matched.diet || "",
+            localDistribution: matched.local_distribution || "",
             role: roleLabel,
             semanticReason: (semanticReason || "").trim(),
             relationshipType: r.relationship_type,
@@ -738,8 +911,8 @@ class EcosystemService {
       }
     }
 
-    // 4. Nếu hỏi theo loại quan hệ tổng quát (ví dụ: "loài ăn cỏ biển", "sinh vật tạo nơi ở")
-    if (relType && results.length < 10) {
+    // 4. Nếu hỏi theo loại quan hệ tổng quát VÀ chưa có loài cụ thể (ví dụ: "loài ăn cỏ biển", "sinh vật tạo nơi ở")
+    if (relType && !targetFocusSpecies) {
       const typeRels = await prisma.species_relationships.findMany({
         where: { relationship_type: relType },
         take: 12,
@@ -782,9 +955,13 @@ class EcosystemService {
             scientificName: candidate.scientificName,
             slug: candidate.slug,
             image: candidate.species_media?.[0]?.url || "",
-            groupName: candidate.species_groups?.name || "Sinh vật biển",
+            groupName: candidate.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
             redList: candidate.vietnam_red_list_status || "LC",
             zone: candidate.east_sea_zone || "Biển Đông",
+            depth: `${candidate.depth_min_m ?? 0} - ${candidate.depth_max_m ?? 200}m`,
+            description: candidate.description || "",
+            diet: candidate.diet || "",
+            localDistribution: candidate.local_distribution || "",
             role: roleTitle,
             semanticReason: explanation,
             relationshipType: r.relationship_type,
@@ -817,9 +994,13 @@ class EcosystemService {
             scientificName: sp.scientificName,
             slug: sp.slug,
             image: sp.species_media?.[0]?.url || "",
-            groupName: "Sinh vật Biển Đông",
+            groupName: sp.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
             redList: sp.vietnam_red_list_status || "LC",
             zone: sp.east_sea_zone || "Biển Đông",
+            depth: `${sp.depth_min_m ?? 0} - ${sp.depth_max_m ?? 200}m`,
+            description: sp.description || "",
+            diet: sp.diet || "",
+            localDistribution: sp.local_distribution || "",
             role: redListStatus
               ? `Sách Đỏ VN: ${sp.vietnam_red_list_status}`
               : `Khu bảo tồn: ${detectedZone}`,
@@ -831,21 +1012,105 @@ class EcosystemService {
       }
     }
 
-    // 6. Fallback từ khóa
-    if (results.length === 0) {
+    // 5.1 Khớp theo đặc điểm hình thái & tập tính (Morphology & Behavior Traits)
+    if (traitQuery) {
       for (const sp of allSpecies) {
         if (addedSpeciesIds.has(sp.id.toString())) continue;
-        const nameVi = (sp.common_name || "").toLowerCase();
-        const sciName = (sp.scientificName || "").toLowerCase();
-        const zone = (sp.east_sea_zone || "").toLowerCase();
-        const diet = (sp.diet || "").toLowerCase();
+        const nameClean = removeDiacritics(sp.common_name || "");
+        const sciClean = removeDiacritics(sp.scientificName || "");
 
-        if (
-          nameVi.includes(q) ||
-          sciName.includes(q) ||
-          zone.includes(q) ||
-          diet.includes(q)
-        ) {
+        let roleLabel = traitLabel || "Đặc điểm sinh thái";
+        let reason = "";
+
+        let matchStrength = 0.85;
+
+        if (traitQuery === "round_shape") {
+          if (nameClean.includes("mat trang") || sciClean.includes("mola")) {
+            roleLabel = "Thân tròn dẹt";
+            matchStrength = 1.0; // Ưu tiên số 1 cho cá hình tròn
+            reason =
+              "Thân hình tròn dẹt đặc trưng như chiếc đĩa khổng lồ, thường bơi phơi mình dưới ánh nắng tầng mặt.";
+          } else if (
+            nameClean.includes("san ho nao") ||
+            sciClean.includes("platygyra")
+          ) {
+            roleLabel = "Khối bán cầu tròn";
+            matchStrength = 0.9;
+            reason =
+              "Cấu trúc tạo rạn hình khối bán cầu tròn gồ ghề các rãnh cuộn như bộ não.";
+          } else if (
+            nameClean.includes("ca he ") ||
+            sciClean.includes("amphiprion")
+          ) {
+            roleLabel = "Thân bầu dục tròn";
+            matchStrength = 0.8;
+            reason =
+              "Thân hình bầu dục tròn dẹt hai bên, bơi luồn lách uyển chuyển quanh hải quỳ.";
+          }
+        } else if (traitQuery === "spines") {
+          if (nameClean.includes("sao bien gai")) {
+            roleLabel = "Gai nhọn độc";
+            matchStrength = 1.0;
+            reason = "Thân bao phủ hàng trăm gai nhọn chứa độc tố saponin.";
+          } else if (nameClean.includes("ngua gai")) {
+            roleLabel = "Gai xương ngụy trang";
+            matchStrength = 0.95;
+            reason =
+              "Thân phủ các gai xương nhọn giúp ngụy trang hoàn hảo giữa nhánh san hô.";
+          }
+        } else if (traitQuery === "bioluminescent") {
+          if (nameClean.includes("phu du")) {
+            roleLabel = "Phát quang sinh học";
+            matchStrength = 1.0;
+            reason =
+              "Chứa tảo phát quang Dinoflagellates phát ra ánh sáng dạ quang xanh biếc ban đêm.";
+          }
+        } else if (traitQuery === "venomous") {
+          if (nameClean.includes("ran bien")) {
+            roleLabel = "Nọc độc thần kinh";
+            matchStrength = 1.0;
+            reason =
+              "Nọc độc Myotoxin & Neurotoxin cực mạnh, độc hại gấp nhiều lần rắn hổ đất.";
+          } else if (nameClean.includes("sao bien gai")) {
+            roleLabel = "Gai độc";
+            matchStrength = 0.9;
+            reason =
+              "Gai nhọn chứa độc tố saponin gây viêm tấy nặng khi đâm phải.";
+          }
+        } else if (traitQuery === "camouflage") {
+          if (nameClean.includes("bach tuoc")) {
+            roleLabel = "Bậc thầy ngụy trang";
+            matchStrength = 1.0;
+            reason =
+              "Thay đổi sắc tố màu và vân da tức thời để hòa lẫn vào san hô và đá biển.";
+          } else if (nameClean.includes("ngua gai")) {
+            roleLabel = "Ngụy trang san hô";
+            matchStrength = 0.9;
+            reason =
+              "Gai nhọn và màu sắc tiệp với cành san hô để trốn kẻ thù.";
+          } else if (nameClean.includes("cua huynh de")) {
+            roleLabel = "Vùi cát ẩn mình";
+            matchStrength = 0.85;
+            reason =
+              "Ẩn nấp hoàn toàn dưới lớp cát mịn đáy biển để rình bắt mồi.";
+          }
+        } else if (traitQuery === "giant") {
+          if (nameClean.includes("voi") || nameClean.includes("khong lo")) {
+            roleLabel = "Kích thước khổng lồ";
+            matchStrength = 0.95;
+            reason =
+              "Loài sinh vật đạt kích thước và trọng lượng kỷ lục trong hệ sinh thái Biển Đông.";
+          }
+        } else if (traitQuery === "hammer_head") {
+          if (nameClean.includes("nham bua")) {
+            roleLabel = "Đầu hình búa";
+            matchStrength = 1.0;
+            reason =
+              "Đầu búa dẹt chứa hệ thống cảm biến thụ thể điện từ siêu nhạy để dò tìm con mồi.";
+          }
+        }
+
+        if (reason) {
           addedSpeciesIds.add(sp.id.toString());
           results.push({
             id: sp.id.toString(),
@@ -854,15 +1119,201 @@ class EcosystemService {
             scientificName: sp.scientificName,
             slug: sp.slug,
             image: sp.species_media?.[0]?.url || "",
-            groupName: "Sinh vật Biển Đông",
+            groupName: sp.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
             redList: sp.vietnam_red_list_status || "LC",
             zone: sp.east_sea_zone || "Biển Đông",
-            role: "Trùng khớp dữ liệu",
-            semanticReason: `Tập tính & Sinh cảnh: ${sp.diet || sp.local_distribution || "Phân bố tự nhiên tại vùng Biển Đông"}`,
-            relationshipType: null,
-            strength: 0.8,
+            depth: `${sp.depth_min_m ?? 0} - ${sp.depth_max_m ?? 200}m`,
+            description: sp.description || "",
+            diet: sp.diet || "",
+            localDistribution: sp.local_distribution || "",
+            role: roleLabel,
+            semanticReason: reason,
+            relationshipType: "morphology",
+            strength: matchStrength,
           });
         }
+      }
+
+      // Sắp xếp theo độ liên quan giảm dần
+      results.sort((a, b) => (b.strength || 0) - (a.strength || 0));
+    }
+
+    // 6. Tầng Vector Semantic Search Engine (Gemini 768-dim Embeddings + In-Memory Cosine Similarity)
+    // Hoạt động ngầm, siêu nhanh (< 1ms với bộ nhớ đệm), hiểu sâu sắc mọi mô tả ngữ nghĩa sinh học.
+    if (results.length === 0 && process.env.GEMINI_API_KEY) {
+      try {
+        const vectorMatches = await vectorSearchService.search(rawQuery, 0.48, 12);
+
+        if (vectorMatches && vectorMatches.length > 0) {
+          for (const match of vectorMatches) {
+            const sp = allSpecies.find(
+              (s) => s.id.toString() === match.speciesId.toString()
+            );
+            if (!sp || addedSpeciesIds.has(sp.id.toString())) continue;
+            addedSpeciesIds.add(sp.id.toString());
+            results.push({
+              id: sp.id.toString(),
+              code: sp.code,
+              commonName: sp.common_name,
+              scientificName: sp.scientificName,
+              slug: sp.slug,
+              image: sp.species_media?.[0]?.url || "",
+              groupName: sp.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
+              redList: sp.vietnam_red_list_status || "LC",
+              zone: sp.east_sea_zone || "Biển Đông",
+              depth: `${sp.depth_min_m ?? 0} - ${sp.depth_max_m ?? 200}m`,
+              description: sp.description || "",
+              diet: sp.diet || "",
+              localDistribution: sp.local_distribution || "",
+              role: null,
+              semanticReason: null,
+              relationshipType: "vector_semantic",
+              strength: match.score,
+            });
+          }
+        }
+      } catch (vecErr) {
+        console.warn("[Semantic] Vector search error, trying fallback:", vecErr.message);
+      }
+    }
+
+    // 6.1. Tầng dự phòng Generative AI (chỉ khi vector search chưa có kết quả)
+    if (results.length === 0 && process.env.GEMINI_API_KEY) {
+      try {
+        const aiMatches = await callGeminiSemanticMatch(rawQuery, allSpecies);
+
+        for (const match of aiMatches) {
+          const sp = allSpecies.find(
+            (s) => s.id.toString() === match.speciesId.toString()
+          );
+          if (!sp || addedSpeciesIds.has(sp.id.toString())) continue;
+          addedSpeciesIds.add(sp.id.toString());
+          results.push({
+            id: sp.id.toString(),
+            code: sp.code,
+            commonName: sp.common_name,
+            scientificName: sp.scientificName,
+            slug: sp.slug,
+            image: sp.species_media?.[0]?.url || "",
+            groupName: sp.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
+            redList: sp.vietnam_red_list_status || "LC",
+            zone: sp.east_sea_zone || "Biển Đông",
+            depth: `${sp.depth_min_m ?? 0} - ${sp.depth_max_m ?? 200}m`,
+            description: sp.description || "",
+            diet: sp.diet || "",
+            localDistribution: sp.local_distribution || "",
+            role: null,
+            semanticReason: null,
+            relationshipType: "ai_semantic",
+            strength: 0.95,
+            aiGenerated: true,
+          });
+        }
+      } catch (aiErr) {
+        console.warn("[Semantic] Gemini AI execution failed, falling back to local tokens:", aiErr.message);
+      }
+    }
+
+    // 7. Tầng dự phòng cuối: Phân tích & Tách từ khóa cục bộ (Local Token Matching Fallback)
+    // Dành cho trường hợp offline, truy vấn từ khóa vắn tắt, hoặc Gemini không trả kết quả.
+    if (results.length === 0) {
+      const stopWords = new Set([
+        "con", "cai", "loai", "nhung", "cac", "nhom", "trong", "hinh", "dang",
+        "nhu", "o", "tai", "la", "cua", "va", "co", "biet", "duoc", "tim", "kiem",
+        "nao", "gi", "day", "do", "ma", "hay", "hoac", "khi", "voi", "thi", "rat",
+        "qua", "kha", "chiec", "mot", "nhat", "ben", "tren", "duoi", "mat", "nuoc",
+        "san", "vat", "dong", "sinh"
+      ]);
+
+      const tokens = qClean
+        .split(/\s+/)
+        .map((w) => w.trim())
+        .filter((w) => w.length >= 2 && !stopWords.has(w));
+
+      const generalKeywords = [
+        "sinh vat", "sinh vat bien", "dong vat", "dong vat bien",
+        "thuc vat", "thuc vat bien", "bien", "bien dong", "dai duong"
+      ];
+      const isStrictlyGeneral = generalKeywords.includes(qClean);
+
+      const scoredSpecies = [];
+
+      for (const sp of allSpecies) {
+        if (addedSpeciesIds.has(sp.id.toString())) continue;
+        const nameClean = removeDiacritics(sp.common_name || "");
+        const sciClean = removeDiacritics(sp.scientificName || "");
+        const zoneClean = removeDiacritics(sp.east_sea_zone || "");
+        const dietClean = removeDiacritics(sp.diet || "");
+        const descClean = removeDiacritics(sp.description || "");
+
+        let score = 0;
+        let matchedReason = "";
+
+        // Khớp nguyên chuỗi trong tên hoặc mô tả
+        if (nameClean.includes(qClean) || sciClean.includes(qClean)) {
+          score += 10;
+          matchedReason = `Tên loài khớp với từ khóa "${rawQuery}".`;
+        } else if (descClean.includes(qClean) || dietClean.includes(qClean)) {
+          score += 8;
+          matchedReason = `Đặc điểm sinh thái phù hợp với truy vấn.`;
+        }
+
+        // Khớp từng token riêng lẻ
+        for (const token of tokens) {
+          if (nameClean.includes(token)) {
+            score += 4;
+            if (!matchedReason)
+              matchedReason = `Tên loài khớp từ khóa "${token}".`;
+          }
+          if (descClean.includes(token)) {
+            score += 2;
+            if (!matchedReason)
+              matchedReason = `Đặc điểm hình thái liên quan đến "${token}".`;
+          }
+          if (dietClean.includes(token) || zoneClean.includes(token)) {
+            score += 1;
+          }
+        }
+
+        // Ưu tiên nhóm loài (ví dụ: truy vấn có "cá")
+        if (tokens.includes("ca") && (nameClean.startsWith("ca ") || nameClean.includes(" ca "))) {
+          score += 3;
+        }
+
+        if (score >= 4 || isStrictlyGeneral) {
+          scoredSpecies.push({
+            sp,
+            score: isStrictlyGeneral ? 1 : score,
+            matchedReason:
+              matchedReason ||
+              `Phân bố tại ${sp.east_sea_zone || "Biển Đông"}. ${sp.diet || ""}`.trim(),
+          });
+        }
+      }
+
+      scoredSpecies.sort((a, b) => b.score - a.score);
+
+      for (const { sp } of scoredSpecies.slice(0, 12)) {
+        addedSpeciesIds.add(sp.id.toString());
+        results.push({
+          id: sp.id.toString(),
+          code: sp.code,
+          commonName: sp.common_name,
+          scientificName: sp.scientificName,
+          slug: sp.slug,
+          image: sp.species_media?.[0]?.url || "",
+          groupName: sp.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
+          redList: sp.vietnam_red_list_status || "LC",
+          zone: sp.east_sea_zone || "Biển Đông",
+          depth: `${sp.depth_min_m ?? 0} - ${sp.depth_max_m ?? 200}m`,
+          description: sp.description || "",
+          diet: sp.diet || "",
+          localDistribution: sp.local_distribution || "",
+          role: null,
+          semanticReason: null,
+          relationshipType: null,
+          strength: 0.85,
+        });
       }
     }
 

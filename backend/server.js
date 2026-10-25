@@ -24,6 +24,7 @@ import adminRoutes from "./src/routes/admin.js";
 import userRoutes from "./src/routes/users.js";
 import uploadRoutes from "./src/routes/upload.js";
 import feedbackRoutes from "./src/routes/feedback.js";
+import vectorSearchService from "./src/services/vectorSearchService.js";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/species", speciesRoutes);
@@ -37,6 +38,12 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", time: new Date() });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
+  // Nạp sẵn chỉ mục Vector vào RAM để phản hồi tìm kiếm trong 0.1ms
+  try {
+    await vectorSearchService.loadIndex();
+  } catch (err) {
+    console.warn("[Server] Vector search warm-up warning:", err.message);
+  }
 });

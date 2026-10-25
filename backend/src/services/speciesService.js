@@ -8,6 +8,7 @@ import prisma from "../lib/prisma.js";
 import axios from "axios";
 import taxonomyService from "./taxonomyService.js";
 import apiProviderService from "./apiProviderService.js";
+import vectorSearchService from "./vectorSearchService.js";
 
 /**
  * SpeciesService - Tầng xử lý nghiệp vụ cho Sinh vật
@@ -247,7 +248,14 @@ export class SpeciesService {
       await prisma.species_media.createMany({ data: mediaRecords });
     }
 
-    return speciesRepository.findById(newSpecies.id);
+    const created = await speciesRepository.findById(newSpecies.id);
+
+    // Tự động sinh vector ngữ nghĩa cho loài mới trong nền (không chặn API phản hồi)
+    vectorSearchService.syncSingleSpeciesEmbedding(newSpecies.id).catch((err) =>
+      console.warn("[VectorSearch] Auto sync on createSpecies failed:", err.message)
+    );
+
+    return created;
   }
 
   /**
@@ -356,7 +364,14 @@ export class SpeciesService {
       }
     }
 
-    return speciesRepository.findById(id);
+    const finalRecord = await speciesRepository.findById(id);
+
+    // Tự động cập nhật vector ngữ nghĩa cho loài được chỉnh sửa trong nền
+    vectorSearchService.syncSingleSpeciesEmbedding(id).catch((err) =>
+      console.warn("[VectorSearch] Auto sync on updateSpecies failed:", err.message)
+    );
+
+    return finalRecord;
   }
 
   /**
@@ -372,7 +387,14 @@ export class SpeciesService {
    */
   async deleteSpecies(id) {
     await this.getSpeciesById(id);
-    return speciesRepository.softDelete(id);
+    const result = await speciesRepository.softDelete(id);
+
+    // Tự động gỡ bỏ vector của loài đã xóa trong nền
+    vectorSearchService.removeSpeciesEmbedding(id).catch((err) =>
+      console.warn("[VectorSearch] Auto remove on deleteSpecies failed:", err.message)
+    );
+
+    return result;
   }
 
   /**
