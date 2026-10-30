@@ -178,7 +178,7 @@ class AdminLocationsController {
         return res.status(400).json({ success: false, error: "Tên địa điểm không được để trống" });
       }
 
-      // Auto-generate slug if not provided
+      // Tự sinh slug nếu chưa có
       const finalSlug = slug?.trim()
         || name.trim().toLowerCase()
             .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -186,7 +186,7 @@ class AdminLocationsController {
             .replace(/\s+/g, "-")
             .replace(/-+/g, "-");
 
-      // Check slug uniqueness
+      // Kiểm tra trùng lặp slug
       const existing = await prisma.locations.findUnique({ where: { slug: finalSlug } });
       if (existing) {
         return res.status(400).json({ success: false, error: `Slug "${finalSlug}" đã tồn tại` });
@@ -317,7 +317,7 @@ class AdminLocationsController {
 
   /**
    * DELETE /api/admin/locations/:id
-   * Xóa địa điểm (hard delete - sẽ cascade xóa species_locations và user_explored_locations)
+   * Xóa địa điểm
    */
   async deleteLocation(req, res) {
     try {

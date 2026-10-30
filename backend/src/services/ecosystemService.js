@@ -86,7 +86,7 @@ Trả về mảng JSON đúng cấu trúc:
 
 /**
  * ecosystemService.js
- * Dịch vụ xử lý Hệ tri thức & Đồ thị Sinh thái Biển Đông (Knowledge Graph & Trophic Network)
+ * Dịch vụ đồ thị sinh thái Biển Đông
  */
 
 // Định nghĩa nhãn & màu sắc trực quan cho các loại quan hệ sinh thái
@@ -165,7 +165,7 @@ const removeDiacritics = (str = "") => {
 
 class EcosystemService {
   /**
-   * Lấy toàn bộ hoặc một phần Đồ thị Tri thức (Knowledge Graph) phục vụ ECharts / D3.js
+   * Lấy dữ liệu đồ thị sinh thái
    */
   async getKnowledgeGraph(filters = {}) {
     const { zone, groupId, redList, limit = 100 } = filters;
@@ -304,10 +304,10 @@ class EcosystemService {
   }
 
   /**
-   * Lấy hệ sinh thái & quan hệ mạng lưới của một loài cụ thể (Ego Network)
+   * Lấy hệ sinh thái và mạng lưới quan hệ của loài
    */
   async getSpeciesEcosystem(idOrSlug) {
-    // 1. Tìm thông tin loài (hỗ trợ alias từ mockup / tiếng Anh)
+    // Tìm thông tin loài
     const SLUG_ALIASES = {
       "giant-octopus-3": "bach-tuoc-khong-lo",
       octopus: "bach-tuoc-khong-lo",
@@ -356,7 +356,7 @@ class EcosystemService {
       return { success: false, message: "Không tìm thấy loài sinh vật" };
     }
 
-    // 2. Tìm tất cả quan hệ xuất phát (outgoing) và hướng đến (incoming)
+    // Tìm tất cả quan hệ hai chiều của loài
     const [outgoing, incoming] = await Promise.all([
       prisma.species_relationships.findMany({
         where: { source_species_id: species.id },
@@ -565,7 +565,7 @@ class EcosystemService {
   }
 
   /**
-   * ─── 4. BỘ MÁY TÌM KIẾM NGỮ NGHĨA (SEMANTIC SEARCH ENGINE) ─────────────
+   * Tìm kiếm ngữ nghĩa
    * Nhận diện ngôn ngữ tự nhiên về chuỗi thức ăn, quan hệ sinh học và phân vùng Biển Đông
    */
   async searchSemantic(rawQuery) {
@@ -590,7 +590,7 @@ class EcosystemService {
     const q = rawQuery.trim().toLowerCase();
     const qClean = removeDiacritics(q);
 
-    // 1. Phân tích ngữ nghĩa (Intent Detection)
+    // Phân tích ý định tìm kiếm
     let relType = null;
     let isLookingForPredator = false;
     let isLookingForPrey = false;
@@ -638,7 +638,7 @@ class EcosystemService {
       relType = "parasitism";
     }
 
-    // Nhận diện Sách Đỏ với regex từ nguyên vẹn (ưu tiên kiểm tra cụm dài trước)
+    // Nhận diện tình trạng sách đỏ
     let redListStatus = null;
     const isRedListExplicit =
       qClean.includes("sach do") ||
@@ -690,60 +690,6 @@ class EcosystemService {
       }
     }
 
-    // Nhận diện đặc điểm hình thái & tập tính (Morphology & Behavior Traits)
-    let traitQuery = null;
-    let traitLabel = null;
-    if (
-      qClean.includes("hinh tron") ||
-      qClean.includes("tron") ||
-      qClean.includes("dia tron") ||
-      qClean.includes("hinh dia") ||
-      qClean.includes("dia")
-    ) {
-      traitQuery = "round_shape";
-      traitLabel = "Thân hình tròn / Dạng đĩa";
-    } else if (
-      qClean.includes("co gai") ||
-      qClean.includes("nhieu gai") ||
-      qClean.includes("gai goc")
-    ) {
-      traitQuery = "spines";
-      traitLabel = "Thân có gai nhọn";
-    } else if (
-      qClean.includes("phat quang") ||
-      qClean.includes("phat sang") ||
-      qClean.includes("chieu sang")
-    ) {
-      traitQuery = "bioluminescent";
-      traitLabel = "Phát quang sinh học";
-    } else if (
-      qClean.includes("noc doc") ||
-      qClean.includes("co doc") ||
-      qClean.includes("nguy hiem nhat")
-    ) {
-      traitQuery = "venomous";
-      traitLabel = "Có nọc độc / Nguy hiểm";
-    } else if (
-      qClean.includes("nguy trang") ||
-      qClean.includes("bien mau") ||
-      qClean.includes("doi mau")
-    ) {
-      traitQuery = "camouflage";
-      traitLabel = "Ngụy trang ẩn mình";
-    } else if (
-      qClean.includes("to nhat") ||
-      qClean.includes("lon nhat") ||
-      qClean.includes("khong lo")
-    ) {
-      traitQuery = "giant";
-      traitLabel = "Kích thước khổng lồ";
-    } else if (
-      qClean.includes("hinh bua") ||
-      qClean.includes("dau bua")
-    ) {
-      traitQuery = "hammer_head";
-      traitLabel = "Đầu hình búa";
-    }
 
     // 2. Lấy toàn bộ sinh vật để đối chiếu tên & thực thể
     const allSpecies = await prisma.species.findMany({
@@ -774,7 +720,7 @@ class EcosystemService {
       },
     });
 
-    // Nhận diện loài ưu tiên tên dài nhất (tránh "cá mập trắng lớn" bị khớp nhầm "cá mập")
+    // Nhận diện tên loài theo độ dài ưu tiên
     let targetFocusSpecies = null;
     let bestLen = 0;
     for (const sp of allSpecies) {
@@ -822,7 +768,7 @@ class EcosystemService {
     const results = [];
     const addedSpeciesIds = new Set();
 
-    // 3. Nếu người dùng hỏi về quan hệ của 1 loài cụ thể (e.g. "thiên địch của sao biển gai", "cộng sinh với hải quỳ")
+    // Xử lý khi truy vấn quan hệ của một loài cụ thể
     if (targetFocusSpecies) {
       const directionCondition =
         relType === "predator_prey" && isLookingForPredator
@@ -911,7 +857,7 @@ class EcosystemService {
       }
     }
 
-    // 4. Nếu hỏi theo loại quan hệ tổng quát VÀ chưa có loài cụ thể (ví dụ: "loài ăn cỏ biển", "sinh vật tạo nơi ở")
+    // Xử lý khi hỏi theo loại quan hệ tổng quát
     if (relType && !targetFocusSpecies) {
       const typeRels = await prisma.species_relationships.findMany({
         where: { relationship_type: relType },
@@ -1012,134 +958,10 @@ class EcosystemService {
       }
     }
 
-    // 5.1 Khớp theo đặc điểm hình thái & tập tính (Morphology & Behavior Traits)
-    if (traitQuery) {
-      for (const sp of allSpecies) {
-        if (addedSpeciesIds.has(sp.id.toString())) continue;
-        const nameClean = removeDiacritics(sp.common_name || "");
-        const sciClean = removeDiacritics(sp.scientificName || "");
 
-        let roleLabel = traitLabel || "Đặc điểm sinh thái";
-        let reason = "";
 
-        let matchStrength = 0.85;
-
-        if (traitQuery === "round_shape") {
-          if (nameClean.includes("mat trang") || sciClean.includes("mola")) {
-            roleLabel = "Thân tròn dẹt";
-            matchStrength = 1.0; // Ưu tiên số 1 cho cá hình tròn
-            reason =
-              "Thân hình tròn dẹt đặc trưng như chiếc đĩa khổng lồ, thường bơi phơi mình dưới ánh nắng tầng mặt.";
-          } else if (
-            nameClean.includes("san ho nao") ||
-            sciClean.includes("platygyra")
-          ) {
-            roleLabel = "Khối bán cầu tròn";
-            matchStrength = 0.9;
-            reason =
-              "Cấu trúc tạo rạn hình khối bán cầu tròn gồ ghề các rãnh cuộn như bộ não.";
-          } else if (
-            nameClean.includes("ca he ") ||
-            sciClean.includes("amphiprion")
-          ) {
-            roleLabel = "Thân bầu dục tròn";
-            matchStrength = 0.8;
-            reason =
-              "Thân hình bầu dục tròn dẹt hai bên, bơi luồn lách uyển chuyển quanh hải quỳ.";
-          }
-        } else if (traitQuery === "spines") {
-          if (nameClean.includes("sao bien gai")) {
-            roleLabel = "Gai nhọn độc";
-            matchStrength = 1.0;
-            reason = "Thân bao phủ hàng trăm gai nhọn chứa độc tố saponin.";
-          } else if (nameClean.includes("ngua gai")) {
-            roleLabel = "Gai xương ngụy trang";
-            matchStrength = 0.95;
-            reason =
-              "Thân phủ các gai xương nhọn giúp ngụy trang hoàn hảo giữa nhánh san hô.";
-          }
-        } else if (traitQuery === "bioluminescent") {
-          if (nameClean.includes("phu du")) {
-            roleLabel = "Phát quang sinh học";
-            matchStrength = 1.0;
-            reason =
-              "Chứa tảo phát quang Dinoflagellates phát ra ánh sáng dạ quang xanh biếc ban đêm.";
-          }
-        } else if (traitQuery === "venomous") {
-          if (nameClean.includes("ran bien")) {
-            roleLabel = "Nọc độc thần kinh";
-            matchStrength = 1.0;
-            reason =
-              "Nọc độc Myotoxin & Neurotoxin cực mạnh, độc hại gấp nhiều lần rắn hổ đất.";
-          } else if (nameClean.includes("sao bien gai")) {
-            roleLabel = "Gai độc";
-            matchStrength = 0.9;
-            reason =
-              "Gai nhọn chứa độc tố saponin gây viêm tấy nặng khi đâm phải.";
-          }
-        } else if (traitQuery === "camouflage") {
-          if (nameClean.includes("bach tuoc")) {
-            roleLabel = "Bậc thầy ngụy trang";
-            matchStrength = 1.0;
-            reason =
-              "Thay đổi sắc tố màu và vân da tức thời để hòa lẫn vào san hô và đá biển.";
-          } else if (nameClean.includes("ngua gai")) {
-            roleLabel = "Ngụy trang san hô";
-            matchStrength = 0.9;
-            reason =
-              "Gai nhọn và màu sắc tiệp với cành san hô để trốn kẻ thù.";
-          } else if (nameClean.includes("cua huynh de")) {
-            roleLabel = "Vùi cát ẩn mình";
-            matchStrength = 0.85;
-            reason =
-              "Ẩn nấp hoàn toàn dưới lớp cát mịn đáy biển để rình bắt mồi.";
-          }
-        } else if (traitQuery === "giant") {
-          if (nameClean.includes("voi") || nameClean.includes("khong lo")) {
-            roleLabel = "Kích thước khổng lồ";
-            matchStrength = 0.95;
-            reason =
-              "Loài sinh vật đạt kích thước và trọng lượng kỷ lục trong hệ sinh thái Biển Đông.";
-          }
-        } else if (traitQuery === "hammer_head") {
-          if (nameClean.includes("nham bua")) {
-            roleLabel = "Đầu hình búa";
-            matchStrength = 1.0;
-            reason =
-              "Đầu búa dẹt chứa hệ thống cảm biến thụ thể điện từ siêu nhạy để dò tìm con mồi.";
-          }
-        }
-
-        if (reason) {
-          addedSpeciesIds.add(sp.id.toString());
-          results.push({
-            id: sp.id.toString(),
-            code: sp.code,
-            commonName: sp.common_name,
-            scientificName: sp.scientificName,
-            slug: sp.slug,
-            image: sp.species_media?.[0]?.url || "",
-            groupName: sp.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
-            redList: sp.vietnam_red_list_status || "LC",
-            zone: sp.east_sea_zone || "Biển Đông",
-            depth: `${sp.depth_min_m ?? 0} - ${sp.depth_max_m ?? 200}m`,
-            description: sp.description || "",
-            diet: sp.diet || "",
-            localDistribution: sp.local_distribution || "",
-            role: roleLabel,
-            semanticReason: reason,
-            relationshipType: "morphology",
-            strength: matchStrength,
-          });
-        }
-      }
-
-      // Sắp xếp theo độ liên quan giảm dần
-      results.sort((a, b) => (b.strength || 0) - (a.strength || 0));
-    }
-
-    // 6. Tầng Vector Semantic Search Engine (Gemini 768-dim Embeddings + In-Memory Cosine Similarity)
-    // Hoạt động ngầm, siêu nhanh (< 1ms với bộ nhớ đệm), hiểu sâu sắc mọi mô tả ngữ nghĩa sinh học.
+    // Tìm kiếm ngữ nghĩa theo vector
+    // Tìm kiếm theo độ tương đồng ngữ nghĩa trong bộ nhớ
     if (results.length === 0 && process.env.GEMINI_API_KEY) {
       try {
         const vectorMatches = await vectorSearchService.search(rawQuery, 0.48, 12);
@@ -1177,7 +999,7 @@ class EcosystemService {
       }
     }
 
-    // 6.1. Tầng dự phòng Generative AI (chỉ khi vector search chưa có kết quả)
+    // Dự phòng tìm kiếm bằng mô hình sinh
     if (results.length === 0 && process.env.GEMINI_API_KEY) {
       try {
         const aiMatches = await callGeminiSemanticMatch(rawQuery, allSpecies);
@@ -1214,7 +1036,7 @@ class EcosystemService {
       }
     }
 
-    // 7. Tầng dự phòng cuối: Phân tích & Tách từ khóa cục bộ (Local Token Matching Fallback)
+    // Dự phòng so khớp từ khóa cục bộ
     // Dành cho trường hợp offline, truy vấn từ khóa vắn tắt, hoặc Gemini không trả kết quả.
     if (results.length === 0) {
       const stopWords = new Set([
@@ -1275,7 +1097,7 @@ class EcosystemService {
           }
         }
 
-        // Ưu tiên nhóm loài (ví dụ: truy vấn có "cá")
+        // Ưu tiên theo nhóm loài
         if (tokens.includes("ca") && (nameClean.startsWith("ca ") || nameClean.includes(" ca "))) {
           score += 3;
         }
@@ -1342,7 +1164,7 @@ class EcosystemService {
   }
 
   /**
-   * ─── 5. QUẢN TRỊ MỐI QUAN HỆ SINH THÁI (ADMIN RELATIONSHIP CMS) ───────────
+   * Quản lý mối quan hệ sinh thái
    */
   async getAdminRelationships(params = {}) {
     const { page = 1, limit = 15, search = "", type = "" } = params;

@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma.js";
 
-// Helper: tính số ngày tham gia
+// Tính số ngày tham gia
 const calculateMemberDays = (createdAt) => {
   const diffTime = Math.abs(Date.now() - new Date(createdAt).getTime());
   return Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
@@ -9,7 +9,7 @@ const calculateMemberDays = (createdAt) => {
 
 /**
  * GET /api/users/me
- * Lấy toàn bộ thông tin cá nhân của người dùng hiện tại (Private)
+ * Lấy thông tin cá nhân của người dùng hiện tại
  */
 export const getMyProfile = async (req, res) => {
   try {
@@ -53,7 +53,7 @@ export const updateMyProfile = async (req, res) => {
     const userId = BigInt(req.user.userId);
     const { fullName, bio, phoneNumber, dateOfBirth, avatar } = req.body;
 
-    // Validate fullName nếu có gửi lên
+    // Kiểm tra họ tên
     if (fullName !== undefined) {
       if (typeof fullName !== "string" || fullName.trim().length < 2 || fullName.trim().length > 50) {
         return res.status(400).json({
@@ -63,7 +63,7 @@ export const updateMyProfile = async (req, res) => {
       }
     }
 
-    // Validate bio
+    // Kiểm tra tiểu sử
     if (bio !== undefined && typeof bio === "string" && bio.length > 500) {
       return res.status(400).json({
         success: false,
@@ -71,18 +71,18 @@ export const updateMyProfile = async (req, res) => {
       });
     }
 
-    // Validate phone VN format nếu có nhập
+    // Kiểm tra định dạng số điện thoại
     if (phoneNumber) {
       const phoneRegex = /^(\+84|0)[0-9]{9,10}$/;
       if (!phoneRegex.test(phoneNumber.trim())) {
         return res.status(400).json({
           success: false,
-          error: "Số điện thoại không đúng định dạng (Ví dụ: 0912345678 hoặc +84912345678)",
+          error: "Số điện thoại không đúng định dạng",
         });
       }
     }
 
-    // Validate dateOfBirth (age >= 10)
+    // Kiểm tra độ tuổi tối thiểu 10
     let parsedDob = null;
     if (dateOfBirth) {
       const dobDate = new Date(dateOfBirth);
@@ -132,7 +132,7 @@ export const updateMyProfile = async (req, res) => {
 
 /**
  * PUT /api/users/me/email
- * Thay đổi email (Yêu cầu mật khẩu hiện tại)
+ * Thay đổi email
  */
 export const changeEmail = async (req, res) => {
   try {
@@ -324,7 +324,7 @@ export const getMyStats = async (req, res) => {
 
 /**
  * GET /api/users/me/favorites
- * Danh sách sinh vật yêu thích cá nhân có phân trang
+ * Danh sách sinh vật yêu thích có phân trang
  */
 export const getMyFavorites = async (req, res) => {
   try {
@@ -389,7 +389,7 @@ export const getMyFavorites = async (req, res) => {
 
 /**
  * GET /api/users/me/explored
- * Danh sách địa điểm đã khám phá cá nhân có phân trang
+ * Danh sách địa điểm đã khám phá có phân trang
  */
 export const getMyExplored = async (req, res) => {
   try {
@@ -438,7 +438,7 @@ export const getMyExplored = async (req, res) => {
 
 /**
  * GET /api/users/:username
- * Hồ sơ công khai cho cộng đồng (CHỈ HIỂN THỊ THÔNG TIN PUBLIC, ẨN HOÀN TOÀN FULLNAME, EMAIL, SĐT, NGÀY SINH)
+ * Lấy hồ sơ công khai của người dùng
  */
 export const getPublicProfile = async (req, res) => {
   try {
@@ -471,7 +471,7 @@ export const getPublicProfile = async (req, res) => {
 
     const memberDays = calculateMemberDays(user.created_at);
 
-    // Lấy top 8 sinh vật yêu thích công khai
+    // Lấy sinh vật yêu thích công khai
     const topFavorites = await prisma.favorites.findMany({
       where: { user_id: user.id },
       take: 8,

@@ -209,7 +209,7 @@ export class ApiProviderService {
   }
 
   /**
-   * Add a new API provider (Catalog preset or Custom REST endpoint)
+   * Thêm nguồn API mới
    */
   async addProvider(dto) {
     const { name, desc, endpoint, category, apiKey, headers, isEnabled = true } = dto;
@@ -257,7 +257,7 @@ export class ApiProviderService {
   }
 
   /**
-   * Update an existing API provider (Toggle enable/disable, edit details)
+   * Cập nhật thông tin nguồn API
    */
   async updateProvider(id, dto) {
     const providers = await this.getRawProviders();

@@ -19,7 +19,7 @@ const router = Router();
 router.use(checkAdmin);
 
 /**
- * ── 0. THÔNG BÁO ADMIN (NOTIFICATIONS) ──
+ * Thông báo admin
  */
 router.get("/notifications", (req, res) => adminController.getNotifications(req, res));
 
@@ -49,13 +49,13 @@ router.post("/species/sync-item/:id", (req, res) => speciesAdminController.retry
 // POST /api/admin/species/sync-all - Đồng bộ tất cả sinh vật lỗi
 router.post("/species/sync-all", (req, res) => speciesAdminController.syncAllIncomplete(req, res));
 
-// POST /api/admin/species/sync - Đồng bộ tự động từ API ngoài (Phải đặt trước /:id)
+// POST /api/admin/species/sync - Đồng bộ tự động từ API ngoài
 router.post("/species/sync", (req, res) => speciesAdminController.syncFromExternalAPI(req, res));
 
 // GET /api/admin/species/:id - Chi tiết 1 sinh vật
 router.get("/species/:id", (req, res) => speciesAdminController.getSpeciesById(req, res));
 
-// POST /api/admin/species - Thêm sinh vật mới (Mã FISH-XXXX tự sinh)
+// POST /api/admin/species - Thêm sinh vật mới
 router.post("/species", (req, res) => speciesAdminController.createSpecies(req, res));
 
 // PUT /api/admin/species/:id - Cập nhật thông tin sinh vật
@@ -64,7 +64,7 @@ router.put("/species/:id", (req, res) => speciesAdminController.updateSpecies(re
 // PATCH /api/admin/species/:id/visibility - Bật / tắt ẩn hiển thị
 router.patch("/species/:id/visibility", (req, res) => speciesAdminController.toggleVisibility(req, res));
 
-// DELETE /api/admin/species/:id - Xóa mềm (soft delete)
+// DELETE /api/admin/species/:id - Xóa mềm
 router.delete("/species/:id", (req, res) => speciesAdminController.deleteSpecies(req, res));
 
 /**
@@ -79,7 +79,7 @@ router.post("/species-groups", (req, res) => speciesGroupsAdminController.create
 // PUT /api/admin/species-groups/:id - Cập nhật nhóm sinh vật
 router.put("/species-groups/:id", (req, res) => speciesGroupsAdminController.updateSpeciesGroup(req, res));
 
-// DELETE /api/admin/species-groups/:id - Xóa nhóm sinh vật (gỡ liên kết sinh vật)
+// DELETE /api/admin/species-groups/:id - Xóa nhóm sinh vật
 router.delete("/species-groups/:id", (req, res) => speciesGroupsAdminController.deleteSpeciesGroup(req, res));
 
 // POST /api/admin/species-groups/:id/species - Gán hàng loạt sinh vật vào nhóm
@@ -92,7 +92,7 @@ router.delete("/species-groups/:id/species/:speciesId", (req, res) => speciesGro
 router.get("/species-groups/:id/species", (req, res) => speciesGroupsAdminController.getGroupSpecies(req, res));
 
 /**
- * ── 3.5. QUẢN LÝ QUAN HỆ SINH THÁI (SPECIES RELATIONSHIPS CMS) ──
+ * Quản lý quan hệ sinh thái
  */
 // GET /api/admin/relationships - Danh sách quan hệ kèm tìm kiếm & lọc
 router.get("/relationships", (req, res) => adminRelationshipsController.getRelationships(req, res));
@@ -108,7 +108,7 @@ router.delete("/relationships/:id", (req, res) => adminRelationshipsController.d
 
 
 /**
- * ── 4. HỒ SƠ ADMIN (ADMIN PROFILE) ──
+ * Hồ sơ admin
  */
 // GET /api/admin/me - Lấy thông tin admin
 router.get("/me", (req, res) => adminProfileController.getAdminProfile(req, res));
@@ -135,7 +135,7 @@ router.post("/me/change-password", (req, res) => adminProfileController.changeAd
 router.put("/me/settings", (req, res) => adminProfileController.updateAdminSettings(req, res));
 
 /**
- * ── 5. QUẢN LÝ NGUỒN API ĐỒNG BỘ (API PROVIDERS HUB) ──
+ * Quản lý nguồn API đồng bộ
  */
 // GET /api/admin/api-providers - Danh sách tất cả API Providers
 router.get("/api-providers", (req, res) => apiProviderController.getProviders(req, res));
@@ -164,13 +164,13 @@ router.get("/users/:id", (req, res) => adminUserController.getUserById(req, res)
 // GET /api/admin/users/:id/activity - Lịch sử hoạt động của 1 người dùng
 router.get("/users/:id/activity", (req, res) => adminUserController.getUserActivity(req, res));
 
-// PATCH /api/admin/users/:id/status - Cập nhật trạng thái (active/locked/pending)
+// PATCH /api/admin/users/:id/status - Cập nhật trạng thái
 router.patch("/users/:id/status", (req, res) => adminUserController.updateUserStatus(req, res));
 
-// PATCH /api/admin/users/:id/role - Cập nhật vai trò (user/admin)
+// PATCH /api/admin/users/:id/role - Cập nhật vai trò
 router.patch("/users/:id/role", (req, res) => adminUserController.updateUserRole(req, res));
 
-// POST /api/admin/users/:id/reset-password - Đặt lại mật khẩu (admin)
+// POST /api/admin/users/:id/reset-password - Đặt lại mật khẩu
 router.post("/users/:id/reset-password", (req, res) => adminUserController.resetUserPassword(req, res));
 
 /**
@@ -206,7 +206,7 @@ router.delete("/comments/:id", (req, res) => adminCommentsController.deleteComme
 // PATCH /api/admin/comments/:id/restore - Khôi phục bình luận
 router.patch("/comments/:id/restore", (req, res) => adminCommentsController.restoreComment(req, res));
 
-// POST /api/admin/comments/:id/reports/dismiss - Bác bỏ báo cáo (Giữ bình luận)
+// POST /api/admin/comments/:id/reports/dismiss - Bác bỏ báo cáo
 router.post("/comments/:id/reports/dismiss", (req, res) => adminCommentsController.dismissReports(req, res));
 
 // PATCH /api/admin/comments/:id/toggle-hide - Tạm ẩn hoặc hiển thị lại
@@ -216,7 +216,7 @@ router.patch("/comments/:id/toggle-hide", (req, res) => adminCommentsController.
 router.delete("/comments/:id/permanent", (req, res) => adminCommentsController.permanentDeleteComment(req, res));
 
 /**
- * ── 9. THIẾT LẬP HỆ THỐNG (SYSTEM SETTINGS) ──
+ * Thiết lập hệ thống
  */
 // GET /api/admin/settings - Lấy cấu hình hệ thống
 router.get("/settings", (req, res) => adminSettingsController.getSettings(req, res));
@@ -225,7 +225,7 @@ router.get("/settings", (req, res) => adminSettingsController.getSettings(req, r
 router.put("/settings", (req, res) => adminSettingsController.updateSettings(req, res));
 
 /**
- * ── 10. NGÂN HÀNG CÂU HỎI TRẮC NGHIỆM (OCEAN QUIZ) ──
+ * Ngân hàng câu hỏi trắc nghiệm
  */
 // GET /api/admin/quiz - Lấy danh sách câu hỏi kèm lọc, tìm kiếm, phân trang
 router.get("/quiz", (req, res) => adminQuizController.getQuizList(req, res));
@@ -243,7 +243,7 @@ router.delete("/quiz/:id", (req, res) => adminQuizController.deleteQuestion(req,
 router.patch("/quiz/:id/toggle", (req, res) => adminQuizController.toggleQuestion(req, res));
 
 /**
- * ── 11. QUẢN LÝ Ý KIẾN ĐÓNG GÓP (SITE REVIEWS / FEEDBACK) ──
+ * Quản lý ý kiến đóng góp
  */
 // GET /api/admin/feedback - Lấy danh sách ý kiến đóng góp kèm tìm kiếm, lọc, phân trang
 router.get("/feedback", (req, res) => adminFeedbackController.getFeedbackList(req, res));

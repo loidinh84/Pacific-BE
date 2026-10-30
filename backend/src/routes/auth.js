@@ -81,7 +81,7 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Địa chỉ email này đã được sử dụng!" });
     }
 
-// Helper chuyển đổi tên Tiếng Việt có dấu thành Username sạch không dấu (VD: "Đinh Thành Lợi" -> "dinhthanhloi")
+// Chuyển đổi họ tên tiếng Việt thành username không dấu
 function slugifyVietnamese(str) {
   if (!str) return "";
   return str
@@ -157,7 +157,7 @@ function slugifyVietnamese(str) {
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
     );
 
-    // Gửi email chào mừng/xác nhận chạy ngầm (không await để phản hồi cực nhanh)
+    // Gửi email chào mừng chạy ngầm
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const verifyUrl = `${frontendUrl}/verify-email?email=${encodeURIComponent(newUser.email)}`;
     sendVerificationEmail(newUser.email, verifyUrl).catch((mailErr) => {
@@ -196,7 +196,7 @@ router.post("/login", async (req, res) => {
 
     const cleanInput = email.trim();
 
-    // Tìm người dùng theo Email hoặc Username (Khớp chính xác 100% từng chữ hoa/thường)
+    // Tìm người dùng theo email hoặc username
     const user = await prisma.user.findFirst({
       where: {
         OR: [
@@ -437,7 +437,7 @@ router.post("/google", async (req, res) => {
 
 /**
  * POST /api/auth/github
- * Đăng nhập / Đăng ký bằng GitHub (OAuth2 Authorization Code)
+ * Đăng nhập hoặc đăng ký bằng GitHub
  */
 router.post("/github", async (req, res) => {
   try {
@@ -481,7 +481,7 @@ router.post("/github", async (req, res) => {
     const ghData = ghUserRes.data;
     let email = ghData.email;
 
-    // Nếu email riêng tư (private), lấy email chính từ danh sách email của user
+    // Lấy email chính nếu người dùng để chế độ riêng tư
     if (!email) {
       try {
         const emailsRes = await axios.get("https://api.github.com/user/emails", {
@@ -608,7 +608,7 @@ router.post("/forgot-password", async (req, res) => {
     // Token hết hạn sau 15 phút
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Lưu vào DB (bảng password_reset_tokens)
+    // Lưu token đặt lại mật khẩu vào cơ sở dữ liệu
     await prisma.password_reset_tokens.create({
       data: {
         user_id: user.id,
@@ -621,7 +621,7 @@ router.post("/forgot-password", async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
 
-    // Gửi email khôi phục qua Nodemailer (SMTP Gmail)
+    // Gửi email khôi phục mật khẩu
     try {
       await sendPasswordResetEmail(user.email, resetUrl);
     } catch (mailError) {
@@ -670,7 +670,7 @@ router.post("/reset-password", async (req, res) => {
       return res.status(400).json({ message: "Mã khôi phục này đã được sử dụng trước đó!" });
     }
 
-    // Kiểm tra xem đã hết hạn chưa (15 phút)
+    // Kiểm tra thời hạn hiệu lực của token
     if (new Date() > new Date(resetTokenRecord.expires_at)) {
       return res.status(400).json({ message: "Mã khôi phục đã hết hạn! Vui lòng gửi lại yêu cầu mới." });
     }

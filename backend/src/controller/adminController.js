@@ -2,7 +2,7 @@ import adminService from "../services/adminService.js";
 import prisma from "../lib/prisma.js";
 
 /**
- * AdminController - Tầng tiếp nhận & phản hồi HTTP (Controller Layer) cho Admin
+ * Controller xử lý dữ liệu và thống kê admin
  */
 export class AdminController {
   /**

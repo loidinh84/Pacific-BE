@@ -1,7 +1,7 @@
 import adminRepository from "../repositories/adminRepository.js";
 
 /**
- * AdminService - Tầng xử lý nghiệp vụ (Business Logic Layer) cho Admin
+ * Service xử lý nghiệp vụ admin
  */
 export class AdminService {
   /**
@@ -48,7 +48,7 @@ export class AdminService {
   }
 
   /**
-   * Lấy toàn bộ dữ liệu Dashboard trong 1 request (tối ưu tải trang)
+   * Lấy dữ liệu dashboard tổng hợp
    */
   async getFullDashboardData(days = 7) {
     const [overview, charts, rankings] = await Promise.all([

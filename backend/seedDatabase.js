@@ -27,7 +27,7 @@ async function seed() {
     });
   }
 
-  // 2. CONSERVATION STATUSES (IUCN 9 Standard Categories)
+  // 2. CONSERVATION STATUSES
   console.log("2. Seeding Conservation Statuses...");
   const statuses = [
     { id: 1, code: "LC", name: "Least Concern - Ít lo ngại" },
@@ -48,7 +48,7 @@ async function seed() {
     });
   }
 
-  // 3. OCEAN ZONES (5 Depth Layers)
+  // 3. OCEAN ZONES
   console.log("3. Seeding Ocean Zones...");
   const zones = [
     {
@@ -100,47 +100,47 @@ async function seed() {
     });
   }
 
-  // 4. SPECIES GROUPS (6 Marine Taxa Groups)
+  // 4. SPECIES GROUPS
   console.log("4. Seeding Species Groups...");
   const groups = [
     {
       id: 1n,
-      name: "Cá biển (Fish)",
+      name: "Cá biển",
       slug: "ca-bien",
       description: "Các loài cá xương (Osteichthyes) và cá sụn (Chondrichthyes) như cá mập, cá đuối.",
       image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop",
     },
     {
       id: 2n,
-      name: "Động vật có vú biển (Marine Mammals)",
+      name: "Động vật có vú biển",
       slug: "dong-vat-co-vu-bien",
       description: "Cá voi, cá heo, hải cẩu, sư tử biển, hải mã và bò biển.",
       image_url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=600&auto=format&fit=crop",
     },
     {
       id: 3n,
-      name: "Bò sát biển (Marine Reptiles)",
+      name: "Bò sát biển",
       slug: "bo-sat-bien",
       description: "Rùa biển, rắn biển, kỳ giông biển và cá sấu nước mặn.",
       image_url: "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=600&auto=format&fit=crop",
     },
     {
       id: 4n,
-      name: "Thân mềm & Không xương sống (Invertebrates)",
+      name: "Thân mềm & Không xương sống",
       slug: "than-mem-khong-xuong-song",
       description: "Bạch tuộc, mực, sứa, tôm cua, sao biển, nhím biển và giáp xác.",
       image_url: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?w=600&auto=format&fit=crop",
     },
     {
       id: 5n,
-      name: "San hô & Thực vật biển (Corals & Marine Plants)",
+      name: "San hô & Thực vật biển",
       slug: "san-ho-thuc-vat-bien",
       description: "Rạn san hô, cỏ biển, rừng tảo bẹ kelp và các loài thực vật thủy sinh.",
       image_url: "https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=600&auto=format&fit=crop",
     },
     {
       id: 6n,
-      name: "Sinh vật biển sâu & Phát quang (Deep Sea)",
+      name: "Sinh vật biển sâu & Phát quang",
       slug: "sinh-vat-bien-sau",
       description: "Các loài sinh vật thích nghi với áp suất cao, bóng tối và phát quang sinh học.",
       image_url: "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=600&auto=format&fit=crop",
@@ -159,7 +159,7 @@ async function seed() {
     });
   }
 
-  // 5. OCEAN LOCATIONS (6 Iconic Marine Regions)
+  // 5. OCEAN LOCATIONS
   console.log("5. Seeding Ocean Locations...");
   const locations = [
     {

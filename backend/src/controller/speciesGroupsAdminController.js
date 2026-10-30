@@ -1,6 +1,6 @@
 import prisma from "../lib/prisma.js";
 
-// Helper chuyển đổi tiếng Việt có dấu thành slug URL thân thiện
+// Chuyển đổi tên sang slug URL
 function slugify(text) {
   return text
     .toString()
@@ -280,7 +280,7 @@ export class SpeciesGroupsAdminController {
 
   /**
    * DELETE /api/admin/species-groups/:id
-   * Xóa nhóm sinh vật (Tự động gỡ liên kết với các sinh vật, không xóa sinh vật)
+   * Xóa nhóm sinh vật
    */
   async deleteSpeciesGroup(req, res) {
     try {
@@ -349,7 +349,7 @@ export class SpeciesGroupsAdminController {
 
       const bigIntIds = speciesIds.map((id) => BigInt(id));
 
-      // 1. Gỡ bỏ những sinh vật trước đây thuộc nhóm nhưng hiện tại không có trong danh sách được chọn
+      // Gỡ bỏ sinh vật không thuộc danh sách được chọn
       await prisma.species.updateMany({
         where: {
           group_id: groupId,
@@ -360,7 +360,7 @@ export class SpeciesGroupsAdminController {
         },
       });
 
-      // 2. Gán những sinh vật được chọn vào nhóm này
+      // Gán sinh vật được chọn vào nhóm
       const result = await prisma.species.updateMany({
         where: {
           id: { in: bigIntIds },

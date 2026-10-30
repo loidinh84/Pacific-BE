@@ -3,14 +3,14 @@ import prisma from "../lib/prisma.js";
 
 /**
  * vectorSearchService.js
- * Dịch vụ Tìm kiếm Ngữ nghĩa bằng Không gian Vector (Vector Semantic Search Engine)
- * - Sử dụng Gemini Embedding (768 chiều)
+ * Dịch vụ tìm kiếm ngữ nghĩa theo không gian vector
+ * Sử dụng Gemini Embedding 768 chiều
  * - Lưu trữ vĩnh viễn trong PostgreSQL table `species_embeddings`
- * - Lập chỉ mục In-Memory (Float32Array) so khớp Cosine Similarity trong 0.1ms
+ * Lập chỉ mục trong bộ nhớ để so khớp nhanh
  * - Tự động đồng bộ khi có loài mới hoặc sửa đổi thông tin
  */
 
-// Bộ nhớ đệm In-Memory cho vector câu truy vấn (LRU Cache đơn giản)
+// Bộ nhớ đệm cho vector truy vấn
 const queryVectorCache = new Map();
 const MAX_CACHE_SIZE = 500;
 
@@ -163,7 +163,7 @@ class VectorSearchService {
   }
 
   /**
-   * Đồng bộ vector cho MỘT loài duy nhất (gọi khi Admin tạo mới hoặc cập nhật loài)
+   * Đồng bộ vector cho một loài
    * Hoạt động phi tập trung, không khóa tiến trình chính.
    */
   async syncSingleSpeciesEmbedding(speciesId) {
@@ -287,7 +287,7 @@ class VectorSearchService {
         const vector = await this.embedText(text);
         if (!vector) continue;
 
-        // Lưu vào PostgreSQL (double precision[])
+        // Lưu vector vào cơ sở dữ liệu
         const vectorArray = Array.from(vector);
         await prisma.$executeRawUnsafe(
           `
@@ -317,9 +317,9 @@ class VectorSearchService {
   }
 
   /**
-   * Tìm kiếm các loài sinh vật bằng độ tương đồng Vector (Cosine Similarity)
+   * Tìm kiếm sinh vật theo độ tương đồng vector
    * @param {string} rawQuery Câu tìm kiếm tự do của người dùng
-   * @param {number} threshold Ngưỡng tương đồng tối thiểu (mặc định 0.52 = 52%)
+   * @param {number} threshold Ngưỡng tương đồng tối thiểu
    * @param {number} limit Số lượng kết quả tối đa
    * @returns {Promise<Array<{ speciesId: string, score: number }>>}
    */
@@ -338,7 +338,7 @@ class VectorSearchService {
 
     const tEmbed = Date.now();
 
-    // So khớp vector trong RAM với tốc độ cực đại (< 0.5ms)
+    // So khớp vector trong bộ nhớ
     const matches = [];
     for (const item of this.speciesIndex) {
       const score = this.cosineSimilarity(queryVector, item.vector);

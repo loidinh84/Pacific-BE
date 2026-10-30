@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma.js";
 
 /**
- * AdminRepository - Tầng truy vấn dữ liệu (Data Access Layer) cho Admin
+ * Repository truy vấn dữ liệu admin
  */
 export class AdminRepository {
   /**

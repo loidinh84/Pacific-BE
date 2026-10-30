@@ -53,7 +53,7 @@ export class SpeciesService {
         queryParams.is_visible === "true" || queryParams.is_visible === true;
     }
 
-    // Sắp xếp dữ liệu (Sort)
+    // Sắp xếp dữ liệu
     let orderBy = { id: "desc" };
     if (queryParams.sortBy) {
       const direction = queryParams.order === "asc" ? "asc" : "desc";
@@ -107,7 +107,7 @@ export class SpeciesService {
   }
 
   /**
-   * Thêm sinh vật mới (Tự sinh mã chuẩn [GROUP]-[STATUS]-[NUMBER] và slug)
+   * Thêm sinh vật mới
    */
   async createSpecies(dto) {
     // 1. Map DTO flexible fields
@@ -146,7 +146,7 @@ export class SpeciesService {
     let groupId = dto.group_id || dto.groupId;
     groupId = groupId ? BigInt(groupId) : null;
 
-    // 2. Tìm mã viết tắt nhóm sinh vật (VD: FSH, MAM, REP, INV, PLN, SPC)
+    // Lấy mã viết tắt nhóm sinh vật
     let groupCode = "SPC";
     if (groupId) {
       const groupRecord = await prisma.species_groups.findUnique({
@@ -250,7 +250,7 @@ export class SpeciesService {
 
     const created = await speciesRepository.findById(newSpecies.id);
 
-    // Tự động sinh vector ngữ nghĩa cho loài mới trong nền (không chặn API phản hồi)
+    // Sinh vector ngữ nghĩa chạy ngầm
     vectorSearchService.syncSingleSpeciesEmbedding(newSpecies.id).catch((err) =>
       console.warn("[VectorSearch] Auto sync on createSpecies failed:", err.message)
     );
@@ -487,7 +487,7 @@ export class SpeciesService {
   }
 
   /**
-   * Thử lại đồng bộ cho 1 sinh vật theo ID (Tự động tìm kiếm ảnh & thông tin bổ sung)
+   * Thử lại đồng bộ dữ liệu sinh vật
    */
   async retrySyncItem(id) {
     const target = await speciesRepository.findById(id);

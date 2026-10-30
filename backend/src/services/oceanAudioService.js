@@ -2,9 +2,9 @@
  * oceanAudioService.js
  * Live Bioacoustics Gateway — 100% Dynamic, Zero Hardcoded Data
  *
- * Data source: Freesound.org API v2 (https://freesound.org/apiv2/)
+ * Data source: Freesound.org API v2 - https://freesound.org/apiv2/
  * - Returns real community-recorded marine, ocean & wildlife sounds
- * - Preview MP3 URLs accessible without OAuth (CORS-enabled CDN)
+ * Trả về liên kết âm thanh có thể truy cập trực tiếp
  * - 163+ whale sounds, 65+ dolphin, 73+ ocean recordings and growing
  */
 
@@ -13,7 +13,7 @@ import axios from "axios";
 const FREESOUND_API = "https://freesound.org/apiv2/search/text/";
 const FREESOUND_TOKEN = process.env.FREESOUND_CLIENT_ID || "";
 
-// Vietnamese → English marine search term mapping (logic, not static dict)
+// Ánh xạ từ khóa tìm kiếm tiếng Việt sang tiếng Anh
 function buildSearchTerm(rawQuery) {
   const v = rawQuery.toLowerCase().trim();
   if (!v) return null;

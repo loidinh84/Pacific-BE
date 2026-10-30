@@ -24,7 +24,7 @@ export class AnatomyController {
   }
 
   /**
-   * POST /api/admin/species/:id/anatomy - Thêm bộ phận giải phẫu mới (Admin)
+   * POST /api/admin/species/:id/anatomy - Thêm bộ phận giải phẫu mới
    */
   async createAnatomy(req, res) {
     try {
@@ -45,7 +45,7 @@ export class AnatomyController {
   }
 
   /**
-   * PUT /api/admin/anatomy/:anatomyId - Cập nhật bộ phận giải phẫu (Admin)
+   * PUT /api/admin/anatomy/:anatomyId - Cập nhật bộ phận giải phẫu
    */
   async updateAnatomy(req, res) {
     try {
@@ -65,7 +65,7 @@ export class AnatomyController {
   }
 
   /**
-   * DELETE /api/admin/anatomy/:anatomyId - Xóa bộ phận giải phẫu (Admin)
+   * DELETE /api/admin/anatomy/:anatomyId - Xóa bộ phận giải phẫu
    */
   async deleteAnatomy(req, res) {
     try {

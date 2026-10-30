@@ -194,7 +194,7 @@ class AdminUserController {
 
   /**
    * GET /api/admin/users/:id/activity
-   * Lịch sử hoạt động của người dùng (bình luận, yêu thích, địa điểm)
+   * Lịch sử hoạt động của người dùng
    */
   async getUserActivity(req, res) {
     try {
@@ -339,7 +339,7 @@ class AdminUserController {
 
   /**
    * PATCH /api/admin/users/:id/role
-   * Cập nhật vai trò người dùng (user, top_fan, expert, moderator, admin, super_admin)
+   * Cập nhật vai trò người dùng
    */
   async updateUserRole(req, res) {
     try {
@@ -429,7 +429,7 @@ class AdminUserController {
 
   /**
    * POST /api/admin/users/:id/reset-password
-   * Đặt lại mật khẩu về mặc định (hoặc mật khẩu tùy chỉnh)
+   * Đặt lại mật khẩu người dùng
    */
   async resetUserPassword(req, res) {
     try {

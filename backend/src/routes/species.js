@@ -33,7 +33,7 @@ router.get("/taxonomy-search", async (req, res) => {
   }
 });
 
-// GET /api/species/audio-library - Tải danh sách âm thanh đại dương (default catalog from Wikimedia)
+// GET /api/species/audio-library - Tải danh sách âm thanh đại dương
 router.get("/audio-library", async (req, res) => {
   try {
     const query = req.query.q || "";
@@ -162,7 +162,7 @@ router.get("/locations", async (req, res) => {
   }
 });
 
-// GET /api/species/ecosystem/graph - Đồ thị Tri thức Đa dạng sinh thái Biển Đông (Nodes & Links)
+// GET /api/species/ecosystem/graph - Đồ thị đa dạng sinh thái Biển Đông
 router.get("/ecosystem/graph", async (req, res) => {
   try {
     const result = await ecosystemService.getKnowledgeGraph(req.query);
@@ -184,7 +184,7 @@ router.get("/ecosystem/stats", async (req, res) => {
   }
 });
 
-// GET /api/species/:idOrSlug/ecosystem - Hệ sinh thái & Chuỗi thức ăn của 1 loài (Ego Network)
+// GET /api/species/:idOrSlug/ecosystem - Hệ sinh thái và chuỗi thức ăn của loài
 router.get("/:idOrSlug/ecosystem", async (req, res) => {
   try {
     const result = await ecosystemService.getSpeciesEcosystem(req.params.idOrSlug);
@@ -216,7 +216,7 @@ router.get("/:idOrSlug/comments", async (req, res) => {
     const { idOrSlug } = req.params;
     const { default: prisma } = await import("../lib/prisma.js");
 
-    // Tìm loài sinh vật theo id (nếu là số) hoặc slug/code/common_name
+    // Tìm sinh vật theo id hoặc slug
     const targetSlug = resolveSpeciesSlug(idOrSlug);
     let species = null;
     const isNum = /^\d+$/.test(targetSlug);
@@ -370,7 +370,7 @@ router.post("/:idOrSlug/comments", authenticateToken, async (req, res) => {
 
     let processedContent = content.trim();
 
-    // 3. Kiểm tra danh sách từ khóa cấm (Profanity Filter)
+    // 3. Kiểm tra danh sách từ khóa cấm
     if (contentSettings.filterProfanity !== false) {
       const bannedWords = Array.isArray(contentSettings.customBannedWords)
         ? contentSettings.customBannedWords
@@ -394,7 +394,7 @@ router.post("/:idOrSlug/comments", authenticateToken, async (req, res) => {
       }
     }
 
-    // 4. Kiểm duyệt tự động bằng AI (Google Gemini AI)
+    // 4. Kiểm duyệt tự động nội dung bình luận
     let initialStatus = contentSettings.requireApprovalFirst ? "pending" : "visible";
     let aiFlagReason = "";
 
@@ -434,7 +434,7 @@ router.post("/:idOrSlug/comments", authenticateToken, async (req, res) => {
       },
     });
 
-    // Nếu AI gắn cờ vi phạm -> Tự động tạo 1 phiếu báo cáo để Admin kiểm duyệt tại /admin/comments
+    // Tạo phiếu báo cáo khi bình luận có dấu hiệu vi phạm
     if (aiFlagReason) {
       try {
         await prisma.comment_reports.create({
@@ -510,7 +510,7 @@ router.delete("/comments/:commentId", authenticateToken, async (req, res) => {
   }
 });
 
-// POST /api/species/:idOrSlug/view - Ghi nhận lượt xem sinh vật (tự động loại trừ Admin để tránh làm sai lệch số liệu)
+// POST /api/species/:idOrSlug/view - Ghi nhận lượt xem sinh vật
 router.post("/:idOrSlug/view", async (req, res) => {
   try {
     const { idOrSlug } = req.params;
@@ -599,7 +599,7 @@ router.post("/:idOrSlug/view", async (req, res) => {
   }
 });
 
-// GET /api/species - Lấy danh sách loài sinh vật biển (hỗ trợ phân trang, tìm kiếm & bộ lọc Biển Đông)
+// GET /api/species - Lấy danh sách loài sinh vật biển
 router.get("/", async (req, res) => {
   try {
     const { default: prisma } = await import("../lib/prisma.js");

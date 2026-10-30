@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 /**
- * Middleware checkAdmin - Kiểm tra authentication & role admin trong JWT payload
+ * Middleware kiểm tra quyền admin qua JWT token
  */
 export const checkAdmin = (req, res, next) => {
   try {
@@ -9,20 +9,20 @@ export const checkAdmin = (req, res, next) => {
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Yêu cầu mã xác thực JWT (Authorization token required)",
+        message: "Vui lòng đăng nhập lại!",
       });
     }
 
     const token = authHeader.split(" ")[1];
-    const secret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
+    const secret = process.env.JWT_SECRET;
 
     const decoded = jwt.verify(token, secret);
 
-    // Kiểm tra role trong JWT payload
+    // Kiểm tra vai trò tài khoản
     if (!decoded || (decoded.role !== "admin" && decoded.role !== "super_admin")) {
       return res.status(403).json({
         success: false,
-        message: "Quyền truy cập bị từ chối. Cần quyền Admin (Admin role required)",
+        message: "Quyền truy cập bị từ chối. Cần quyền Admin",
       });
     }
 
@@ -31,7 +31,7 @@ export const checkAdmin = (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: "Mã xác thực không hợp lệ hoặc đã hết hạn (Invalid or expired token)",
+      message: "Mã xác thực không hợp lệ hoặc đã hết hạn",
       error: error.message,
     });
   }

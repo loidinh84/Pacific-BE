@@ -1,14 +1,14 @@
 import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma.js";
 
-// Helper: tính số ngày tham gia
+// Tính số ngày tham gia
 const calculateMemberDays = (createdAt) => {
   if (!createdAt) return 1;
   const diffTime = Math.abs(Date.now() - new Date(createdAt).getTime());
   return Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
 };
 
-// Helper: ghi activity log an toàn
+// Ghi log hoạt động
 const logActivity = async (actorId, action, targetType, targetId, description) => {
   try {
     await prisma.activity_logs.create({
@@ -27,7 +27,7 @@ const logActivity = async (actorId, action, targetType, targetId, description) =
 
 class AdminProfileController {
   /**
-   * 1. GET /api/admin/me
+   * GET /api/admin/me
    * Lấy thông tin cá nhân của Admin hiện tại
    */
   async getAdminProfile(req, res) {
@@ -68,7 +68,7 @@ class AdminProfileController {
   }
 
   /**
-   * 2. PUT /api/admin/me
+   * PUT /api/admin/me
    * Cập nhật thông tin: fullName, bio, email, phoneNumber, dateOfBirth
    */
   async updateAdminProfile(req, res) {
@@ -86,7 +86,7 @@ class AdminProfileController {
 
       const updateData = {};
 
-      // Validate username
+      // Kiểm tra username
       if (username !== undefined && username.trim().toLowerCase() !== currentAdmin.username.toLowerCase()) {
         const cleanUsername = username.trim().toLowerCase();
         const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
@@ -115,7 +115,7 @@ class AdminProfileController {
       }
 
 
-      // Validate fullName
+      // Kiểm tra họ tên
       if (fullName !== undefined) {
         if (typeof fullName !== "string" || fullName.trim().length < 2 || fullName.trim().length > 50) {
           return res.status(400).json({ success: false, error: "Họ và tên phải từ 2 đến 50 ký tự" });
@@ -123,7 +123,7 @@ class AdminProfileController {
         updateData.full_name = fullName.trim();
       }
 
-      // Validate bio
+      // Kiểm tra tiểu sử
       if (bio !== undefined) {
         if (typeof bio === "string" && bio.length > 500) {
           return res.status(400).json({ success: false, error: "Tiểu sử không được vượt quá 500 ký tự" });
@@ -131,7 +131,7 @@ class AdminProfileController {
         updateData.bio = bio ? bio.trim() : "";
       }
 
-      // Validate phone
+      // Kiểm tra số điện thoại
       if (phoneNumber !== undefined) {
         if (phoneNumber && phoneNumber.trim().length > 0) {
           const phoneRegex = /^(\+84|0)[0-9]{9,10}$/;
@@ -144,7 +144,7 @@ class AdminProfileController {
         }
       }
 
-      // Validate dateOfBirth
+      // Kiểm tra ngày sinh
       if (dateOfBirth !== undefined) {
         if (dateOfBirth) {
           const dob = new Date(dateOfBirth);
@@ -157,7 +157,7 @@ class AdminProfileController {
         }
       }
 
-      // Nếu có yêu cầu đổi Email -> Bắt buộc kiểm tra mật khẩu hiện tại
+      // Kiểm tra mật khẩu hiện tại khi đổi email
       if (email && email.toLowerCase().trim() !== currentAdmin.email.toLowerCase()) {
         const cleanEmail = email.toLowerCase().trim();
         const emailRegex = /^[^s@]+@[^s@]+.[^s@]+$/;
@@ -233,7 +233,7 @@ class AdminProfileController {
   }
 
   /**
-   * 3. POST /api/admin/me/avatar
+   * POST /api/admin/me/avatar
    * Cập nhật avatar của Admin
    */
   async updateAdminAvatar(req, res) {
@@ -267,7 +267,7 @@ class AdminProfileController {
   }
 
   /**
-   * 4. GET /api/admin/me/stats
+   * GET /api/admin/me/stats
    * Thống kê quản trị: usersManaged, speciesManaged, groupsManaged, activityCount, memberDays
    */
   async getAdminStats(req, res) {
@@ -301,7 +301,7 @@ class AdminProfileController {
   }
 
   /**
-   * 5. GET /api/admin/me/activity
+   * GET /api/admin/me/activity
    * Lịch sử hoạt động phân trang: page, limit, filter
    */
   async getAdminActivity(req, res) {

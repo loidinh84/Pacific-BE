@@ -17,12 +17,12 @@ async function addMolaMola() {
     return;
   }
 
-  // Lấy group Cá biển (ID 1)
+  // Lấy nhóm cá biển
   const group = await prisma.species_groups.findFirst({
     where: { name: { contains: "Cá" } },
   });
 
-  // Lấy status VU (ID 3)
+  // Lấy trạng thái bảo tồn
   const status = await prisma.conservation_statuses.findFirst({
     where: { code: "VU" },
   });

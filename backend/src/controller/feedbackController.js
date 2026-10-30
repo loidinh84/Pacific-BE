@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 class FeedbackController {
   /**
    * POST /api/feedback
-   * Tiếp nhận ý kiến đóng góp từ người dùng (cả khách vãng lai hoặc thành viên đã đăng nhập)
+   * Tiếp nhận ý kiến đóng góp từ người dùng
    */
   async createFeedback(req, res) {
     try {
@@ -32,7 +32,7 @@ class FeedbackController {
         });
       }
 
-      // Xử lý rating (mặc định là 5 sao nếu không chọn, giới hạn 1 - 5)
+      // Xử lý điểm đánh giá
       let parsedRating = parseInt(rating, 10);
       if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) {
         parsedRating = 5;
@@ -58,7 +58,7 @@ class FeedbackController {
             }
           }
         } catch {
-          // Token không hợp lệ hoặc đã hết hạn -> Tiếp tục dưới dạng Khách vãng lai
+          // Token không hợp lệ tiếp tục dưới dạng khách vãng lai
           userId = null;
         }
       }

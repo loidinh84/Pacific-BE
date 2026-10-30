@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Service kiểm duyệt bình luận bằng Google Gemini AI (Miễn phí)
- * Hỗ trợ fallback an toàn (fail-open) nếu API gặp sự cố hoặc timeout
+ * Service kiểm duyệt nội dung bình luận
+ * Cơ chế dự phòng khi dịch vụ kiểm duyệt gặp sự cố
  */
 class AIModerationService {
   constructor() {

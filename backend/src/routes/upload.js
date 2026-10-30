@@ -3,7 +3,7 @@ import uploadController from "../controller/uploadController.js";
 
 const router = Router();
 
-// POST /api/upload - Upload file từ máy tính (ảnh, video, 3d model .glb, audio .mp3)
+// POST /api/upload - Tải tệp lên hệ thống
 router.post("/", (req, res) => uploadController.uploadFile(req, res));
 
 export default router;

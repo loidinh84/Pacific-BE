@@ -46,7 +46,7 @@ async function seedComments() {
     },
   });
 
-  // 2. Bình luận bị báo cáo (Reported comments matching Figma Image 2)
+  // Bình luận bị báo cáo
   const reported1 = await prisma.comments.create({
     data: {
       user_id: userA.id,
@@ -123,7 +123,7 @@ async function seedComments() {
     ],
   });
 
-  // 3. Bình luận đã xóa (Deleted comments matching Figma Image 3)
+  // Bình luận đã xóa
   await prisma.comments.create({
     data: {
       user_id: userA.id,

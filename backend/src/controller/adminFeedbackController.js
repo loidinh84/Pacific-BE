@@ -19,19 +19,19 @@ class AdminFeedbackController {
 
       const where = {};
 
-      // Lọc theo rating (1-5)
+      // Lọc theo đánh giá rating
       if (rating && rating >= 1 && rating <= 5) {
         where.rating = rating;
       }
 
-      // Lọc theo loại người gửi (Thành viên / Khách vãng lai)
+      // Lọc theo loại người gửi
       if (userType === "user") {
         where.user_id = { not: null };
       } else if (userType === "guest") {
         where.user_id = null;
       }
 
-      // Tìm kiếm từ khóa theo nội dung hoặc thông tin người dùng
+      // Tìm kiếm theo nội dung hoặc thông tin người dùng
       if (search) {
         where.OR = [
           { content: { contains: search, mode: "insensitive" } },

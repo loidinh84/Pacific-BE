@@ -40,7 +40,7 @@ class AdminCommentsController {
         where.deleted_at = null;
       }
 
-      // Tìm kiếm từ khóa (nội dung, tên người dùng, tên sinh vật)
+      // Tìm kiếm theo từ khóa
       if (search) {
         const searchConditions = [
           { content: { contains: search, mode: "insensitive" } },
@@ -104,7 +104,7 @@ class AdminCommentsController {
         }),
         // Đếm badge tab: Tất cả
         prisma.comments.count({ where: { deleted_at: null } }),
-        // Đếm badge tab: Bị báo cáo (chỉ đếm các bình luận có báo cáo đang chờ duyệt)
+        // Đếm bình luận bị báo cáo đang chờ duyệt
         prisma.comments.count({
           where: {
             deleted_at: null,
@@ -126,7 +126,7 @@ class AdminCommentsController {
         const pendingReports = c.comment_reports.filter((r) => r.status === "pending");
         const dismissedReports = c.comment_reports.filter((r) => r.status === "dismissed");
 
-        // Chỉ gom lý do báo cáo của các báo cáo CHỜ DUYỆT (pending)
+        // Gom lý do của các báo cáo chờ duyệt
         const reportReasonMap = {};
         pendingReports.forEach((r) => {
           const reason = r.reason || "Bình luận vi phạm tiêu chuẩn cộng đồng";
@@ -213,7 +213,7 @@ class AdminCommentsController {
 
   /**
    * DELETE /api/admin/comments/:id
-   * Xóa mềm bình luận (chuyển vào thùng rác)
+   * Xóa mềm bình luận
    */
   async deleteComment(req, res) {
     try {
@@ -236,7 +236,7 @@ class AdminCommentsController {
             report_count: 0,
           },
         }),
-        // Đánh dấu các báo cáo chưa xử lý là đã duyệt (reviewed)
+        // Đánh dấu các báo cáo chưa xử lý là đã duyệt
         prisma.comment_reports.updateMany({
           where: { comment_id: commentId, status: "pending" },
           data: { status: "reviewed" },
@@ -289,7 +289,7 @@ class AdminCommentsController {
 
   /**
    * POST /api/admin/comments/:id/reports/dismiss
-   * Bác bỏ báo cáo vi phạm — Giữ bình luận
+   * Bác bỏ báo cáo vi phạm
    */
   async dismissReports(req, res) {
     try {

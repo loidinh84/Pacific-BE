@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma.js";
 
 /**
- * AnatomyRepository - Tầng truy vấn dữ liệu cho Giải phẫu sinh vật (species_anatomy)
+ * Repository truy vấn dữ liệu giải phẫu sinh vật
  */
 export class AnatomyRepository {
   /**

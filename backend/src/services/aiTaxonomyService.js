@@ -9,7 +9,7 @@ const KNOWN_FRESHWATER_SPECIES = {
 
 const KNOWN_FICTIONAL_SPECIES = ["godzilla", "pikachu", "chocobo", "dragon", "rồng sấm", "người cá fiction", "super saiyan"];
 
-// Terrestrial check with exact whole-word matching (avoids matching 'hổ' in 'khổng lồ')
+// Kiểm tra loài trên cạn theo từ nguyên vẹn
 const TERRESTRIAL_REGEX = /(?:^|\s)(con\s+hổ|hổ\s+vằn|panthera\s+tigris|con\s+voi|con\s+ngựa|chó\s+nhà|mèo\s+nhà|chó\s+sói|con\s+gấu\s+bắc\s+cực|con\s+gấu\s+nâu)(?:$|\s)/i;
 
 export class AITaxonomyService {
@@ -17,7 +17,7 @@ export class AITaxonomyService {
     const cleanQ = (rawQuery || "").trim().toLowerCase();
     console.log(`[AI TAXONOMY AGENT] Tra cứu từ khóa: "${rawQuery}"`);
 
-    // 0. Check Marine Dictionary first (Always prioritizes verified ocean creatures)
+    // Kiểm tra từ điển sinh vật biển
     const isMarineInDict = Boolean(VIETNAMESE_MARINE_DICTIONARY[cleanQ]) ||
       cleanQ.includes("bạch tuộc") ||
       cleanQ.includes("cá mập") ||
@@ -39,7 +39,7 @@ export class AITaxonomyService {
       };
     }
 
-    // 2. Check Terrestrial (Land) Animals (Only if NOT a known marine animal)
+    // Kiểm tra động vật trên cạn
     if (!isMarineInDict && TERRESTRIAL_REGEX.test(cleanQ)) {
       console.log(`[AI TAXONOMY AGENT] Nhận diện: Động vật trên cạn ("${rawQuery}")`);
       return {

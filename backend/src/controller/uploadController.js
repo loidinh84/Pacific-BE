@@ -1,6 +1,6 @@
 /**
  * uploadController.js
- * Backend File Upload Controller for Images, Videos, 3D Models (.glb/.gltf) & Ocean Audio (.mp3/.wav)
+ * Controller xử lý tải lên tệp tin đa phương tiện
  */
 
 import fs from "fs";

@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma.js";
 
 /**
- * SpeciesRepository - Tầng truy vấn dữ liệu cho Sinh vật (Species)
+ * Repository truy vấn dữ liệu sinh vật
  */
 export class SpeciesRepository {
   /**

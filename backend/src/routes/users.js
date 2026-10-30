@@ -13,7 +13,7 @@ import {
 
 const router = Router();
 
-// Toàn bộ các endpoints đều yêu cầu JWT Token (Private Profile)
+// Yêu cầu xác thực tài khoản qua token
 router.use(authenticateToken);
 
 router.get("/me", getMyProfile);

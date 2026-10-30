@@ -3,7 +3,7 @@ import prisma from "../src/lib/prisma.js";
 async function main() {
   console.log("🌊 Bắt đầu nạp dữ liệu Hệ tri thức Sinh thái Biển Đông (East Sea Marine Ecosystem)...");
 
-  // 1. CẬP NHẬT CÁC KHU BẢO TỒN BIỂN ĐÔNG (LOCATIONS / MPAs)
+  // Cập nhật các khu bảo tồn Biển Đông
   console.log("📍 [1/3] Đang nạp các Khu bảo tồn biển (MPAs) tại Biển Đông...");
   const eastSeaLocations = [
     {
@@ -445,7 +445,7 @@ async function main() {
       lifespan_years: 15,
       imageUrl: "https://upload.wikimedia.org/wikipedia/commons/2/25/Holothuria_nobilis.jpg",
     },
-    // 14. Cá heo không vây (Cá nược)
+    // 14. Cá heo không vây
     {
       id: 24n,
       code: "MAM-EN-0024",
@@ -783,7 +783,7 @@ async function main() {
     }
   }
 
-  // 3. MẠNG LƯỚI QUAN HỆ SINH THÁI (KNOWLEDGE GRAPH RELATIONSHIPS)
+  // Mạng lưới quan hệ sinh thái
   console.log("🕸️ [3/3] Đang nạp mạng lưới quan hệ sinh thái (Trophic & Ecological Links)...");
   const relationships = [
     // 1. Dugong ăn Cỏ biển
@@ -804,7 +804,7 @@ async function main() {
       strength: 0.90,
       ecological_impact: "Giữ độ cao thảm cỏ biển tối ưu, tăng năng suất sơ cấp",
     },
-    // 3. Ốc tù và ăn Sao biển gai (Thiên địch cứu san hô)
+    // Ốc tù và ăn sao biển gai
     {
       source_species_id: 16n,
       target_species_id: 15n,

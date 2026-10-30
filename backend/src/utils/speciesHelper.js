@@ -20,11 +20,11 @@ export function getGroupPrefix(groupSlugOrName) {
 }
 
 /**
- * Sinh mã sinh vật chuẩn [GROUP]-[STATUS]-[NUMBER] (Ví dụ: FSH-VU-0001, MAM-CR-0002)
+ * Sinh mã sinh vật theo định dạng GROUP-STATUS-NUMBER
  * @param {string|null} lastCode - Mã sinh vật mới nhất trong DB
- * @param {string} [groupPrefix="SPC"] - Mã nhóm sinh vật (VD: FSH, MAM, REP, INV, PLN)
- * @param {string} [statusPrefix="NE"] - Mã trạng thái bảo tồn (VD: CR, EN, VU, LC, DD, NE)
- * @returns {string} Mã mới (Ví dụ: FSH-VU-0001)
+ * @param {string} [groupPrefix="SPC"] - Mã nhóm sinh vật
+ * @param {string} [statusPrefix="NE"] - Mã trạng thái bảo tồn
+ * @returns {string} Mã sinh vật mới
  */
 export function generateNextSpeciesCode(lastCode, groupPrefix = "SPC", statusPrefix = "NE") {
   const group = (groupPrefix || "SPC").toUpperCase().trim();

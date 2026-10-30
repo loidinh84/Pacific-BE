@@ -2,13 +2,13 @@
  * taxonomyService.js
  * Backend Taxonomy Gateway Service for Ocean Species & Multi-Source API Integration
  * Providers supported:
- * - "auto": AI-Powered Multi-Source Gateway (Gemini Flash + WoRMS + iNaturalist + Wikipedia)
+ * Nguồn tổng hợp tự động từ nhiều API
  * - "wikipedia": Wikipedia Vietnamese & English Encyclopedia Summary & Media
  * - "fishbase": FishBase & SeaLifeBase Biological Metrics & Depth Gateway
  * - "inaturalist": iNaturalist Community Biodiversity & Photo Database
  * - "gbif": Global Biodiversity Information Facility
- * - "worms": World Register of Marine Species (WoRMS AphiaID)
- * - "obis": Ocean Biodiversity Information System (UNESCO IOC)
+ * Nguồn cơ sở dữ liệu sinh vật biển WoRMS
+ * Nguồn dữ liệu sinh học đại dương OBIS
  */
 
 import { translateMarineQuery } from "../config/marineDictionary.js";
@@ -18,7 +18,7 @@ const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const taxonomyCache = new Map();
 
 /**
- * Verify species against WoRMS (World Register of Marine Species)
+ * Xác thực tên loài qua cơ sở dữ liệu WoRMS
  */
 async function verifyWithWoRMS(sciName) {
   if (!sciName) return { inWoRMS: false, isMarine: false };
@@ -47,7 +47,7 @@ async function verifyWithWoRMS(sciName) {
 
 export class TaxonomyService {
   /**
-   * Search species taxonomy using requested Provider (auto, wikipedia, fishbase, inaturalist, gbif, worms, obis)
+   * Tra cứu phân loại học sinh vật theo nguồn chỉ định
    */
   async searchTaxonomy(query, provider = "auto") {
     const rawQuery = (query || "").trim();
@@ -100,7 +100,7 @@ export class TaxonomyService {
         return await this.searchOBISDirect(rawQuery, cacheKey);
       }
 
-      // ─── Default Provider: "auto" (AI-Powered Multi-Gateway) ────────────────
+      // Nguồn mặc định auto
       return await this.searchAutoGateway(rawQuery, cacheKey);
     } catch (err) {
       console.error(`[TAXONOMY GATEWAY] Lỗi khi tra cứu ${selectedProvider}:`, err);
@@ -254,7 +254,7 @@ export class TaxonomyService {
   }
 
   /**
-   * Query Wikipedia API Directly (Supports Vietnamese & English Bách khoa toàn thư)
+   * Tra cứu dữ liệu từ Wikipedia
    */
   async searchWikipediaDirect(query, cacheKey) {
     try {
@@ -601,7 +601,7 @@ export class TaxonomyService {
   }
 
   /**
-   * Query OBIS (Ocean Biodiversity Information System - UNESCO IOC)
+   * Tra cứu dữ liệu từ OBIS
    */
   async searchOBISDirect(query, cacheKey) {
     try {
