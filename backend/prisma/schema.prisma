@@ -41,6 +41,7 @@ model User {
   species_views                           species_views[]
   system_settings                         system_settings[]
   user_explored_locations                 user_explored_locations[]
+  news_articles                           news_articles[]
   languages                               languages?                @relation(fields: [preferred_language_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([created_at], map: "idx_users_created_at")
@@ -457,4 +458,79 @@ model species_relationships {
   @@index([target_species_id], map: "idx_species_rel_target")
   @@index([relationship_type], map: "idx_species_rel_type")
   @@map("species_relationships")
+}
+
+enum news_status {
+  draft
+  pending
+  published
+  archived
+}
+
+enum news_source_type {
+  internal
+  external
+}
+
+model news_categories {
+  id          Int             @id @default(autoincrement())
+  name        String          @db.VarChar(100)
+  slug        String          @unique @db.VarChar(100)
+  description String?         @db.VarChar(255)
+  icon        String?         @db.VarChar(50)
+  sort_order  Int             @default(0)
+  is_active   Boolean         @default(true)
+  created_at  DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime        @default(now()) @db.Timestamptz(6)
+  articles    news_articles[]
+
+  @@map("news_categories")
+}
+
+model news_sources {
+  id         Int             @id @default(autoincrement())
+  name       String          @db.VarChar(100)
+  slug       String          @unique @db.VarChar(100)
+  url        String?         @db.VarChar(500)
+  logo_url   String?         @db.VarChar(500)
+  is_active  Boolean         @default(true)
+  created_at DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at DateTime        @default(now()) @db.Timestamptz(6)
+  articles   news_articles[]
+
+  @@map("news_sources")
+}
+
+model news_articles {
+  id           BigInt           @id @default(autoincrement())
+  title        String           @db.VarChar(300)
+  slug         String           @unique @db.VarChar(320)
+  excerpt      String?          @db.VarChar(1000)
+  content      String?          @db.Text
+  cover_url    String?          @db.VarChar(1000)
+  cover_caption String?         @db.VarChar(500)
+  language     String           @default("vi") @db.VarChar(10)
+  source_type  news_source_type @default(internal)
+  external_url String?          @db.VarChar(1000)
+  status       news_status      @default(draft)
+  is_featured  Boolean          @default(false)
+  view_count   BigInt           @default(0)
+  category_id  Int?
+  source_id    Int?
+  author_id    BigInt?
+  published_at DateTime?        @db.Timestamptz(6)
+  deleted_at   DateTime?        @db.Timestamptz(6)
+  created_at   DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime         @default(now()) @db.Timestamptz(6)
+
+  category     news_categories? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  source       news_sources?    @relation(fields: [source_id], references: [id], onDelete: SetNull)
+  author       User?            @relation(fields: [author_id], references: [id], onDelete: SetNull)
+
+  @@index([status, published_at], map: "idx_news_status_published")
+  @@index([category_id], map: "idx_news_category")
+  @@index([source_id], map: "idx_news_source")
+  @@index([is_featured], map: "idx_news_featured")
+  @@index([source_type], map: "idx_news_source_type")
+  @@map("news_articles")
 }
