@@ -24,6 +24,7 @@ import adminRoutes from "./src/routes/admin.js";
 import userRoutes from "./src/routes/users.js";
 import uploadRoutes from "./src/routes/upload.js";
 import feedbackRoutes from "./src/routes/feedback.js";
+import newsRoutes from "./src/routes/news.js";
 import vectorSearchService from "./src/services/vectorSearchService.js";
 
 app.use("/api/auth", authRoutes);
@@ -32,6 +33,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/feedback", feedbackRoutes);
+app.use("/api/news", newsRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
