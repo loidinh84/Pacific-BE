@@ -599,6 +599,149 @@ router.post("/:idOrSlug/view", async (req, res) => {
   }
 });
 
+// POST /api/species/:idOrSlug/favorite - Toggle lưu hoặc bỏ lưu sinh vật yêu thích
+router.post("/:idOrSlug/favorite", authenticateToken, async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+    const userId = BigInt(req.user.userId);
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    const targetSlug = resolveSpeciesSlug(idOrSlug);
+    let species = null;
+    const isNum = /^\d+$/.test(targetSlug);
+    if (isNum) {
+      species = await prisma.species.findUnique({
+        where: { id: BigInt(targetSlug) },
+        select: { id: true, common_name: true },
+      });
+    }
+    if (!species) {
+      species = await prisma.species.findFirst({
+        where: {
+          OR: [
+            { slug: targetSlug },
+            { slug: idOrSlug },
+            { code: idOrSlug },
+          ],
+        },
+        select: { id: true, common_name: true },
+      });
+    }
+
+    if (!species) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy loài sinh vật" });
+    }
+
+    const existing = await prisma.favorites.findUnique({
+      where: {
+        user_id_species_id: {
+          user_id: userId,
+          species_id: species.id,
+        },
+      },
+    });
+
+    if (existing) {
+      await prisma.favorites.delete({
+        where: {
+          user_id_species_id: {
+            user_id: userId,
+            species_id: species.id,
+          },
+        },
+      });
+      return res.status(200).json({
+        success: true,
+        isFavorited: false,
+        message: "Đã xóa khỏi danh sách yêu thích",
+      });
+    } else {
+      await prisma.favorites.create({
+        data: {
+          user_id: userId,
+          species_id: species.id,
+        },
+      });
+      return res.status(200).json({
+        success: true,
+        isFavorited: true,
+        message: "Đã lưu vào danh sách yêu thích",
+      });
+    }
+  } catch (error) {
+    console.error("Lỗi toggle favorite:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/species/:idOrSlug/favorite-status - Kiểm tra trạng thái yêu thích
+router.get("/:idOrSlug/favorite-status", async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(200).json({ success: true, isFavorited: false });
+    }
+
+    let userId = null;
+    try {
+      const token = authHeader.split(" ")[1];
+      const jwtSecret = process.env.JWT_SECRET || "dinhthanhloi08042005&nguyentranlebao23012005";
+      const decoded = (await import("jsonwebtoken")).default.verify(token, jwtSecret);
+      userId = decoded.userId;
+    } catch {
+      return res.status(200).json({ success: true, isFavorited: false });
+    }
+
+    if (!userId) {
+      return res.status(200).json({ success: true, isFavorited: false });
+    }
+
+    const { default: prisma } = await import("../lib/prisma.js");
+    const targetSlug = resolveSpeciesSlug(idOrSlug);
+    let species = null;
+    const isNum = /^\d+$/.test(targetSlug);
+    if (isNum) {
+      species = await prisma.species.findUnique({
+        where: { id: BigInt(targetSlug) },
+        select: { id: true },
+      });
+    }
+    if (!species) {
+      species = await prisma.species.findFirst({
+        where: {
+          OR: [
+            { slug: targetSlug },
+            { slug: idOrSlug },
+            { code: idOrSlug },
+          ],
+        },
+        select: { id: true },
+      });
+    }
+
+    if (!species) {
+      return res.status(200).json({ success: true, isFavorited: false });
+    }
+
+    const existing = await prisma.favorites.findUnique({
+      where: {
+        user_id_species_id: {
+          user_id: BigInt(userId),
+          species_id: species.id,
+        },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      isFavorited: !!existing,
+    });
+  } catch (error) {
+    return res.status(200).json({ success: true, isFavorited: false });
+  }
+});
+
 // GET /api/species - Lấy danh sách loài sinh vật biển
 router.get("/", async (req, res) => {
   try {
@@ -610,6 +753,9 @@ router.get("/", async (req, res) => {
       zone = "",
       redList = "",
       groupId = "",
+      category = "",
+      sortBy = "az",
+      featured = "",
     } = req.query;
 
     const skip = (Math.max(1, parseInt(page, 10)) - 1) * Math.min(100, parseInt(limit, 10));
@@ -639,6 +785,29 @@ router.get("/", async (req, res) => {
 
     if (groupId) {
       where.group_id = BigInt(groupId);
+    } else if (category && category.trim() !== "") {
+      const catTrim = category.trim();
+      if (/^\d+$/.test(catTrim)) {
+        where.group_id = BigInt(catTrim);
+      } else {
+        where.species_groups = {
+          OR: [
+            { slug: { equals: catTrim, mode: "insensitive" } },
+            { name: { contains: catTrim, mode: "insensitive" } },
+          ],
+        };
+      }
+    }
+
+    let orderBy = { id: "asc" };
+    if (sortBy === "az") {
+      orderBy = { common_name: "asc" };
+    } else if (sortBy === "depth") {
+      orderBy = { depth_min_m: "asc" };
+    } else if (sortBy === "views" || sortBy === "popular" || featured === "true") {
+      orderBy = { view_count: "desc" };
+    } else if (sortBy === "newest") {
+      orderBy = { created_at: "desc" };
     }
 
     const [total, speciesList] = await Promise.all([
@@ -647,7 +816,7 @@ router.get("/", async (req, res) => {
         where,
         skip,
         take,
-        orderBy: { id: "asc" },
+        orderBy,
         include: {
           species_groups: { select: { id: true, name: true, slug: true } },
           conservation_statuses: { select: { id: true, code: true, name: true } },
@@ -667,7 +836,14 @@ router.get("/", async (req, res) => {
       commonName: s.common_name,
       scientificName: s.scientificName,
       slug: s.slug,
-      group: s.species_groups ? { id: s.species_groups.id.toString(), name: s.species_groups.name } : null,
+      description: s.description || "",
+      group: s.species_groups
+        ? {
+            id: s.species_groups.id.toString(),
+            name: s.species_groups.name,
+            slug: s.species_groups.slug,
+          }
+        : null,
       conservationStatus: s.conservation_statuses ? s.conservation_statuses.code : null,
       vietnamRedListStatus: s.vietnam_red_list_status,
       vietnamProtectionGroup: s.vietnam_protection_group,
@@ -677,6 +853,12 @@ router.get("/", async (req, res) => {
       oceanZone: s.ocean_zones ? s.ocean_zones.name : null,
       depthMin: s.depth_min_m,
       depthMax: s.depth_max_m,
+      sizeMinCm: s.size_min_cm ? Number(s.size_min_cm) : null,
+      sizeMaxCm: s.size_max_cm ? Number(s.size_max_cm) : null,
+      weightMinKg: s.weight_min_kg ? Number(s.weight_min_kg) : null,
+      weightMaxKg: s.weight_max_kg ? Number(s.weight_max_kg) : null,
+      lifespanYears: s.lifespan_years,
+      diet: s.diet,
       image: s.species_media?.[0]?.url || "",
       viewCount: Number(s.view_count || 0),
     }));

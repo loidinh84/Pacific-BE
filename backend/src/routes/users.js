@@ -8,6 +8,7 @@ import {
   updateAvatar,
   getMyStats,
   getMyFavorites,
+  getMyFavoriteIds,
   getMyExplored,
 } from "../controller/userController.js";
 
@@ -22,6 +23,7 @@ router.put("/me/email", changeEmail);
 router.put("/me/password", changePassword);
 router.post("/me/avatar", updateAvatar);
 router.get("/me/stats", getMyStats);
+router.get("/me/favorites/ids", getMyFavoriteIds);
 router.get("/me/favorites", getMyFavorites);
 router.get("/me/explored", getMyExplored);
 

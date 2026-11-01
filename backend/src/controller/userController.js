@@ -523,3 +523,24 @@ export const getPublicProfile = async (req, res) => {
     return res.status(500).json({ success: false, error: "Lỗi hệ thống khi tải hồ sơ công khai" });
   }
 };
+
+/**
+ * GET /api/users/me/favorites/ids
+ * Lấy danh sách ID các sinh vật đã yêu thích của người dùng
+ */
+export const getMyFavoriteIds = async (req, res) => {
+  try {
+    const userId = BigInt(req.user.userId);
+    const favs = await prisma.favorites.findMany({
+      where: { user_id: userId },
+      select: { species_id: true },
+    });
+    return res.json({
+      success: true,
+      data: favs.map((f) => f.species_id.toString()),
+    });
+  } catch (error) {
+    console.error("getMyFavoriteIds error:", error);
+    return res.status(500).json({ success: false, error: "Lỗi khi lấy danh sách ID yêu thích" });
+  }
+};
