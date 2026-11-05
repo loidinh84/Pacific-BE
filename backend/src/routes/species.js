@@ -799,15 +799,17 @@ router.get("/", async (req, res) => {
       }
     }
 
-    let orderBy = { id: "asc" };
+    let orderBy = [{ id: "asc" }];
     if (sortBy === "az") {
-      orderBy = { common_name: "asc" };
+      orderBy = [{ common_name: "asc" }];
     } else if (sortBy === "depth") {
-      orderBy = { depth_min_m: "asc" };
+      orderBy = [{ depth_max_m: "asc" }, { depth_min_m: "asc" }];
+    } else if (sortBy === "status") {
+      orderBy = [{ conservation_status_id: "desc" }, { common_name: "asc" }];
     } else if (sortBy === "views" || sortBy === "popular" || featured === "true") {
-      orderBy = { view_count: "desc" };
+      orderBy = [{ view_count: "desc" }];
     } else if (sortBy === "newest") {
-      orderBy = { created_at: "desc" };
+      orderBy = [{ created_at: "desc" }];
     }
 
     const [total, speciesList] = await Promise.all([
