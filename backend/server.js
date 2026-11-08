@@ -8,7 +8,7 @@ import "./src/utils/bigint.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware (Support up to 50mb for 3D models & audio files)
+// Middleware
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));

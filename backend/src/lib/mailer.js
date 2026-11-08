@@ -17,9 +17,9 @@ const transporter = nodemailer.createTransport({
  */
 export async function sendPasswordResetEmail(toEmail, resetUrl) {
   const mailOptions = {
-    from: process.env.EMAIL_FROM || '"Pacific Support" <no-reply@pacific.com>',
+    from: process.env.EMAIL_FROM,
     to: toEmail,
-    subject: "[Pacific] Yêu cầu đặt lại mật khẩu",
+    subject: "Yêu cầu đặt lại mật khẩu",
     html: `
       <!DOCTYPE html>
       <html>
@@ -48,11 +48,8 @@ export async function sendPasswordResetEmail(toEmail, resetUrl) {
             <a href="${resetUrl}" target="_blank" class="btn">Đặt lại mật khẩu</a>
             <p style="font-size: 13px; color: #94a3b8;">Link này sẽ <strong>hết hạn sau 15 phút</strong> vì lý do bảo mật.</p>
             <div class="note">
-              Nếu bạn không gửi yêu cầu này, vui lòng bỏ qua email hoặc liên hệ với đội ngũ hỗ trợ Pacific.
+              Nếu bạn không gửi yêu cầu này, vui lòng bỏ qua email này.
             </div>
-          </div>
-          <div class="footer">
-            &copy; 2026 Pacific Ocean Exploration. All rights reserved.
           </div>
         </div>
       </body>
