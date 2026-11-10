@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 const envPath = path.resolve(__dirname, "../../.env");
 dotenv.config({ path: envPath });
 
-const connectionString = process.env.DATABASE_URL || "postgresql://postgres:123456@localhost:5432/Pacific?schema=public";
+const connectionString = process.env.DATABASE_URL;
 
 const pool = new pg.Pool({
   connectionString,

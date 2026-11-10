@@ -63,6 +63,7 @@ export class AdminRepository {
       totalFavorites,
       viewsThisWeek,
       viewsLastWeek,
+      totalNews,
     ] = await Promise.all([
       prisma.species.count({ where: { deleted_at: null } }),
       prisma.species_views.count(),
@@ -72,6 +73,7 @@ export class AdminRepository {
       prisma.species_views.count({
         where: { viewed_at: { gte: fourteenDaysAgo, lt: sevenDaysAgo } },
       }),
+      prisma.news_articles.count({ where: { deleted_at: null } }),
     ]);
 
     const viewGrowth =
@@ -86,6 +88,7 @@ export class AdminRepository {
       totalViews,
       totalSearches,
       totalFavorites,
+      totalNews,
       viewGrowth,
     };
   }

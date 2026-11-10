@@ -154,7 +154,7 @@ function slugifyVietnamese(str) {
         role: newUser.role,
       },
       jwtSecret,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
+      { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
     // Gửi email chào mừng chạy ngầm
@@ -234,7 +234,7 @@ router.post("/login", async (req, res) => {
         role: user.role,
       },
       jwtSecret,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
+      { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
     // Cập nhật last_login_at
@@ -414,7 +414,7 @@ router.post("/google", async (req, res) => {
         role: user.role,
       },
       jwtSecret,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
+      { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
     return res.json({
@@ -554,7 +554,7 @@ router.post("/github", async (req, res) => {
         role: user.role,
       },
       jwtSecret,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
+      { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
     return res.json({
@@ -618,7 +618,7 @@ router.post("/forgot-password", async (req, res) => {
     });
 
     // Tạo liên kết reset mật khẩu
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = process.env.FRONTEND_URL;
     const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
 
     // Gửi email khôi phục mật khẩu

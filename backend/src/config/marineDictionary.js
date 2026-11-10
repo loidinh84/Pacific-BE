@@ -14,7 +14,7 @@ export const VIETNAMESE_MARINE_DICTIONARY = {
   "ca voi": "whale",
   "cá voi xanh": "blue whale",
   "cá voi sát thủ": "orca",
-  "orca": "orca",
+  orca: "orca",
   "hải cẩu": "seal",
   "hai cau": "seal",
   "sư tử biển": "sea lion",
@@ -39,16 +39,16 @@ export const VIETNAMESE_MARINE_DICTIONARY = {
   "cá đuối manta": "manta ray",
 
   // Sứa, Bạch tuộc, Mực, Rùa biển
-  "sứa": "jellyfish",
-  "sua": "jellyfish",
+  sứa: "jellyfish",
+  sua: "jellyfish",
   "sứa trăng": "moon jellyfish",
   "sứa mặt trăng": "moon jellyfish",
   "sứa lửa": "sea nettle",
   "bạch tuộc": "octopus",
   "bach tuoc": "octopus",
   "bạch tuộc khổng lồ": "giant pacific octopus",
-  "mực": "squid",
-  "muc": "squid",
+  mực: "squid",
+  muc: "squid",
   "mực khổng lồ": "giant squid",
   "rùa biển": "sea turtle",
   "rua bien": "sea turtle",
@@ -90,7 +90,7 @@ export const VIETNAMESE_MARINE_DICTIONARY = {
 
 /**
  * Translate query or return raw
- * @param {string} rawQuery 
+ * @param {string} rawQuery
  * @returns {string}
  */
 export function translateMarineQuery(rawQuery) {

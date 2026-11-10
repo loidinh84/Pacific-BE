@@ -12,6 +12,7 @@ import adminSettingsController from "../controller/adminSettingsController.js";
 import adminQuizController from "../controller/adminQuizController.js";
 import adminRelationshipsController from "../controller/adminRelationshipsController.js";
 import adminFeedbackController from "../controller/adminFeedbackController.js";
+import adminNewsController from "../controller/adminNewsController.js";
 
 const router = Router();
 
@@ -250,6 +251,30 @@ router.get("/feedback", (req, res) => adminFeedbackController.getFeedbackList(re
 
 // DELETE /api/admin/feedback/:id - Xóa 1 ý kiến đóng góp
 router.delete("/feedback/:id", (req, res) => adminFeedbackController.deleteFeedback(req, res));
+
+/**
+ * Quản lý tin tức & bài viết
+ */
+// GET /api/admin/news - Danh sách tin tức có lọc, phân trang
+router.get("/news", (req, res) => adminNewsController.getNewsList(req, res));
+
+// GET /api/admin/news/categories - Danh sách chuyên mục
+router.get("/news/categories", (req, res) => adminNewsController.getCategories(req, res));
+
+// GET /api/admin/news/:id - Chi tiết bài viết
+router.get("/news/:id", (req, res) => adminNewsController.getNewsById(req, res));
+
+// POST /api/admin/news - Tạo bài viết mới
+router.post("/news", (req, res) => adminNewsController.createNews(req, res));
+
+// PUT /api/admin/news/:id - Cập nhật bài viết
+router.put("/news/:id", (req, res) => adminNewsController.updateNews(req, res));
+
+// PATCH /api/admin/news/:id/featured - Bật/tắt ghim nổi bật
+router.patch("/news/:id/featured", (req, res) => adminNewsController.toggleFeatured(req, res));
+
+// DELETE /api/admin/news/:id - Xóa bài viết
+router.delete("/news/:id", (req, res) => adminNewsController.deleteNews(req, res));
 
 export default router;
 

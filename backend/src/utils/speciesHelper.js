@@ -1,6 +1,6 @@
 /**
- * @param {string|null} groupSlugOrName 
- * @returns {string} 
+ * @param {string|null} groupSlugOrName
+ * @returns {string}
  */
 export function getGroupPrefix(groupSlugOrName) {
   if (!groupSlugOrName || typeof groupSlugOrName !== "string") {
@@ -10,10 +10,39 @@ export function getGroupPrefix(groupSlugOrName) {
   const str = groupSlugOrName.toLowerCase().trim();
 
   if (str.includes("ca") || str.includes("fish")) return "FSH";
-  if (str.includes("vinh") || str.includes("vu") || str.includes("mam") || str.includes("voi") || str.includes("heo")) return "MAM";
-  if (str.includes("rua") || str.includes("san") || str.includes("rep") || str.includes("bat")) return "REP";
-  if (str.includes("than mem") || str.includes("khong xuong") || str.includes("inv") || str.includes("bach tuoc") || str.includes("sua") || str.includes("cua") || str.includes("tom")) return "INV";
-  if (str.includes("thuc vat") || str.includes("tao") || str.includes("co") || str.includes("pln") || str.includes("plant")) return "PLN";
+  if (
+    str.includes("vinh") ||
+    str.includes("vu") ||
+    str.includes("mam") ||
+    str.includes("voi") ||
+    str.includes("heo")
+  )
+    return "MAM";
+  if (
+    str.includes("rua") ||
+    str.includes("san") ||
+    str.includes("rep") ||
+    str.includes("bat")
+  )
+    return "REP";
+  if (
+    str.includes("than mem") ||
+    str.includes("khong xuong") ||
+    str.includes("inv") ||
+    str.includes("bach tuoc") ||
+    str.includes("sua") ||
+    str.includes("cua") ||
+    str.includes("tom")
+  )
+    return "INV";
+  if (
+    str.includes("thuc vat") ||
+    str.includes("tao") ||
+    str.includes("co") ||
+    str.includes("pln") ||
+    str.includes("plant")
+  )
+    return "PLN";
 
   const clean = str.replace(/[^a-z0-9]/g, "").toUpperCase();
   return clean.length >= 3 ? clean.substring(0, 3) : "SPC";
@@ -26,7 +55,11 @@ export function getGroupPrefix(groupSlugOrName) {
  * @param {string} [statusPrefix="NE"] - Mã trạng thái bảo tồn
  * @returns {string} Mã sinh vật mới
  */
-export function generateNextSpeciesCode(lastCode, groupPrefix = "SPC", statusPrefix = "NE") {
+export function generateNextSpeciesCode(
+  lastCode,
+  groupPrefix = "SPC",
+  statusPrefix = "NE",
+) {
   const group = (groupPrefix || "SPC").toUpperCase().trim();
   const status = (statusPrefix || "NE").toUpperCase().trim();
   const prefix = `${group}-${status}`;
@@ -50,12 +83,12 @@ export function generateNextSpeciesCode(lastCode, groupPrefix = "SPC", statusPre
 
 /**
  * Tạo slug chuẩn URL từ chuỗi văn bản
- * @param {string} text 
+ * @param {string} text
  * @returns {string}
  */
 export function generateSlug(text) {
   if (!text) return "";
-  
+
   return text
     .toString()
     .normalize("NFD")
