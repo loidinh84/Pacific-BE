@@ -1,7 +1,18 @@
 import prisma from "../lib/prisma.js";
+import { OFFICIAL_NEWS_SOURCES } from "../utils/newsHelper.js";
 
 async function seedNews() {
-  console.log("🌱 Bắt đầu nạp dữ liệu mẫu cho Chuyên mục và Tin tức biển...");
+  console.log("Bắt đầu nạp dữ liệu mẫu cho Chuyên mục, Nguồn tin chính thống và Tin tức biển...");
+
+  // 0. Nguồn tin tức chính thống đã kiểm duyệt
+  for (const src of OFFICIAL_NEWS_SOURCES) {
+    await prisma.news_sources.upsert({
+      where: { slug: src.slug },
+      update: { name: src.name, url: src.url, is_active: true },
+      create: { name: src.name, slug: src.slug, url: src.url, is_active: true },
+    });
+  }
+  console.log("Đã khởi tạo danh sách nguồn tin chính thống!");
 
   // 1. Chuyên mục tin tức
   const categoriesData = [
@@ -70,7 +81,7 @@ async function seedNews() {
     });
     categoryMap[cat.slug] = upserted.id;
   }
-  console.log("✅ Đã khởi tạo 6 chuyên mục tin tức thành công!");
+  console.log("Đã khởi tạo 6 chuyên mục tin tức thành công!");
 
   // 2. Bài viết tin tức mẫu (bao gồm cả các bài Có thể bạn chưa biết)
   const articlesData = [
@@ -82,13 +93,12 @@ async function seedNews() {
       content: `Vườn Quốc gia Côn Đảo (Bà Rịa - Vũng Tàu) là bãi đẻ quan trọng bậc nhất của loài Rùa Xanh (Chelonia mydas) tại Việt Nam. Mỗi năm, hàng trăm cá thể rùa mẹ vượt hàng ngàn hải lý tìm về các bãi cát quen thuộc như Bãi Cát Lớn (hòn Bảy Cạnh), Hòn Tre Lớn, Hòn Cau để đẻ trứng.
 
 Nhờ sự nỗ lực không ngừng nghỉ của lực lượng kiểm lâm và hàng trăm tình nguyện viên bảo tồn biển, tỷ lệ ấp nở thành công đạt trên 87%. Những chú rùa con vừa chào đời sẽ nhanh chóng hướng về ánh trăng trên mặt biển để bắt đầu hành trình sinh tồn đầy kỳ diệu giữa lòng đại dương.`,
-      cover_url:
-        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80",
+      cover_url: "http://localhost:3000/uploads/turtle-hatchlings.jpg",
       cover_caption: "Rùa biển con chập chững những bước đi đầu tiên ra biển tại Côn Đảo",
       category_id: categoryMap["conservation"],
       is_featured: true,
       status: "published",
-      view_count: 1420n,
+      view_count: 0n,
       published_at: new Date(Date.now() - 3600 * 1000 * 12),
     },
     {
@@ -105,7 +115,7 @@ Nơi đây là môi trường sinh sống của hơn 3.000 loài cá, hơn 400 l
       category_id: categoryMap["fun-facts"],
       is_featured: true,
       status: "published",
-      view_count: 2850n,
+      view_count: 0n,
       published_at: new Date(Date.now() - 3600 * 1000 * 24),
     },
     {
@@ -122,7 +132,7 @@ Nơi đây là môi trường sinh sống của hơn 3.000 loài cá, hơn 400 l
       category_id: categoryMap["fun-facts"],
       is_featured: true,
       status: "published",
-      view_count: 3120n,
+      view_count: 0n,
       published_at: new Date(Date.now() - 3600 * 1000 * 36),
     },
     {
@@ -139,7 +149,7 @@ Nơi đây là môi trường sinh sống của hơn 3.000 loài cá, hơn 400 l
       category_id: categoryMap["fun-facts"],
       is_featured: true,
       status: "published",
-      view_count: 2490n,
+      view_count: 0n,
       published_at: new Date(Date.now() - 3600 * 1000 * 48),
     },
     {
@@ -156,7 +166,7 @@ Hơn 500 giá thể san hô cứng thuộc chi Acropora và Pocillopora đã đ�
       category_id: categoryMap["conservation"],
       is_featured: false,
       status: "published",
-      view_count: 980n,
+      view_count: 0n,
       published_at: new Date(Date.now() - 3600 * 1000 * 72),
     },
   ];
@@ -173,6 +183,7 @@ Hơn 500 giá thể san hô cứng thuộc chi Acropora và Pocillopora đã đ�
         category_id: art.category_id,
         is_featured: art.is_featured,
         status: art.status,
+        view_count: 0n,
       },
       create: {
         title: art.title,
@@ -190,12 +201,12 @@ Hơn 500 giá thể san hô cứng thuộc chi Acropora và Pocillopora đã đ�
     });
   }
 
-  console.log("✅ Đã nạp 5 bài viết tin tức và kiến thức đại dương mẫu thành công!");
+  console.log("Đã nạp 5 bài viết tin tức và kiến thức đại dương mẫu thành công!");
 }
 
 seedNews()
   .catch((e) => {
-    console.error("❌ Lỗi khi nạp dữ liệu tin tức:", e);
+    console.error("Lỗi khi nạp dữ liệu tin tức:", e);
   })
   .finally(async () => {
     await prisma.$disconnect();

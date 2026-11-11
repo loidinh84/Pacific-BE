@@ -1,4 +1,5 @@
 import prisma from "../lib/prisma.js";
+import { parseArticleMetadata } from "../utils/newsHelper.js";
 
 class NewsController {
   /**
@@ -70,6 +71,7 @@ class NewsController {
           title: true,
           slug: true,
           excerpt: true,
+          content: true,
           cover_url: true,
           cover_caption: true,
           language: true,
@@ -109,7 +111,7 @@ class NewsController {
 
       return res.status(200).json({
         success: true,
-        data: articles,
+        data: articles.map(parseArticleMetadata),
         pagination: {
           total,
           page,
@@ -151,6 +153,7 @@ class NewsController {
           title: true,
           slug: true,
           excerpt: true,
+          content: true,
           cover_url: true,
           cover_caption: true,
           language: true,
@@ -190,7 +193,7 @@ class NewsController {
 
       return res.status(200).json({
         success: true,
-        data: articles,
+        data: articles.map(parseArticleMetadata),
       });
     } catch (error) {
       console.error("Lỗi khi lấy tin nổi bật:", error);
@@ -382,8 +385,8 @@ class NewsController {
 
       return res.status(200).json({
         success: true,
-        data: article,
-        related_articles: relatedArticles,
+        data: parseArticleMetadata(article),
+        related_articles: relatedArticles.map(parseArticleMetadata),
       });
     } catch (error) {
       console.error("Lỗi khi lấy chi tiết bài viết:", error);

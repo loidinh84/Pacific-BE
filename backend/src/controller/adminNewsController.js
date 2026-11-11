@@ -1,17 +1,10 @@
 import prisma from "../lib/prisma.js";
-
-function createSlug(str) {
-  if (!str) return "";
-  return str
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[đĐ]/g, "d")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
+import {
+  createSlug,
+  parseArticleMetadata,
+  serializeArticleContent,
+  OFFICIAL_NEWS_SOURCES,
+} from "../utils/newsHelper.js";
 
 class AdminNewsController {
   // GET /api/admin/news - Danh sách tin tức có phân trang & lọc
@@ -68,6 +61,14 @@ class AdminNewsController {
                 icon: true,
               },
             },
+            source: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                url: true,
+              },
+            },
             author: {
               select: {
                 id: true,
@@ -83,7 +84,7 @@ class AdminNewsController {
 
       return res.status(200).json({
         success: true,
-        data: articles,
+        data: articles.map(parseArticleMetadata),
         pagination: {
           page,
           limit,
@@ -122,6 +123,43 @@ class AdminNewsController {
     }
   }
 
+  // GET /api/admin/news/sources - Danh sách nguồn tin chính thống đã kiểm duyệt
+  async getSources(req, res) {
+    try {
+      let sources = await prisma.news_sources.findMany({
+        where: { is_active: true },
+        orderBy: { name: "asc" },
+      });
+
+      // Tự động khởi tạo danh sách nguồn tin chính thống nếu bảng chưa có dữ liệu
+      if (sources.length === 0) {
+        for (const src of OFFICIAL_NEWS_SOURCES) {
+          await prisma.news_sources.upsert({
+            where: { slug: src.slug },
+            update: { name: src.name, url: src.url, is_active: true },
+            create: { name: src.name, slug: src.slug, url: src.url, is_active: true },
+          });
+        }
+        sources = await prisma.news_sources.findMany({
+          where: { is_active: true },
+          orderBy: { name: "asc" },
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: sources,
+      });
+    } catch (error) {
+      console.error("Lỗi lấy danh sách nguồn tin:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Không thể lấy danh sách nguồn tin",
+        error: error.message,
+      });
+    }
+  }
+
   // GET /api/admin/news/:id - Chi tiết 1 bài viết
   async getNewsById(req, res) {
     try {
@@ -130,6 +168,7 @@ class AdminNewsController {
         where: { id },
         include: {
           category: true,
+          source: true,
           author: {
             select: {
               id: true,
@@ -149,7 +188,7 @@ class AdminNewsController {
 
       return res.status(200).json({
         success: true,
-        data: article,
+        data: parseArticleMetadata(article),
       });
     } catch (error) {
       console.error("Lỗi lấy chi tiết bài viết admin:", error);
@@ -176,7 +215,12 @@ class AdminNewsController {
         is_featured = false,
         language = "vi",
         source_type = "internal",
+        source_id,
         external_url,
+        badge,
+        stat_val,
+        stat_title,
+        gallery,
       } = req.body;
 
       if (!title || !title.trim()) {
@@ -184,6 +228,21 @@ class AdminNewsController {
           success: false,
           message: "Tiêu đề bài viết không được để trống",
         });
+      }
+
+      if (source_type === "external") {
+        if (!source_id) {
+          return res.status(400).json({
+            success: false,
+            message: "Vui lòng chọn nguồn tin chính thống cho bài viết dẫn nguồn bên ngoài",
+          });
+        }
+        if (!external_url || !/^https?:\/\/.+/i.test(external_url.trim())) {
+          return res.status(400).json({
+            success: false,
+            message: "Vui lòng nhập đường dẫn bài báo gốc hợp lệ (bắt đầu bằng https:// hoặc http://)",
+          });
+        }
       }
 
       let slug = (userSlug && userSlug.trim()) ? createSlug(userSlug) : createSlug(title);
@@ -200,17 +259,25 @@ class AdminNewsController {
       const published_at = status === "published" ? new Date() : null;
       const author_id = req.user?.id ? BigInt(req.user.id) : null;
 
+      const finalContent = serializeArticleContent(content, {
+        badge,
+        stat_val,
+        stat_title,
+        gallery,
+      });
+
       const created = await prisma.news_articles.create({
         data: {
           title: title.trim(),
           slug: uniqueSlug,
           excerpt: excerpt?.trim() || null,
-          content: content?.trim() || null,
+          content: finalContent ? finalContent.trim() : null,
           cover_url: cover_url?.trim() || null,
           cover_caption: cover_caption?.trim() || null,
           language,
           source_type,
-          external_url: external_url?.trim() || null,
+          source_id: source_type === "external" && source_id ? parseInt(source_id, 10) : null,
+          external_url: source_type === "external" ? external_url?.trim() || null : null,
           status,
           is_featured: Boolean(is_featured),
           category_id: category_id ? parseInt(category_id, 10) : null,
@@ -219,13 +286,14 @@ class AdminNewsController {
         },
         include: {
           category: true,
+          source: true,
         },
       });
 
       return res.status(201).json({
         success: true,
         message: "Tạo bài viết mới thành công",
-        data: created,
+        data: parseArticleMetadata(created),
       });
     } catch (error) {
       console.error("Lỗi tạo bài viết admin:", error);
@@ -262,8 +330,28 @@ class AdminNewsController {
         is_featured,
         language,
         source_type,
+        source_id,
         external_url,
+        badge,
+        stat_val,
+        stat_title,
+        gallery,
       } = req.body;
+
+      if (source_type === "external") {
+        if (!source_id) {
+          return res.status(400).json({
+            success: false,
+            message: "Vui lòng chọn nguồn tin chính thống cho bài viết dẫn nguồn bên ngoài",
+          });
+        }
+        if (!external_url || !/^https?:\/\/.+/i.test(external_url.trim())) {
+          return res.status(400).json({
+            success: false,
+            message: "Vui lòng nhập đường dẫn bài báo gốc hợp lệ (bắt đầu bằng https:// hoặc http://)",
+          });
+        }
+      }
 
       let uniqueSlug = existing.slug;
       if (userSlug && userSlug.trim() && userSlug !== existing.slug) {
@@ -283,13 +371,36 @@ class AdminNewsController {
         published_at = new Date();
       }
 
+      let finalContent;
+      if (
+        content !== undefined ||
+        badge !== undefined ||
+        stat_val !== undefined ||
+        stat_title !== undefined ||
+        gallery !== undefined
+      ) {
+        const existingParsed = parseArticleMetadata(existing);
+        const rawContent = content !== undefined ? content : existingParsed.clean_content;
+        const effectiveBadge = badge !== undefined ? badge : existingParsed.badge;
+        const effectiveStatVal = stat_val !== undefined ? stat_val : existingParsed.stat_val;
+        const effectiveStatTitle = stat_title !== undefined ? stat_title : existingParsed.stat_title;
+        const effectiveGallery = gallery !== undefined ? gallery : existingParsed.gallery;
+
+        finalContent = serializeArticleContent(rawContent, {
+          badge: effectiveBadge,
+          stat_val: effectiveStatVal,
+          stat_title: effectiveStatTitle,
+          gallery: effectiveGallery,
+        });
+      }
+
       const updated = await prisma.news_articles.update({
         where: { id },
         data: {
           ...(title !== undefined && { title: title.trim() }),
           slug: uniqueSlug,
           ...(excerpt !== undefined && { excerpt: excerpt?.trim() || null }),
-          ...(content !== undefined && { content: content?.trim() || null }),
+          ...(finalContent !== undefined && { content: finalContent ? finalContent.trim() : null }),
           ...(cover_url !== undefined && { cover_url: cover_url?.trim() || null }),
           ...(cover_caption !== undefined && { cover_caption: cover_caption?.trim() || null }),
           ...(category_id !== undefined && {
@@ -299,19 +410,25 @@ class AdminNewsController {
           ...(is_featured !== undefined && { is_featured: Boolean(is_featured) }),
           ...(language !== undefined && { language }),
           ...(source_type !== undefined && { source_type }),
-          ...(external_url !== undefined && { external_url: external_url?.trim() || null }),
+          ...(source_id !== undefined && {
+            source_id: source_type === "external" && source_id ? parseInt(source_id, 10) : null,
+          }),
+          ...(external_url !== undefined && {
+            external_url: source_type === "external" ? external_url?.trim() || null : null,
+          }),
           published_at,
           updated_at: new Date(),
         },
         include: {
           category: true,
+          source: true,
         },
       });
 
       return res.status(200).json({
         success: true,
         message: "Cập nhật bài viết thành công",
-        data: updated,
+        data: parseArticleMetadata(updated),
       });
     } catch (error) {
       console.error("Lỗi cập nhật bài viết admin:", error);

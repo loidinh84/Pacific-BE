@@ -261,6 +261,9 @@ router.get("/news", (req, res) => adminNewsController.getNewsList(req, res));
 // GET /api/admin/news/categories - Danh sách chuyên mục
 router.get("/news/categories", (req, res) => adminNewsController.getCategories(req, res));
 
+// GET /api/admin/news/sources - Danh sách nguồn tin chính thống
+router.get("/news/sources", (req, res) => adminNewsController.getSources(req, res));
+
 // GET /api/admin/news/:id - Chi tiết bài viết
 router.get("/news/:id", (req, res) => adminNewsController.getNewsById(req, res));
 
