@@ -758,8 +758,8 @@ router.get("/", async (req, res) => {
       featured = "",
     } = req.query;
 
-    const skip = (Math.max(1, parseInt(page, 10)) - 1) * Math.min(100, parseInt(limit, 10));
-    const take = Math.min(100, parseInt(limit, 10));
+    const skip = (Math.max(1, parseInt(page, 10)) - 1) * Math.min(500, parseInt(limit, 10));
+    const take = Math.min(500, parseInt(limit, 10));
 
     const where = {
       deleted_at: null,
