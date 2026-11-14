@@ -5,14 +5,14 @@ const SETTING_GROUP = "GENERAL";
 
 const DEFAULT_SETTINGS = {
   general: {
-    websiteName: "Pacific Ocean Portal",
+    websiteName: "Biển Đông",
     seoDescription: "Cổng thông tin & tra cứu sinh vật biển Biển Đông chuẩn khoa học",
-    contactEmail: "admin@pacific.org",
+    contactEmail: "admin@domain.org",
     logoUrl: "",
     socialLinks: [
-      { id: "1", platform: "Facebook", url: "https://facebook.com/pacific.ocean" },
-      { id: "2", platform: "Instagram", url: "https://instagram.com/pacific.ocean" },
-      { id: "3", platform: "YouTube", url: "https://youtube.com/@pacific.ocean" },
+      { id: "1", platform: "Facebook", url: "https://facebook.com" },
+      { id: "2", platform: "Instagram", url: "https://instagram.com" },
+      { id: "3", platform: "YouTube", url: "https://youtube.com" },
     ],
   },
   display: {
