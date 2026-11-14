@@ -56,7 +56,7 @@ router.get("/audio-search", async (req, res) => {
   }
 });
 
-// GET /api/species/audio-proxy - Proxy âm thanh để bypass lỗi 403 Forbidden của CDNs
+// GET /api/species/audio-proxy - Proxy âm thanh hợp lệ từ các nguồn khoa học / Freesound đã xác thực
 router.get("/audio-proxy", async (req, res) => {
   try {
     const targetUrl = req.query.url;
@@ -64,12 +64,33 @@ router.get("/audio-proxy", async (req, res) => {
       return res.status(400).send("Missing target audio URL");
     }
 
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(targetUrl);
+    } catch {
+      return res.status(400).send("Invalid audio URL");
+    }
+
+    const allowedHosts = [
+      "freesound.org",
+      "cdn.freesound.org",
+      "upload.wikimedia.org",
+      "commons.wikimedia.org",
+      "localhost",
+    ];
+    const isAllowed = allowedHosts.some(
+      (h) => parsedUrl.hostname === h || parsedUrl.hostname.endsWith(`.${h}`),
+    );
+    if (!isAllowed || !["http:", "https:"].includes(parsedUrl.protocol)) {
+      return res.status(403).send("Audio source domain is not permitted");
+    }
+
     const audioRes = await fetch(targetUrl, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Referer": "https://pixabay.com/",
-        "Accept": "*/*",
+        "User-Agent": "PacificOceanApp/1.0 (https://pacific.org; educational bioacoustics)",
+        "Accept": "audio/*,*/*;q=0.8",
       },
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!audioRes.ok) {
@@ -891,6 +912,123 @@ router.get("/:id/anatomy", async (req, res) => {
   }
 });
 
+// GET /api/species/:idOrSlug/related - Lấy tối đa 4 loài sinh vật tương tự thực tế (cùng nhóm / cùng tầng nước)
+router.get("/:idOrSlug/related", async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    const targetSlug = resolveSpeciesSlug(idOrSlug);
+    const isNum = /^\d+$/.test(targetSlug);
+
+    const current = isNum
+      ? await prisma.species.findUnique({
+          where: { id: BigInt(targetSlug) },
+          select: { id: true, group_id: true, ocean_zone_id: true, scientificName: true },
+        })
+      : await prisma.species.findFirst({
+          where: { OR: [{ slug: targetSlug }, { slug: idOrSlug }, { code: idOrSlug }], deleted_at: null },
+          select: { id: true, group_id: true, ocean_zone_id: true, scientificName: true },
+        });
+
+    if (!current) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy sinh vật" });
+    }
+
+    const includeCfg = {
+      species_groups: true,
+      conservation_statuses: true,
+      ocean_zones: true,
+      species_media: {
+        where: { type: "image" },
+        orderBy: [{ is_primary: "desc" }, { sort_order: "asc" }, { id: "asc" }],
+        take: 2,
+      },
+    };
+
+    const baseNot = {
+      deleted_at: null,
+      id: { not: current.id },
+      scientificName: { not: current.scientificName },
+      species_media: { some: { type: "image" } },
+    };
+
+    // Truy vấn theo mức độ tương đồng: cùng nhóm & tầng -> cùng nhóm -> cùng tầng
+    const [sameGroupAndZone, sameGroup, sameZone] = await Promise.all([
+      current.group_id && current.ocean_zone_id
+        ? prisma.species.findMany({
+            where: { ...baseNot, group_id: current.group_id, ocean_zone_id: current.ocean_zone_id },
+            include: includeCfg,
+            take: 8,
+            orderBy: { view_count: "desc" },
+          })
+        : [],
+      current.group_id
+        ? prisma.species.findMany({
+            where: { ...baseNot, group_id: current.group_id },
+            include: includeCfg,
+            take: 8,
+            orderBy: { view_count: "desc" },
+          })
+        : [],
+      current.ocean_zone_id
+        ? prisma.species.findMany({
+            where: { ...baseNot, ocean_zone_id: current.ocean_zone_id },
+            include: includeCfg,
+            take: 8,
+            orderBy: { view_count: "desc" },
+          })
+        : [],
+    ]);
+
+    const seenIds = new Set();
+    const seenSciNames = new Set([String(current.scientificName || "").toLowerCase()]);
+    const seenImages = new Set();
+    const picked = [];
+
+    for (const candidate of [...sameGroupAndZone, ...sameGroup, ...sameZone]) {
+      const sid = candidate.id.toString();
+      const sciLower = String(candidate.scientificName || "").toLowerCase();
+      const imgUrl = candidate.species_media?.[0]?.url || null;
+
+      if (!imgUrl || seenIds.has(sid) || seenSciNames.has(sciLower) || seenImages.has(imgUrl)) {
+        continue;
+      }
+      seenIds.add(sid);
+      seenSciNames.add(sciLower);
+      seenImages.add(imgUrl);
+      picked.push(candidate);
+      if (picked.length >= 4) break;
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: picked.map((sp) => ({
+        id: sp.id.toString(),
+        slug: sp.slug,
+        commonName: sp.common_name,
+        scientificName: sp.scientificName,
+        image: sp.species_media?.[0]?.url || null,
+        group: sp.species_groups
+          ? { id: sp.species_groups.id.toString(), name: sp.species_groups.name, slug: sp.species_groups.slug }
+          : null,
+        oceanZone: sp.ocean_zones ? { id: sp.ocean_zones.id, name: sp.ocean_zones.name } : null,
+        sizeMinCm: sp.size_min_cm,
+        sizeMaxCm: sp.size_max_cm,
+        depthMinM: sp.depth_min_m,
+        depthMaxM: sp.depth_max_m,
+        conservationStatus: sp.conservation_statuses
+          ? { id: sp.conservation_statuses.id, code: sp.conservation_statuses.code, name: sp.conservation_statuses.name }
+          : null,
+        vietnamRedListStatus: sp.vietnam_red_list_status,
+      })),
+    });
+  } catch (error) {
+    console.error("Lỗi lấy danh sách sinh vật tương tự:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // GET /api/species/:idOrSlug - Chi tiết một loài sinh vật biển
 router.get("/:idOrSlug", async (req, res) => {
   try {
@@ -940,6 +1078,11 @@ router.get("/:idOrSlug", async (req, res) => {
       return res.status(404).json({ success: false, message: "Không tìm thấy loài sinh vật" });
     }
 
+    const taxonomy = await taxonomyService.getTaxonHierarchy(
+      species.source_api_id,
+      species.scientificName
+    );
+
     return res.status(200).json({
       success: true,
       data: {
@@ -956,7 +1099,11 @@ router.get("/:idOrSlug", async (req, res) => {
         weightMaxKg: species.weight_max_kg,
         depthMinM: species.depth_min_m,
         depthMaxM: species.depth_max_m,
+        temperatureMinC: species.temperature_min_c,
+        temperatureMaxC: species.temperature_max_c,
         lifespanYears: species.lifespan_years,
+        sourceApiId: species.source_api_id,
+        taxonomy,
         vietnamRedListStatus: species.vietnam_red_list_status,
         vietnamProtectionGroup: species.vietnam_protection_group,
         citesAppendix: species.cites_appendix,

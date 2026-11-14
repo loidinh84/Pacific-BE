@@ -5,10 +5,21 @@ import {
   getGroupPrefix,
 } from "../utils/speciesHelper.js";
 import prisma from "../lib/prisma.js";
-import axios from "axios";
 import taxonomyService from "./taxonomyService.js";
 import apiProviderService from "./apiProviderService.js";
 import vectorSearchService from "./vectorSearchService.js";
+
+function toFloatOrNull(val) {
+  if (val === undefined || val === null || val === "") return null;
+  const num = parseFloat(val);
+  return Number.isFinite(num) ? num : null;
+}
+
+function toIntOrNull(val) {
+  if (val === undefined || val === null || val === "") return null;
+  const num = parseInt(val, 10);
+  return Number.isFinite(num) ? num : null;
+}
 
 /**
  * SpeciesService - Tầng xử lý nghiệp vụ cho Sinh vật
@@ -212,20 +223,21 @@ export class SpeciesService {
       common_name: commonName,
       slug: finalSlug,
       description: dto.description || null,
-      size_min_cm: (dto.sizeMinCm || dto.size_min_cm) ? parseFloat(dto.sizeMinCm || dto.size_min_cm) : null,
-      size_max_cm: (dto.sizeMaxCm || dto.size_max_cm) ? parseFloat(dto.sizeMaxCm || dto.size_max_cm) : null,
-      weight_min_kg: (dto.weightMinKg || dto.weight_min_kg) ? parseFloat(dto.weightMinKg || dto.weight_min_kg) : null,
-      weight_max_kg: (dto.weightMaxKg || dto.weight_max_kg) ? parseFloat(dto.weightMaxKg || dto.weight_max_kg) : null,
-      lifespan_years: (dto.lifespanYears || dto.lifespan_years)
-        ? parseInt(dto.lifespanYears || dto.lifespan_years, 10)
-        : null,
+      size_min_cm: toFloatOrNull(dto.sizeMinCm ?? dto.size_min_cm),
+      size_max_cm: toFloatOrNull(dto.sizeMaxCm ?? dto.size_max_cm),
+      weight_min_kg: toFloatOrNull(dto.weightMinKg ?? dto.weight_min_kg),
+      weight_max_kg: toFloatOrNull(dto.weightMaxKg ?? dto.weight_max_kg),
+      lifespan_years: toIntOrNull(dto.lifespanYears ?? dto.lifespan_years),
       diet: dto.diet || null,
-      depth_min_m: (dto.depthMin || dto.depth_min_m) ? parseInt(dto.depthMin || dto.depth_min_m, 10) : null,
-      depth_max_m: (dto.depthMax || dto.depth_max_m) ? parseInt(dto.depthMax || dto.depth_max_m, 10) : null,
-      temperature_min_c: (dto.tempMinC || dto.temperature_min_c) ? parseFloat(dto.tempMinC || dto.temperature_min_c) : null,
-      temperature_max_c: (dto.tempMaxC || dto.temperature_max_c) ? parseFloat(dto.tempMaxC || dto.temperature_max_c) : null,
+      depth_min_m: toIntOrNull(dto.depthMin ?? dto.depth_min_m),
+      depth_max_m: toIntOrNull(dto.depthMax ?? dto.depth_max_m),
+      temperature_min_c: toFloatOrNull(dto.tempMinC ?? dto.temperature_min_c),
+      temperature_max_c: toFloatOrNull(dto.tempMaxC ?? dto.temperature_max_c),
       model_3d_url: dto.model3dUrl || dto.model_3d_url || null,
       sound_url: dto.soundUrl || dto.sound_url || null,
+      source_api_id: dto.source_api_id || dto.sourceApiId || (dto.aphiaID ? `worms:${dto.aphiaID}` : null),
+      east_sea_zone: dto.east_sea_zone || dto.geoZone || null,
+      local_distribution: dto.local_distribution || null,
       is_visible: dto.is_visible !== undefined ? Boolean(dto.is_visible) : true,
       group_id: groupId,
       conservation_status_id: conservationStatusId,
@@ -275,39 +287,49 @@ export class SpeciesService {
     if (dto.description !== undefined) dataToUpdate.description = dto.description;
 
     const sMin = dto.sizeMinCm !== undefined ? dto.sizeMinCm : dto.size_min_cm;
-    if (sMin !== undefined) dataToUpdate.size_min_cm = sMin ? parseFloat(sMin) : null;
+    if (sMin !== undefined) dataToUpdate.size_min_cm = toFloatOrNull(sMin);
 
     const sMax = dto.sizeMaxCm !== undefined ? dto.sizeMaxCm : dto.size_max_cm;
-    if (sMax !== undefined) dataToUpdate.size_max_cm = sMax ? parseFloat(sMax) : null;
+    if (sMax !== undefined) dataToUpdate.size_max_cm = toFloatOrNull(sMax);
 
     const wMin = dto.weightMinKg !== undefined ? dto.weightMinKg : dto.weight_min_kg;
-    if (wMin !== undefined) dataToUpdate.weight_min_kg = wMin ? parseFloat(wMin) : null;
+    if (wMin !== undefined) dataToUpdate.weight_min_kg = toFloatOrNull(wMin);
 
     const wMax = dto.weightMaxKg !== undefined ? dto.weightMaxKg : dto.weight_max_kg;
-    if (wMax !== undefined) dataToUpdate.weight_max_kg = wMax ? parseFloat(wMax) : null;
+    if (wMax !== undefined) dataToUpdate.weight_max_kg = toFloatOrNull(wMax);
 
     const ls = dto.lifespanYears !== undefined ? dto.lifespanYears : dto.lifespan_years;
-    if (ls !== undefined) dataToUpdate.lifespan_years = ls ? parseInt(ls, 10) : null;
+    if (ls !== undefined) dataToUpdate.lifespan_years = toIntOrNull(ls);
 
     if (dto.diet !== undefined) dataToUpdate.diet = dto.diet;
 
     const dMin = dto.depthMin !== undefined ? dto.depthMin : dto.depth_min_m;
-    if (dMin !== undefined) dataToUpdate.depth_min_m = dMin ? parseInt(dMin, 10) : null;
+    if (dMin !== undefined) dataToUpdate.depth_min_m = toIntOrNull(dMin);
 
     const dMax = dto.depthMax !== undefined ? dto.depthMax : dto.depth_max_m;
-    if (dMax !== undefined) dataToUpdate.depth_max_m = dMax ? parseInt(dMax, 10) : null;
+    if (dMax !== undefined) dataToUpdate.depth_max_m = toIntOrNull(dMax);
 
     const tMin = dto.tempMinC !== undefined ? dto.tempMinC : dto.temperature_min_c;
-    if (tMin !== undefined) dataToUpdate.temperature_min_c = tMin ? parseFloat(tMin) : null;
+    if (tMin !== undefined) dataToUpdate.temperature_min_c = toFloatOrNull(tMin);
 
     const tMax = dto.tempMaxC !== undefined ? dto.tempMaxC : dto.temperature_max_c;
-    if (tMax !== undefined) dataToUpdate.temperature_max_c = tMax ? parseFloat(tMax) : null;
+    if (tMax !== undefined) dataToUpdate.temperature_max_c = toFloatOrNull(tMax);
 
     const m3d = dto.model3dUrl !== undefined ? dto.model3dUrl : dto.model_3d_url;
     if (m3d !== undefined) dataToUpdate.model_3d_url = m3d || null;
 
     const snd = dto.soundUrl !== undefined ? dto.soundUrl : dto.sound_url;
     if (snd !== undefined) dataToUpdate.sound_url = snd || null;
+
+    const srcApi = dto.source_api_id !== undefined ? dto.source_api_id : dto.sourceApiId;
+    if (srcApi !== undefined) dataToUpdate.source_api_id = srcApi || null;
+
+    const eastSea = dto.east_sea_zone !== undefined ? dto.east_sea_zone : dto.geoZone;
+    if (eastSea !== undefined) dataToUpdate.east_sea_zone = eastSea || null;
+
+    if (dto.local_distribution !== undefined) {
+      dataToUpdate.local_distribution = dto.local_distribution || null;
+    }
 
     if (dto.is_visible !== undefined) dataToUpdate.is_visible = Boolean(dto.is_visible);
 
@@ -398,7 +420,7 @@ export class SpeciesService {
   }
 
   /**
-   * Đồng bộ dữ liệu tự động từ GBIF API theo tên khoa học
+   * Đồng bộ dữ liệu tự động từ Cổng Khoa học Đa nguồn (WoRMS + OBIS + GBIF + iNaturalist + Wikidata)
    */
   async syncFromExternalAPI({
     scientificName,
@@ -415,31 +437,39 @@ export class SpeciesService {
     }
 
     const cleanName = scientificName.trim();
+    const taxRes = await taxonomyService.searchTaxonomy(cleanName, "auto");
 
-    // 1. Gọi GBIF Match API
-    let gbifData = null;
-    try {
-      const response = await axios.get(
-        `https://api.gbif.org/v1/species/match?name=${encodeURIComponent(cleanName)}`,
+    if (!taxRes || !taxRes.success || !taxRes.data) {
+      const error = new Error(
+        taxRes?.message || `Không tìm thấy dữ liệu xác thực cho "${cleanName}" từ các nguồn API khoa học.`,
       );
-      gbifData = response.data;
-    } catch (err) {
-      console.warn("Lỗi khi kết nối GBIF API:", err.message);
+      error.statusCode = 404;
+      throw error;
     }
 
-    const matchedName =
-      gbifData?.canonicalName || gbifData?.scientificName || cleanName;
-    const commonName = gbifData?.vernacularName || matchedName;
-    const description = `Thông tin tự động đồng bộ từ GBIF API cho loài ${matchedName}. Họ (Family): ${gbifData?.family || "Chưa rõ"}, Bộ (Order): ${gbifData?.order || "Chưa rõ"}.`;
-
-    // 2. Thêm vào database
+    const d = taxRes.data;
     return this.createSpecies({
-      scientificName: matchedName,
-      common_name: commonName,
-      description,
-      group_id,
-      ocean_zone_id,
-      conservation_status_id,
+      scientificName: d.scientificName || cleanName,
+      common_name: d.name || cleanName,
+      description: d.description,
+      group_id: group_id || d.groupId,
+      ocean_zone_id: ocean_zone_id,
+      oceanZone: d.oceanZone,
+      conservation_status_id: conservation_status_id,
+      conservationStatus: d.conservationStatus,
+      depthMin: d.depthMin,
+      depthMax: d.depthMax,
+      sizeMinCm: d.sizeMinCm,
+      sizeMaxCm: d.sizeMaxCm,
+      weightMinKg: d.weightMinKg,
+      weightMaxKg: d.weightMaxKg,
+      lifespanYears: d.lifespanYears,
+      tempMinC: d.tempMinC,
+      tempMaxC: d.tempMaxC,
+      diet: d.diet,
+      source_api_id: d.source_api_id,
+      east_sea_zone: d.geoZone,
+      mediaItems: d.mediaItems,
     });
   }
 
@@ -450,9 +480,14 @@ export class SpeciesService {
       prisma.species.findMany({
         where: {
           deleted_at: null,
-          OR: [{ species_media: { none: {} } }, { description: null }],
+          OR: [
+            { species_media: { none: {} } },
+            { description: null },
+            { source_api_id: null },
+            { temperature_min_c: null },
+          ],
         },
-        take: 10,
+        take: 15,
         include: {
           species_media: true,
         },
@@ -471,23 +506,25 @@ export class SpeciesService {
         category: p.category,
       }));
 
-    const failedSpecies = incompleteSpecies.map((item) => ({
-      id: String(item.id),
-      name: item.common_name || item.scientificName || `Sinh vật #${item.id}`,
-      error:
-        item.species_media.length === 0
-          ? "Thiếu hình ảnh từ API"
-          : "Thiếu thông tin chi tiết",
-      image:
-        item.species_media?.[0]?.url ||
-        "https://images.unsplash.com/photo-1560275619-4662804300e8?auto=format&fit=crop&w=150&q=80",
-    }));
+    const failedSpecies = incompleteSpecies.map((item) => {
+      let errMsg = "Thiếu thông tin chi tiết";
+      if (item.species_media.length === 0) errMsg = "Thiếu hình ảnh xác thực từ API";
+      else if (!item.source_api_id) errMsg = "Thiếu mã truy xuất nguồn gốc (WoRMS / OBIS / GBIF)";
+      else if (item.temperature_min_c === null) errMsg = "Thiếu khoảng nhiệt độ thực nghiệm (OBIS)";
+
+      return {
+        id: String(item.id),
+        name: item.common_name || item.scientificName || `Sinh vật #${item.id}`,
+        error: errMsg,
+        image: item.species_media?.[0]?.url || null,
+      };
+    });
 
     return { apiStatuses, failedSpecies, allProviders: providersWithPing };
   }
 
   /**
-   * Thử lại đồng bộ dữ liệu sinh vật
+   * Thử lại đồng bộ dữ liệu sinh vật (Ưu tiên tên khoa học chuẩn, chỉ bổ sung trường thật)
    */
   async retrySyncItem(id) {
     const target = await speciesRepository.findById(id);
@@ -497,29 +534,47 @@ export class SpeciesService {
       throw error;
     }
 
-    const cleanName = target.common_name || target.scientificName || "";
+    const cleanName = target.scientificName || target.common_name || "";
     const taxRes = await taxonomyService.searchTaxonomy(cleanName, "auto");
 
     const dataToUpdate = {};
     if (taxRes && taxRes.success && taxRes.data) {
       const d = taxRes.data;
-      if (!target.scientificName || target.scientificName === target.common_name) {
+      if ((!target.scientificName || target.scientificName === target.common_name) && d.scientificName) {
         dataToUpdate.scientificName = d.scientificName;
       }
-      if (!target.description || target.description.trim() === "" || target.description.includes("PostgreSQL")) {
+      if (!target.source_api_id && d.source_api_id) {
+        dataToUpdate.source_api_id = d.source_api_id;
+      }
+      if ((!target.description || target.description.trim() === "" || target.description.includes("PostgreSQL")) && d.description) {
         dataToUpdate.description = d.description;
       }
-      if (target.size_min_cm === null && d.sizeMinCm) {
-        dataToUpdate.size_min_cm = parseFloat(d.sizeMinCm);
+      if (target.size_min_cm === null && toFloatOrNull(d.sizeMinCm) !== null) {
+        dataToUpdate.size_min_cm = toFloatOrNull(d.sizeMinCm);
       }
-      if (target.size_max_cm === null && d.sizeMaxCm) {
-        dataToUpdate.size_max_cm = parseFloat(d.sizeMaxCm);
+      if (target.size_max_cm === null && toFloatOrNull(d.sizeMaxCm) !== null) {
+        dataToUpdate.size_max_cm = toFloatOrNull(d.sizeMaxCm);
       }
-      if (target.depth_min_m === null && d.depthMin) {
-        dataToUpdate.depth_min_m = parseInt(d.depthMin, 10);
+      if (target.weight_min_kg === null && toFloatOrNull(d.weightMinKg) !== null) {
+        dataToUpdate.weight_min_kg = toFloatOrNull(d.weightMinKg);
       }
-      if (target.depth_max_m === null && d.depthMax) {
-        dataToUpdate.depth_max_m = parseInt(d.depthMax, 10);
+      if (target.weight_max_kg === null && toFloatOrNull(d.weightMaxKg) !== null) {
+        dataToUpdate.weight_max_kg = toFloatOrNull(d.weightMaxKg);
+      }
+      if (target.lifespan_years === null && toIntOrNull(d.lifespanYears) !== null) {
+        dataToUpdate.lifespan_years = toIntOrNull(d.lifespanYears);
+      }
+      if (target.depth_min_m === null && toIntOrNull(d.depthMin) !== null) {
+        dataToUpdate.depth_min_m = toIntOrNull(d.depthMin);
+      }
+      if (target.depth_max_m === null && toIntOrNull(d.depthMax) !== null) {
+        dataToUpdate.depth_max_m = toIntOrNull(d.depthMax);
+      }
+      if (target.temperature_min_c === null && toFloatOrNull(d.tempMinC) !== null) {
+        dataToUpdate.temperature_min_c = toFloatOrNull(d.tempMinC);
+      }
+      if (target.temperature_max_c === null && toFloatOrNull(d.tempMaxC) !== null) {
+        dataToUpdate.temperature_max_c = toFloatOrNull(d.tempMaxC);
       }
       if (!target.diet && d.diet) {
         dataToUpdate.diet = d.diet;
@@ -560,7 +615,12 @@ export class SpeciesService {
     const incomplete = await prisma.species.findMany({
       where: {
         deleted_at: null,
-        OR: [{ species_media: { none: {} } }, { description: null }],
+        OR: [
+          { species_media: { none: {} } },
+          { description: null },
+          { source_api_id: null },
+          { temperature_min_c: null },
+        ],
       },
       take: 20,
     });

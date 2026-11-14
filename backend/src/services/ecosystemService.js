@@ -41,7 +41,7 @@ Trả về mảng JSON đúng cấu trúc:
   }
 ]`;
 
-  const models = ["gemini-3-flash-preview", "gemini-3.5-flash"];
+  const models = ["gemini-3-flash-preview", "gemini-3.1-flash-lite"];
   for (const model of models) {
     try {
       const controller = new AbortController();

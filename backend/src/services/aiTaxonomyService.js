@@ -68,33 +68,68 @@ export class AITaxonomyService {
       };
     }
 
-    // 4. Gemini Flash API
+    // 4. Gemini Flash API (Đã kiểm chứng live 200 OK: gemini-3-flash-preview / gemini-3.1-flash-lite)
     const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     if (apiKey) {
-      try {
-        const systemPrompt = `Analyze query for marine biology database. Return JSON: { isValidCreature: bool, isMarine: bool, scientificName: str|null, commonNameVi: str, descriptionVi: str, bioSpecs: obj, reasoning: str }`;
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      const models = ["gemini-3-flash-preview", "gemini-3.1-flash-lite"];
+      const systemPrompt = `You are a marine taxonomy & ecology scientist. Analyze the query for a marine biodiversity database.
+STRICT DATA RULES:
+- Never fabricate scientific facts or default values. Return null for any numeric trait you are not scientifically confident about.
+- Set isEastSea to true ONLY if the species is scientifically documented to inhabit the South China Sea (Biển Đông / Indo-West Pacific waters near Vietnam), false otherwise.
+- Return valid IUCN status code ("LC","NT","VU","EN","CR","EW","EX","DD","NE") or null.
+Return ONLY valid JSON:
+{
+  "isValidCreature": boolean,
+  "isMarine": boolean,
+  "isEastSea": boolean,
+  "scientificName": string | null,
+  "commonNameVi": string,
+  "conservationStatus": string | null,
+  "geoZone": string | null,
+  "descriptionVi": string,
+  "bioSpecs": {
+    "groupId": "1"|"2"|"3"|"4"|null,
+    "oceanZone": "Sunlight"|"Twilight"|"Midnight"|"Abyssal"|"Hadal"|null,
+    "diet": string | null,
+    "depthMin": string | null,
+    "depthMax": string | null,
+    "sizeMinCm": string | null,
+    "sizeMaxCm": string | null,
+    "weightMinKg": string | null,
+    "weightMaxKg": string | null,
+    "lifespanYears": string | null,
+    "tempMinC": string | null,
+    "tempMaxC": string | null
+  },
+  "reasoning": string
+}`;
 
-        const response = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ role: "user", parts: [{ text: systemPrompt }, { text: `Query: "${rawQuery}"` }] }],
-            generationConfig: { temperature: 0.1, responseMimeType: "application/json" },
-          }),
-        });
+      for (const model of models) {
+        try {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-        if (response.ok) {
-          const resData = await response.json();
-          const textOutput = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (textOutput) {
-            const parsedData = JSON.parse(textOutput.replace(/```json|```/g, "").trim());
-            console.log(`[AI TAXONOMY AGENT] Gemini API SciName: ${parsedData.scientificName}`);
-            return parsedData;
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: AbortSignal.timeout(10000),
+            body: JSON.stringify({
+              contents: [{ role: "user", parts: [{ text: systemPrompt }, { text: `Query: "${rawQuery}"` }] }],
+              generationConfig: { temperature: 0.1, responseMimeType: "application/json" },
+            }),
+          });
+
+          if (response.ok) {
+            const resData = await response.json();
+            const textOutput = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (textOutput) {
+              const parsedData = JSON.parse(textOutput.replace(/```json|```/g, "").trim());
+              console.log(`[AI TAXONOMY AGENT] (${model}) SciName: ${parsedData.scientificName}`);
+              return parsedData;
+            }
           }
+        } catch (err) {
+          console.warn(`[AI TAXONOMY AGENT] (${model}) error:`, err.message);
         }
-      } catch (err) {
-        console.warn("Gemini API error:", err.message);
       }
     }
 

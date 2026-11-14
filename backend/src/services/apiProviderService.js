@@ -90,17 +90,50 @@ export const DEFAULT_API_PROVIDERS = [
   },
   {
     id: "noaa",
-    name: "NOAA Ocean Explorer",
-    desc: "Dữ liệu Hải dương học & Rạn san hô Quốc gia Hoa Kỳ",
+    name: "NOAA NCEI Ocean Data API",
+    desc: "Cổng dữ liệu Hải dương học & Khí hậu Quốc gia Hoa Kỳ (NOAA NCEI Search API v1)",
     category: "oceanography",
-    endpoint: "https://www.ncei.noaa.gov",
-    docsUrl: "https://www.ncei.noaa.gov/",
+    endpoint: "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=ocean&limit=1",
+    docsUrl: "https://www.ncei.noaa.gov/support/web-services",
     isEnabled: true,
-    isBuiltIn: false,
+    isBuiltIn: true,
+    requiresKey: false,
+    headers: { "Accept": "application/json" },
+  },
+  {
+    id: "wikidata",
+    name: "Wikidata Marine Traits API",
+    desc: "Kho tri thức có cấu trúc Wikimedia (Cân nặng, Tuổi thọ, Mã định danh WoRMS & GBIF)",
+    category: "traits",
+    endpoint: "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q129026&format=json&props=claims|labels",
+    docsUrl: "https://www.wikidata.org/wiki/Wikidata:REST_API",
+    isEnabled: true,
+    isBuiltIn: true,
+    requiresKey: false,
+    headers: { "User-Agent": "PacificOceanApp/1.0 (https://pacific.org)" },
+  },
+  {
+    id: "iucn_gbif",
+    name: "IUCN Red List (via GBIF)",
+    desc: "Tình trạng bảo tồn Danh lục Đỏ IUCN chính thống đồng bộ qua GBIF Species API",
+    category: "biodiversity",
+    endpoint: "https://api.gbif.org/v1/species/2420694/iucnRedListCategory",
+    docsUrl: "https://www.gbif.org/developer/species",
+    isEnabled: true,
+    isBuiltIn: true,
     requiresKey: false,
     headers: { "Accept": "application/json" },
   },
 ];
+
+// Bản đồ nâng cấp tự động các endpoint HTML/lỗi thời từng lưu trong DB
+const LEGACY_ENDPOINT_UPGRADES = {
+  "https://www.ncei.noaa.gov": "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=ocean&limit=1",
+  "https://www.ncei.noaa.gov/": "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=ocean&limit=1",
+  "https://sealifebase.ca/": "https://api.obis.org/v3/taxon/2688",
+  "https://www.algaebase.org/api/": "https://www.marinespecies.org/rest/AphiaRecordsByName/Sargassum?like=false",
+  "https://api.iucnredlist.org/api/v4": "https://api.gbif.org/v1/species/2420694/iucnRedListCategory",
+};
 
 export class ApiProviderService {
   /**
@@ -122,12 +155,26 @@ export class ApiProviderService {
           }
         }
         if (Array.isArray(parsed) && parsed.length > 0) {
+          let needsSave = false;
+          parsed = parsed.map((p) => {
+            if (LEGACY_ENDPOINT_UPGRADES[p.endpoint] && !p.apiKey) {
+              needsSave = true;
+              return { ...p, endpoint: LEGACY_ENDPOINT_UPGRADES[p.endpoint] };
+            }
+            return p;
+          });
+
           // Merge with any new default built-in providers if not present
           const existingIds = new Set(parsed.map((p) => p.id));
           for (const def of DEFAULT_API_PROVIDERS) {
             if (!existingIds.has(def.id)) {
               parsed.push(def);
+              needsSave = true;
             }
+          }
+
+          if (needsSave) {
+            await this.saveProviders(parsed);
           }
           return parsed;
         }
@@ -340,8 +387,20 @@ export class ApiProviderService {
 
       clearTimeout(timeoutId);
       const responseTimeMs = Date.now() - startTime;
+      const contentType = (res.headers.get("content-type") || "").toLowerCase();
 
-      if (res.ok || res.status === 304 || res.status === 400 || res.status === 401) {
+      if (res.ok || res.status === 304) {
+        // Data Engineer validation: đảm bảo endpoint thực sự trả dữ liệu có cấu trúc (JSON/XML), không phải trang web HTML
+        if (contentType.includes("text/html")) {
+          return {
+            success: false,
+            status: "slow",
+            responseTimeMs,
+            statusCode: res.status,
+            message: `Cảnh báo nguồn: Trả về trang HTML thay vì JSON API (${responseTimeMs}ms)`,
+          };
+        }
+
         const isSlow = responseTimeMs > 2500;
         return {
           success: true,
@@ -352,12 +411,22 @@ export class ApiProviderService {
         };
       }
 
+      if (res.status === 401 || res.status === 403) {
+        return {
+          success: false,
+          status: "offline",
+          responseTimeMs,
+          statusCode: res.status,
+          message: `Từ chối truy cập / Thiếu API Key (HTTP ${res.status})`,
+        };
+      }
+
       return {
         success: false,
-        status: "slow",
+        status: "offline",
         responseTimeMs,
         statusCode: res.status,
-        message: `Mã phản hồi HTTP: ${res.status} (${responseTimeMs}ms)`,
+        message: `Mã phản hồi lỗi HTTP: ${res.status} (${responseTimeMs}ms)`,
       };
     } catch (err) {
       const responseTimeMs = Date.now() - startTime;

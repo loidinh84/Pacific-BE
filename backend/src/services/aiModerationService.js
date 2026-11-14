@@ -8,7 +8,7 @@ dotenv.config();
  */
 class AIModerationService {
   constructor() {
-    this.model = "gemini-3.5-flash-lite";
+    this.model = "gemini-3.1-flash-lite";
   }
 
   get apiKey() {
