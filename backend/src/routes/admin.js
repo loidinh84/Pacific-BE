@@ -9,7 +9,6 @@ import adminUserController from "../controller/adminUserController.js";
 import adminLocationsController from "../controller/adminLocationsController.js";
 import adminCommentsController from "../controller/adminCommentsController.js";
 import adminSettingsController from "../controller/adminSettingsController.js";
-import adminQuizController from "../controller/adminQuizController.js";
 import adminRelationshipsController from "../controller/adminRelationshipsController.js";
 import adminFeedbackController from "../controller/adminFeedbackController.js";
 import adminNewsController from "../controller/adminNewsController.js";
@@ -224,24 +223,6 @@ router.get("/settings", (req, res) => adminSettingsController.getSettings(req, r
 
 // PUT /api/admin/settings - Cập nhật cấu hình hệ thống
 router.put("/settings", (req, res) => adminSettingsController.updateSettings(req, res));
-
-/**
- * Ngân hàng câu hỏi trắc nghiệm
- */
-// GET /api/admin/quiz - Lấy danh sách câu hỏi kèm lọc, tìm kiếm, phân trang
-router.get("/quiz", (req, res) => adminQuizController.getQuizList(req, res));
-
-// POST /api/admin/quiz - Thêm câu hỏi mới
-router.post("/quiz", (req, res) => adminQuizController.createQuestion(req, res));
-
-// PUT /api/admin/quiz/:id - Cập nhật câu hỏi
-router.put("/quiz/:id", (req, res) => adminQuizController.updateQuestion(req, res));
-
-// DELETE /api/admin/quiz/:id - Xóa câu hỏi
-router.delete("/quiz/:id", (req, res) => adminQuizController.deleteQuestion(req, res));
-
-// PATCH /api/admin/quiz/:id/toggle - Bật/tắt trạng thái câu hỏi
-router.patch("/quiz/:id/toggle", (req, res) => adminQuizController.toggleQuestion(req, res));
 
 /**
  * Quản lý ý kiến đóng góp
