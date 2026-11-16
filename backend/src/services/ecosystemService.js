@@ -770,6 +770,28 @@ class EcosystemService {
 
     // Xử lý khi truy vấn quan hệ của một loài cụ thể
     if (targetFocusSpecies) {
+      if (!addedSpeciesIds.has(targetFocusSpecies.id.toString())) {
+        addedSpeciesIds.add(targetFocusSpecies.id.toString());
+        results.push({
+          id: targetFocusSpecies.id.toString(),
+          code: targetFocusSpecies.code,
+          commonName: targetFocusSpecies.common_name,
+          scientificName: targetFocusSpecies.scientificName,
+          slug: targetFocusSpecies.slug,
+          image: targetFocusSpecies.species_media?.[0]?.url || "",
+          groupName: targetFocusSpecies.species_groups?.name?.split("(")[0]?.trim() || "Cá biển",
+          redList: targetFocusSpecies.vietnam_red_list_status || "LC",
+          zone: targetFocusSpecies.east_sea_zone || "Biển Đông",
+          depth: `${targetFocusSpecies.depth_min_m ?? 0} - ${targetFocusSpecies.depth_max_m ?? 200}m`,
+          description: targetFocusSpecies.description || "",
+          diet: targetFocusSpecies.diet || "",
+          localDistribution: targetFocusSpecies.local_distribution || "",
+          role: "Loài tìm kiếm",
+          semanticReason: `Loài trọng tâm trong truy vấn "${rawQuery}".`,
+          relationshipType: "focus_species",
+          strength: 1.0,
+        });
+      }
       const directionCondition =
         relType === "predator_prey" && isLookingForPredator
           ? { target_species_id: targetFocusSpecies.id }
@@ -964,7 +986,7 @@ class EcosystemService {
     // Tìm kiếm theo độ tương đồng ngữ nghĩa trong bộ nhớ
     if (results.length === 0 && process.env.GEMINI_API_KEY) {
       try {
-        const vectorMatches = await vectorSearchService.search(rawQuery, 0.48, 12);
+        const vectorMatches = await vectorSearchService.search(rawQuery, 0.72, 12);
 
         if (vectorMatches && vectorMatches.length > 0) {
           for (const match of vectorMatches) {

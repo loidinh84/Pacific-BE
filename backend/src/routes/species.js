@@ -789,11 +789,14 @@ router.get("/", async (req, res) => {
 
     if (search && search.trim() !== "") {
       const q = search.trim();
-      where.OR = [
+      const searchConditions = [
         { common_name: { contains: q, mode: "insensitive" } },
         { scientificName: { contains: q, mode: "insensitive" } },
-        { code: { contains: q, mode: "insensitive" } },
       ];
+      if (/^SPEC[-_]?[0-9]+/i.test(q)) {
+        searchConditions.push({ code: { equals: q, mode: "insensitive" } });
+      }
+      where.OR = searchConditions;
     }
 
     if (zone && zone.trim() !== "") {
