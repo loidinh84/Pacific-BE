@@ -362,28 +362,67 @@ router.get("/map-distribution", async (req, res) => {
       })),
     }));
 
+    // Helper xác định toạ độ dựa vào locations hoặc east_sea_zone
+    const getSpeciesCoords = (sp) => {
+      // 1. Ưu tiên toạ độ từ bảng liên kết species_locations
+      if (sp.species_locations && sp.species_locations.length > 0) {
+        const firstLoc = sp.species_locations[0].locations;
+        if (firstLoc?.latitude != null && firstLoc?.longitude != null) {
+          return {
+            lat: Number(firstLoc.latitude),
+            lng: Number(firstLoc.longitude),
+            zoneName: firstLoc.name,
+          };
+        }
+      }
+
+      // 2. Nếu không có bảng liên kết, suy diễn từ phân vùng biển east_sea_zone của CSDL
+      const z = (sp.east_sea_zone || "").toLowerCase();
+      const numId = Number(sp.id || 1);
+      const jitterLat = ((numId * 17) % 50 - 25) / 1000;
+      const jitterLng = ((numId * 23) % 50 - 25) / 1000;
+
+      if (z.includes("hoàng sa")) return { lat: 16.5333 + jitterLat, lng: 112.0333 + jitterLng, zoneName: "Quần đảo Hoàng Sa" };
+      if (z.includes("trường sa")) return { lat: 8.6447 + jitterLat, lng: 111.9194 + jitterLng, zoneName: "Quần đảo Trường Sa" };
+      if (z.includes("côn đảo")) return { lat: 8.6833 + jitterLat, lng: 106.6000 + jitterLng, zoneName: "Vườn Quốc gia Côn Đảo" };
+      if (z.includes("phú quốc") || z.includes("thái lan")) return { lat: 10.1500 + jitterLat, lng: 103.9500 + jitterLng, zoneName: "Khu Bảo tồn Biển Phú Quốc" };
+      if (z.includes("nha trang") || z.includes("hòn mun")) return { lat: 12.2167 + jitterLat, lng: 109.2833 + jitterLng, zoneName: "Vịnh Nha Trang & Hòn Mun" };
+      if (z.includes("cù lao chàm")) return { lat: 15.9600 + jitterLat, lng: 108.5100 + jitterLng, zoneName: "Khu BTTB Cù Lao Chàm" };
+      if (z.includes("hạ long") || z.includes("bái tử long")) return { lat: 20.8800 + jitterLat, lng: 107.1500 + jitterLng, zoneName: "Vịnh Hạ Long & Bái Tử Long" };
+      if (z.includes("bạch long vĩ")) return { lat: 20.1333 + jitterLat, lng: 107.7167 + jitterLng, zoneName: "Đảo Bạch Long Vĩ" };
+      if (z.includes("hòn cau") || z.includes("ninh thuận") || z.includes("bình thuận")) return { lat: 11.2333 + jitterLat, lng: 108.8333 + jitterLng, zoneName: "Khu bảo tồn Hòn Cau" };
+      if (z.includes("rãnh") || z.includes("vực thẳm") || z.includes("manila") || z.includes("đáy sâu") || z.includes("hố sâu")) {
+        return { lat: 14.3500 + jitterLat, lng: 117.5000 + jitterLng, zoneName: "Vực thẳm Manila Biển Đông" };
+      }
+      if (z.includes("bắc bộ")) return { lat: 19.5000 + jitterLat, lng: 107.5000 + jitterLng, zoneName: "Vịnh Bắc Bộ" };
+      if (z.includes("trung bộ") || z.includes("miền trung")) return { lat: 14.2000 + jitterLat, lng: 109.8000 + jitterLng, zoneName: "Vùng biển Trung Bộ" };
+      if (z.includes("nam bộ")) return { lat: 9.3000 + jitterLat, lng: 107.2000 + jitterLng, zoneName: "Vùng biển Nam Bộ" };
+
+      // Vùng biển khơi mặc định Biển Đông
+      return { lat: 13.8000 + jitterLat, lng: 113.2000 + jitterLng, zoneName: sp.east_sea_zone || "Biển Đông" };
+    };
+
     return res.status(200).json({
       success: true,
       data: {
         locations,
-        species: dbSpecies.map((sp) => ({
-          id: sp.id.toString(),
-          slug: sp.slug,
-          code: sp.code,
-          nameVi: sp.common_name,
-          nameEn: sp.scientificName,
-          sciName: sp.scientificName,
-          depth: `${sp.depth_min_m ?? 0}m - ${sp.depth_max_m ?? 200}m`,
-          zoneNameVi: sp.east_sea_zone || "Biển Đông",
-          image: sp.species_media[0]?.url || "",
-          groupSlug: sp.species_groups?.slug || "fish",
-          locations: sp.species_locations.map((sl) => ({
-            id: sl.locations.id.toString(),
-            name: sl.locations.name,
-            lat: Number(sl.locations.latitude),
-            lng: Number(sl.locations.longitude),
-          })),
-        })),
+        species: dbSpecies.map((sp) => {
+          const coords = getSpeciesCoords(sp);
+          return {
+            id: sp.id.toString(),
+            slug: sp.slug,
+            code: sp.code,
+            nameVi: sp.common_name,
+            nameEn: sp.scientificName,
+            sciName: sp.scientificName,
+            depth: `${sp.depth_min_m ?? 0}m - ${sp.depth_max_m ?? 200}m`,
+            zoneNameVi: coords.zoneName,
+            lat: coords.lat,
+            lng: coords.lng,
+            image: sp.species_media[0]?.url || "",
+            groupId: sp.species_groups?.slug || "fish",
+          };
+        }),
       },
     });
   } catch (error) {
