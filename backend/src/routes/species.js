@@ -192,6 +192,83 @@ router.get("/statuses", async (req, res) => {
   }
 });
 
+// GET /api/species/:idOrSlug/locations - Danh sách địa điểm phân bố của một loài
+router.get("/:idOrSlug/locations", async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    const targetSlug = resolveSpeciesSlug(idOrSlug);
+    const isNum = /^\d+$/.test(targetSlug);
+
+    let species = null;
+    if (isNum) {
+      species = await prisma.species.findUnique({
+        where: { id: BigInt(targetSlug) },
+        select: { id: true },
+      });
+    }
+    if (!species) {
+      species = await prisma.species.findFirst({
+        where: {
+          OR: [
+            { slug: targetSlug },
+            { slug: idOrSlug },
+            { code: idOrSlug },
+            { common_name: { equals: idOrSlug, mode: "insensitive" } },
+            { slug: { contains: idOrSlug, mode: "insensitive" } },
+            { scientificName: { contains: idOrSlug, mode: "insensitive" } },
+          ],
+        },
+        select: { id: true },
+      });
+    }
+
+    if (!species) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy loài." });
+    }
+
+    const speciesLocations = await prisma.species_locations.findMany({
+      where: { species_id: species.id },
+      include: {
+        locations: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            latitude: true,
+            longitude: true,
+            description: true,
+            image_url: true,
+            ocean_zone_id: true,
+            is_featured: true,
+          },
+        },
+      },
+    });
+
+    const locations = speciesLocations
+      .map((sl) => sl.locations)
+      .filter((loc) => loc.latitude != null && loc.longitude != null)
+      .map((loc) => ({
+        id: loc.id.toString(),
+        name: loc.name,
+        slug: loc.slug,
+        latitude: parseFloat(loc.latitude),
+        longitude: parseFloat(loc.longitude),
+        description: loc.description,
+        image_url: loc.image_url,
+        ocean_zone_id: loc.ocean_zone_id,
+        is_featured: loc.is_featured,
+      }));
+
+    return res.status(200).json({ success: true, data: locations });
+  } catch (error) {
+    console.error("Lỗi lấy địa điểm phân bố loài:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // GET /api/species/locations - Danh sách địa điểm khám phá đại dương
 router.get("/locations", async (req, res) => {
   try {
