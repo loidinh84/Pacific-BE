@@ -269,6 +269,129 @@ router.get("/:idOrSlug/locations", async (req, res) => {
   }
 });
 
+// GET /api/species/map-distribution - Phân bố sinh vật và địa điểm trên bản đồ Biển Đông
+router.get("/map-distribution", async (req, res) => {
+  try {
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    const dbLocations = await prisma.locations.findMany({
+      where: {
+        latitude: { not: null },
+        longitude: { not: null },
+      },
+      include: {
+        species_locations: {
+          include: {
+            species: {
+              select: {
+                id: true,
+                slug: true,
+                common_name: true,
+                scientificName: true,
+                species_media: {
+                  where: { type: "image" },
+                  take: 1,
+                  select: { url: true },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { id: "asc" },
+    });
+
+    const dbSpecies = await prisma.species.findMany({
+      where: {
+        is_visible: true,
+        deleted_at: null,
+      },
+      select: {
+        id: true,
+        slug: true,
+        code: true,
+        common_name: true,
+        scientificName: true,
+        depth_min_m: true,
+        depth_max_m: true,
+        east_sea_zone: true,
+        group_id: true,
+        species_groups: {
+          select: { id: true, name: true, slug: true },
+        },
+        species_media: {
+          where: { type: "image" },
+          take: 1,
+          select: { url: true },
+        },
+        species_locations: {
+          include: {
+            locations: {
+              select: {
+                id: true,
+                name: true,
+                latitude: true,
+                longitude: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { id: "asc" },
+    });
+
+    const locations = dbLocations.map((loc) => ({
+      id: loc.id.toString(),
+      nameVi: loc.name,
+      nameEn: loc.name,
+      slug: loc.slug,
+      lat: Number(loc.latitude),
+      lng: Number(loc.longitude),
+      depth: loc.description || "45m",
+      coordText: `${Number(loc.latitude).toFixed(2)}° B, ${Number(loc.longitude).toFixed(2)}° Đ`,
+      categoryVi: "Khu bảo tồn & Vùng biển trọng điểm",
+      categoryEn: "Marine Protected Area",
+      descVi: loc.description || "",
+      descEn: loc.description || "",
+      residentSpecies: loc.species_locations.map((sl) => ({
+        id: sl.species.id.toString(),
+        slug: sl.species.slug,
+        nameVi: sl.species.common_name,
+        nameEn: sl.species.scientificName,
+        image: sl.species.species_media[0]?.url || "",
+      })),
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        locations,
+        species: dbSpecies.map((sp) => ({
+          id: sp.id.toString(),
+          slug: sp.slug,
+          code: sp.code,
+          nameVi: sp.common_name,
+          nameEn: sp.scientificName,
+          sciName: sp.scientificName,
+          depth: `${sp.depth_min_m ?? 0}m - ${sp.depth_max_m ?? 200}m`,
+          zoneNameVi: sp.east_sea_zone || "Biển Đông",
+          image: sp.species_media[0]?.url || "",
+          groupSlug: sp.species_groups?.slug || "fish",
+          locations: sp.species_locations.map((sl) => ({
+            id: sl.locations.id.toString(),
+            name: sl.locations.name,
+            lat: Number(sl.locations.latitude),
+            lng: Number(sl.locations.longitude),
+          })),
+        })),
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi lấy map-distribution:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // GET /api/species/locations - Danh sách địa điểm khám phá đại dương
 router.get("/locations", async (req, res) => {
   try {
