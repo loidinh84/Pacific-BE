@@ -168,7 +168,7 @@ class EcosystemService {
    * Lấy dữ liệu đồ thị sinh thái
    */
   async getKnowledgeGraph(filters = {}) {
-    const { zone, groupId, redList, limit = 100 } = filters;
+    const { zone, groupId, redList, limit = 500 } = filters;
 
     // Điều kiện lọc liên kết
     const whereRel = {};

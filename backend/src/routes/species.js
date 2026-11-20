@@ -9,12 +9,47 @@ const router = Router();
 
 // Mapping các slug / id phổ biến từ mockup hoặc tiếng Anh sang slug chuẩn trong CSDL
 const SLUG_ALIASES = {
+  // Aliases cũ
   "giant-octopus-3": "bach-tuoc-khong-lo",
   "octopus": "bach-tuoc-khong-lo",
   "whale-shark": "ca-map-voi-nham-voi",
   "whale-shark-2": "ca-map-voi-nham-voi",
   "bluefin-tuna-1": "ca-ngu-vay-vang-dai-duong",
   "great-white-shark-1": "great-white-shark-1",
+
+  // 32 loài trong Độ Sâu Đại Dương (OceanDepth)
+  "dugong": "bo-bien-dugong",
+  "clownfish": "ca-he-ocellaris-nemo",
+  "hawksbill-turtle": "doi-moi-rua-bien",
+  "bigfin-squid": "muc-la-dai-duong",
+  "spotted-dolphin": "ca-heo-dom-nhiet-doi",
+  "sailfish": "ca-co-gon",
+  "hammerhead-shark": "ca-nham-bua-dau-bua",
+  "yellowfin-tuna": "ca-ngu-vay-vang-dai-duong",
+  "ocean-sunfish": "ca-mat-trang-mola-mola",
+  "spotted-eagle-ray": "ca-duoi-o-hoa",
+  "lanternfish": "ca-den-long-bien-sau",
+  "giant-isopod": "bo-bien-khong-lo-giant-isopod",
+  "hatchetfish": "ca-riu-bac-bien-sau",
+  "cockeyed-squid": "muc-mat-choi-lac",
+  "muc-mat-lech": "muc-mat-choi-lac",
+  "deepsea-crab": "cua-da-bien-sau",
+  "ghost-shark": "ca-nham-ma-ghost-shark",
+  "black-dragonfish": "ca-rong-den-bien-sau",
+  "glass-squid": "muc-thuy-tinh-glass-squid",
+  "gigantocypris": "giap-xac-boi-khong-lo-gigantocypris",
+  "anglerfish": "ca-can-cau-bien-sau-anglerfish",
+  "haima-tubeworm": "giun-ong-mieng-lanh-haima",
+  "haima-mussel": "trai-bien-sau-haima",
+  "viperfish": "ca-rong-bien-sau-viperfish",
+  "vampire-squid": "muc-ma-ca-rong-bien-sau",
+  "dumbo-octopus": "bach-tuoc-dumbo",
+  "tripod-fish": "ca-ba-chan-tripod-fish",
+  "grenadier-fish": "ca-duoi-chuot-bien-sau",
+  "sea-pig": "heo-bien-sau-sea-pig",
+  "brittle-star": "sao-gion-vuc-tham",
+  "hadal-snailfish": "ca-oc-ranh-sau-hadal-snailfish",
+  "hadal-amphipod": "giap-xac-chan-hai-ranh-manila",
 };
 
 const resolveSpeciesSlug = (slugOrId = "") => {
