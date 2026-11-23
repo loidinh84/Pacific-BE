@@ -459,29 +459,53 @@ router.get("/map-distribution", async (req, res) => {
         } else if (z.includes("rãnh") || z.includes("vực thẳm") || z.includes("manila") || z.includes("đáy sâu") || z.includes("hố sâu")) {
           centerLat = 14.3500; centerLng = 117.5000; zoneName = "Vực thẳm Manila Biển Đông"; spreadScale = 0.38;
         } else if (z.includes("bắc bộ")) {
-          centerLat = 19.5000; centerLng = 107.5000; zoneName = "Vịnh Bắc Bộ"; spreadScale = 0.40;
+          centerLat = 19.8000; centerLng = 107.5000; zoneName = "Vịnh Bắc Bộ"; spreadScale = 0.85;
         } else if (z.includes("trung bộ") || z.includes("miền trung")) {
-          centerLat = 14.3000; centerLng = 109.8500; zoneName = "Vùng biển Trung Bộ"; spreadScale = 0.45;
+          // Trải đều dọc theo thềm lục địa duyên hải miền Trung (từ Bình Thuận đến Đà Nẵng)
+          centerLat = 14.1000; centerLng = 109.6000; zoneName = "Vùng biển Trung Bộ"; spreadScale = 1.25;
         } else if (z.includes("nam bộ")) {
-          centerLat = 9.3000; centerLng = 107.3000; zoneName = "Vùng biển Nam Bộ"; spreadScale = 0.35;
+          centerLat = 9.3000; centerLng = 107.3000; zoneName = "Vùng biển Nam Bộ"; spreadScale = 0.65;
         } else {
           zoneName = sp.east_sea_zone || "Biển Đông";
-          spreadScale = 0.55;
+          spreadScale = 0.95;
         }
       }
 
-      // Phân tán theo tỷ lệ xoắn ốc vàng (Golden Spiral) với bán kính mở rộng tự nhiên
+      // Phân tán theo tỷ lệ xoắn ốc & thềm hải dương học tự nhiên
       // Giúp sinh vật trong cùng vùng biển tản đều ra các đảo, rạn ngầm và ngư trường xung quanh
       const zoneKey = zoneName;
       const count = zoneDistributionTracker[zoneKey] || 0;
       zoneDistributionTracker[zoneKey] = count + 1;
 
-      // Góc vàng 137.508 độ
-      const goldenAngle = count * 2.39996; // radians
-      const radius = count === 0 ? 0 : (spreadScale * 0.25 + spreadScale * 0.18 * Math.sqrt(count));
-      
-      const finalLat = Number((centerLat + radius * Math.sin(goldenAngle)).toFixed(4));
-      const finalLng = Number((centerLng + radius * Math.cos(goldenAngle) * 1.05).toFixed(4));
+      let finalLat, finalLng;
+      if (zoneKey === "Vùng biển Trung Bộ") {
+        // Trải dọc theo cánh cung duyên hải miền Trung từ 11.8° B (Ninh Thuận) đến 16.2° B (Đà Nẵng)
+        const latStep = 11.8 + ((count * 3) % 15) * 0.31;
+        const coastLng = 109.15 + (latStep - 11.8) * 0.12 + ((count % 3) - 1) * 0.18;
+        finalLat = Number(latStep.toFixed(4));
+        finalLng = Number(coastLng.toFixed(4));
+      } else if (zoneKey.includes("Hoàng Sa")) {
+        // Phân bổ 2 nhóm đảo An Vĩnh (Đông Bắc) và Lưỡi Liềm (Tây Nam) + rạn san hô ngoài khơi
+        const isAnVinh = count % 2 === 0;
+        const subCenterLat = isAnVinh ? 16.85 : 16.35;
+        const subCenterLng = isAnVinh ? 112.45 : 111.65;
+        const angle = count * 2.39996;
+        const r = 0.08 + (count * 0.012);
+        finalLat = Number((subCenterLat + r * Math.sin(angle)).toFixed(4));
+        finalLng = Number((subCenterLng + r * Math.cos(angle) * 1.1).toFixed(4));
+      } else if (zoneKey.includes("Trường Sa")) {
+        // Phân bổ rộng khắp quần đảo Trường Sa từ đảo Song Tử Tây đến Trường Sa Lớn và Nam Yết
+        const angle = count * 2.39996;
+        const r = 0.25 + (count * 0.035);
+        finalLat = Number((centerLat + r * Math.sin(angle)).toFixed(4));
+        finalLng = Number((centerLng + r * Math.cos(angle) * 1.2).toFixed(4));
+      } else {
+        // Góc vàng 137.508 độ với bước tản rộng tránh dồn cục
+        const goldenAngle = count * 2.39996;
+        const radius = count === 0 ? 0 : (spreadScale * 0.20 + spreadScale * 0.12 * Math.sqrt(count));
+        finalLat = Number((centerLat + radius * Math.sin(goldenAngle)).toFixed(4));
+        finalLng = Number((centerLng + radius * Math.cos(goldenAngle) * 1.05).toFixed(4));
+      }
 
       return {
         lat: finalLat,
