@@ -395,12 +395,12 @@ router.get("/map-distribution", async (req, res) => {
       return `${formatPart(lat, true)}, ${formatPart(lng, false)}`;
     };
 
-    // Helper xác định toạ độ dựa vào locations hoặc east_sea_zone
+    // Helper xác định toạ độ dựa vào locations hoặc east_sea_zone với tỷ lệ phân tán hải dương học thực tế
     const getSpeciesCoords = (sp) => {
       let centerLat = 13.8;
       let centerLng = 113.2;
       let zoneName = "Biển Đông";
-      let spreadScale = 0.025; // Bán kính tản phân bố (độ)
+      let spreadScale = 0.5; // Bán kính phân tán mặc định trên biển mở
 
       // 1. Ưu tiên toạ độ từ bảng liên kết species_locations nếu thuộc vùng Biển Đông
       if (sp.species_locations && sp.species_locations.length > 0) {
@@ -411,51 +411,74 @@ router.get("/map-distribution", async (req, res) => {
           centerLat = locLat;
           centerLng = locLng;
           zoneName = firstLoc.name;
-          spreadScale = zoneName.includes("Trường Sa") || zoneName.includes("Hoàng Sa") ? 0.08 : 0.035;
+
+          // Mở rộng bán kính phân bổ theo diện tích tự nhiên của từng ngư trường & khu bảo tồn
+          if (zoneName.includes("Trường Sa")) {
+            spreadScale = 0.42;
+          } else if (zoneName.includes("Hoàng Sa")) {
+            spreadScale = 0.35;
+          } else if (zoneName.includes("Côn Đảo")) {
+            spreadScale = 0.16;
+            centerLng = 106.66; // Hơi dời ra vùng rạn phía Đông Côn Đảo
+          } else if (zoneName.includes("Nha Trang")) {
+            spreadScale = 0.22;
+            centerLng = 109.33; // Vịnh Nha Trang và rạn san hô Hòn Tre, Hòn Mun
+          } else if (zoneName.includes("Phú Quốc")) {
+            spreadScale = 0.18;
+            centerLng = 104.05; // Vùng biển rạn phía Đông và quần đảo An Thới
+          } else if (zoneName.includes("Cù Lao Chàm")) {
+            spreadScale = 0.14;
+            centerLng = 108.56;
+          } else if (zoneName.includes("Bạch Long Vĩ")) {
+            spreadScale = 0.10;
+          } else {
+            spreadScale = 0.20;
+          }
         }
       } else {
         // 2. Nếu không có bảng liên kết, suy diễn từ phân vùng biển east_sea_zone của CSDL
         const z = (sp.east_sea_zone || "").toLowerCase();
         if (z.includes("hoàng sa")) {
-          centerLat = 16.5333; centerLng = 112.0333; zoneName = "Quần đảo Hoàng Sa"; spreadScale = 0.07;
+          centerLat = 16.5333; centerLng = 112.0333; zoneName = "Quần đảo Hoàng Sa"; spreadScale = 0.35;
         } else if (z.includes("trường sa")) {
-          centerLat = 10.1833; centerLng = 114.3667; zoneName = "Quần đảo Trường Sa"; spreadScale = 0.09;
+          centerLat = 10.1833; centerLng = 114.3667; zoneName = "Quần đảo Trường Sa"; spreadScale = 0.42;
         } else if (z.includes("côn đảo")) {
-          centerLat = 8.6833; centerLng = 106.6000; zoneName = "Vườn Quốc gia Côn Đảo"; spreadScale = 0.035;
+          centerLat = 8.6833; centerLng = 106.6600; zoneName = "Vườn Quốc gia Côn Đảo"; spreadScale = 0.16;
         } else if (z.includes("phú quốc") || z.includes("thái lan")) {
-          centerLat = 10.1500; centerLng = 103.9500; zoneName = "Khu Bảo tồn Biển Phú Quốc"; spreadScale = 0.035;
+          centerLat = 10.1500; centerLng = 104.0500; zoneName = "Khu Bảo tồn Biển Phú Quốc"; spreadScale = 0.18;
         } else if (z.includes("nha trang") || z.includes("hòn mun")) {
-          centerLat = 12.2167; centerLng = 109.2833; zoneName = "Vịnh Nha Trang & Hòn Mun"; spreadScale = 0.035;
+          centerLat = 12.2167; centerLng = 109.3300; zoneName = "Vịnh Nha Trang & Hòn Mun"; spreadScale = 0.22;
         } else if (z.includes("cù lao chàm")) {
-          centerLat = 15.9600; centerLng = 108.5100; zoneName = "Khu BTTB Cù Lao Chàm"; spreadScale = 0.03;
+          centerLat = 15.9600; centerLng = 108.5600; zoneName = "Khu BTTB Cù Lao Chàm"; spreadScale = 0.14;
         } else if (z.includes("hạ long") || z.includes("bái tử long")) {
-          centerLat = 20.8800; centerLng = 107.1500; zoneName = "Vịnh Hạ Long & Bái Tử Long"; spreadScale = 0.035;
+          centerLat = 20.8800; centerLng = 107.2500; zoneName = "Vịnh Hạ Long & Bái Tử Long"; spreadScale = 0.18;
         } else if (z.includes("bạch long vĩ")) {
-          centerLat = 20.1333; centerLng = 107.7167; zoneName = "Đảo Bạch Long Vĩ"; spreadScale = 0.025;
+          centerLat = 20.1333; centerLng = 107.7167; zoneName = "Đảo Bạch Long Vĩ"; spreadScale = 0.10;
         } else if (z.includes("hòn cau") || z.includes("ninh thuận") || z.includes("bình thuận")) {
-          centerLat = 11.2333; centerLng = 108.8333; zoneName = "Khu bảo tồn Hòn Cau"; spreadScale = 0.03;
+          centerLat = 11.2333; centerLng = 108.8833; zoneName = "Khu bảo tồn Hòn Cau"; spreadScale = 0.15;
         } else if (z.includes("rãnh") || z.includes("vực thẳm") || z.includes("manila") || z.includes("đáy sâu") || z.includes("hố sâu")) {
-          centerLat = 14.3500; centerLng = 117.5000; zoneName = "Vực thẳm Manila Biển Đông"; spreadScale = 0.08;
+          centerLat = 14.3500; centerLng = 117.5000; zoneName = "Vực thẳm Manila Biển Đông"; spreadScale = 0.38;
         } else if (z.includes("bắc bộ")) {
-          centerLat = 19.5000; centerLng = 107.5000; zoneName = "Vịnh Bắc Bộ"; spreadScale = 0.06;
+          centerLat = 19.5000; centerLng = 107.5000; zoneName = "Vịnh Bắc Bộ"; spreadScale = 0.40;
         } else if (z.includes("trung bộ") || z.includes("miền trung")) {
-          centerLat = 14.2000; centerLng = 109.8000; zoneName = "Vùng biển Trung Bộ"; spreadScale = 0.06;
+          centerLat = 14.3000; centerLng = 109.8500; zoneName = "Vùng biển Trung Bộ"; spreadScale = 0.45;
         } else if (z.includes("nam bộ")) {
-          centerLat = 9.3000; centerLng = 107.2000; zoneName = "Vùng biển Nam Bộ"; spreadScale = 0.05;
+          centerLat = 9.3000; centerLng = 107.3000; zoneName = "Vùng biển Nam Bộ"; spreadScale = 0.35;
         } else {
           zoneName = sp.east_sea_zone || "Biển Đông";
-          spreadScale = 0.12;
+          spreadScale = 0.55;
         }
       }
 
-      // Tính vị trí xoắn ốc vàng (Golden Spiral) để phân tán tự nhiên quanh ngư trường/rạn biển
+      // Phân tán theo tỷ lệ xoắn ốc vàng (Golden Spiral) với bán kính mở rộng tự nhiên
+      // Giúp sinh vật trong cùng vùng biển tản đều ra các đảo, rạn ngầm và ngư trường xung quanh
       const zoneKey = zoneName;
       const count = zoneDistributionTracker[zoneKey] || 0;
       zoneDistributionTracker[zoneKey] = count + 1;
 
       // Góc vàng 137.508 độ
       const goldenAngle = count * 2.39996; // radians
-      const radius = count === 0 ? 0 : spreadScale * (0.3 + 0.22 * Math.sqrt(count));
+      const radius = count === 0 ? 0 : (spreadScale * 0.25 + spreadScale * 0.18 * Math.sqrt(count));
       
       const finalLat = Number((centerLat + radius * Math.sin(goldenAngle)).toFixed(4));
       const finalLng = Number((centerLng + radius * Math.cos(goldenAngle) * 1.05).toFixed(4));
