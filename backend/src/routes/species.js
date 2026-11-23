@@ -10,8 +10,8 @@ const router = Router();
 // Mapping các slug / id phổ biến từ mockup hoặc tiếng Anh sang slug chuẩn trong CSDL
 const SLUG_ALIASES = {
   // Aliases cũ
-  "giant-octopus-3": "bach-tuoc-khong-lo",
-  "octopus": "bach-tuoc-khong-lo",
+  "giant-octopus-3": "bach-tuoc-dom-xanh",
+  "octopus": "bach-tuoc-dom-xanh",
   "whale-shark": "ca-map-voi-nham-voi",
   "whale-shark-2": "ca-map-voi-nham-voi",
   "bluefin-tuna-1": "ca-ngu-vay-vang-dai-duong",

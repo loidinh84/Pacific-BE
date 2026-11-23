@@ -1,0 +1,2972 @@
+[
+  {
+    "id": 1,
+    "code": "FSH-VU-0001",
+    "slug": "great-white-shark-1",
+    "name": "Cá Mập Trắng Lớn",
+    "sci": "Carcharodon carcharias",
+    "zone": "Vùng biển khơi Trung Bộ & Hoàng Sa",
+    "local": "Vùng khơi biển miền Trung, rãnh sâu Hoàng Sa"
+  },
+  {
+    "id": 2,
+    "code": "SPC-NE-0002",
+    "slug": "bach-tuoc-khong-lo",
+    "name": "Bạch Tuộc Khổng Lồ",
+    "sci": "Enteroctopus dofleini",
+    "zone": "Thái Bình Dương Bắc (Nhật Bản - Alaska - Bắc Mỹ)",
+    "local": "Vùng biển lạnh & ôn đới Bắc Thái Bình Dương"
+  },
+  {
+    "id": 5,
+    "code": "MAM-LC-0003",
+    "slug": "ca-voi-lung-gu",
+    "name": "Cá Voi Lưng Gù",
+    "sci": "Megaptera novaeangliae",
+    "zone": "Vùng biển khơi Trung Bộ & Hoàng Sa - Trường Sa",
+    "local": "Vùng biển khơi di cư miền Trung (Quảng Nam - Bình Thuận)"
+  },
+  {
+    "id": 6,
+    "code": "FSH-VU-0036",
+    "slug": "ca-mat-trang-mola-mola",
+    "name": "Cá Mặt Trăng",
+    "sci": "Mola mola",
+    "zone": "Vùng biển khơi Trung Bộ & Hoàng Sa",
+    "local": "Vùng biển xa bờ Nghệ An, Quảng Bình, Thừa Thiên Huế, Bình Định và quần đảo Hoàng Sa"
+  },
+  {
+    "id": 7,
+    "code": "FSH-NT-0251",
+    "slug": "ca-map-ho-tiger-shark",
+    "name": "Cá Mập Hổ",
+    "sci": "Galeocerdo cuvier",
+    "zone": "Quần đảo Trường Sa, Hoàng Sa, vùng biển khơi Nam Trung Bộ",
+    "local": "Thường xuất hiện theo mùa quanh các rạn san hô xa bờ tại Trường Sa, Hoàng Sa, Phú Quý và vùng nước sâu ngoài khơi Bình Thuận - Khánh Hòa."
+  },
+  {
+    "id": 8,
+    "code": "FSH-LC-0252",
+    "slug": "ca-duoi-dom-xanh",
+    "name": "Cá Đuối Đốm Xanh",
+    "sci": "Taeniura lymma",
+    "zone": "Rạn san hô Côn Đảo, Phú Quốc, Nha Trang, Cù Lao Chàm",
+    "local": "Phân bố phổ biến dưới các gờ đá san hô và bãi cát ven rạn nông tại Hòn Mun (Nha Trang), Côn Đảo, Phú Quốc và Cù Lao Chàm."
+  },
+  {
+    "id": 9,
+    "code": "FSH-LC-0253",
+    "slug": "ca-song-cham-xanh",
+    "name": "Cá Song Chấm Xanh",
+    "sci": "Plectropomus leopardus",
+    "zone": "Vịnh Nha Trang, Cù Lao Chàm, Lý Sơn, Trường Sa",
+    "local": "Sinh sống quanh các sườn dốc rạn san hô nhiều hang hốc từ vịnh Hạ Long, Cù Lao Chàm đến Nha Trang, Ninh Thuận và Trường Sa."
+  },
+  {
+    "id": 10,
+    "code": "FSH-LC-0254",
+    "slug": "ca-bo-picasso",
+    "name": "Cá Bò Picasso",
+    "sci": "Rhinecanthus aculeatus",
+    "zone": "Đầm phá rạn san hô Hoàng Sa, Trường Sa, Nha Trang",
+    "local": "Cư trú ở các đầm phá đáy cát pha san hô vụn và rạn cạn tại Côn Đảo, Hòn Mun, Hoàng Sa và Trường Sa."
+  },
+  {
+    "id": 11,
+    "code": "MAM-CR-0011",
+    "slug": "bo-bien-dugong",
+    "name": "Bò Biển",
+    "sci": "Dugong dugon",
+    "zone": "Vườn quốc gia Côn Đảo & Phú Quốc",
+    "local": "Vùng biển nông Côn Đảo (Bà Rịa - Vũng Tàu), Phú Quốc (Kiên Giang)"
+  },
+  {
+    "id": 12,
+    "code": "PLT-LC-0012",
+    "slug": "co-bien-la-kim",
+    "name": "Cỏ Biển Lá Kim",
+    "sci": "Halodule uninervis",
+    "zone": "Vườn quốc gia Côn Đảo & Phú Quốc",
+    "local": "Bãi cát bùn Côn Đảo, Cù Lao Chàm, Phú Quốc, Khánh Hòa"
+  },
+  {
+    "id": 13,
+    "code": "REP-EN-0013",
+    "slug": "rua-xanh-vich",
+    "name": "Rùa Xanh",
+    "sci": "Chelonia mydas",
+    "zone": "Vườn quốc gia Côn Đảo & Vùng biển Trung Bộ",
+    "local": "Bãi Cát Lớn (Côn Đảo), Núi Chúa (Ninh Thuận), Hòn Khô (Bình Định), Quần đảo Trường Sa"
+  },
+  {
+    "id": 14,
+    "code": "CRL-VU-0014",
+    "slug": "san-ho-canh-acropora",
+    "name": "San Hô Cành",
+    "sci": "Acropora millepora",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Nha Trang",
+    "local": "Rạn Hòn Mun (Nha Trang), Cù Lao Chàm, Nam Yết (Trường Sa), Côn Đảo"
+  },
+  {
+    "id": 15,
+    "code": "INV-LC-0015",
+    "slug": "sao-bien-gai",
+    "name": "Sao Biển Gai",
+    "sci": "Acanthaster planci",
+    "zone": "Vùng biển Trung Bộ & Nha Trang",
+    "local": "Vịnh Nha Trang, Cù Lao Chàm, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 16,
+    "code": "MOL-EN-0016",
+    "slug": "oc-tu-va-hoang-hau",
+    "name": "Ốc Tù Và",
+    "sci": "Charonia tritonis",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Nha Trang",
+    "local": "Vịnh Nha Trang (Khánh Hòa), Cù Lao Chàm, Hoàng Sa, Trường Sa"
+  },
+  {
+    "id": 17,
+    "code": "FSH-LC-0017",
+    "slug": "ca-he-ocellaris-nemo",
+    "name": "Cá Hề Ocellaris",
+    "sci": "Amphiprion ocellaris",
+    "zone": "Vùng biển Trung Bộ & Nha Trang",
+    "local": "Hòn Mun (Nha Trang), Cù Lao Chàm, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 18,
+    "code": "INV-LC-0018",
+    "slug": "hai-quy-khong-lo",
+    "name": "Hải Quỳ Khổng Lồ",
+    "sci": "Heteractis magnifica",
+    "zone": "Vùng biển Trung Bộ & Côn Đảo",
+    "local": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 19,
+    "code": "FSH-LC-0019",
+    "slug": "ca-vet-hoa-xanh",
+    "name": "Cá Vẹt Hoa Xanh",
+    "sci": "Chlorurus microrhinos",
+    "zone": "Vùng biển Trung Bộ & Hoàng Sa - Trường Sa",
+    "local": "Rạn san hô Nha Trang, Côn Đảo, Trường Sa, Hoàng Sa"
+  },
+  {
+    "id": 20,
+    "code": "FSH-EN-0020",
+    "slug": "ca-map-voi-nham-voi",
+    "name": "Cá Mập Voi",
+    "sci": "Rhincodon typus",
+    "zone": "Vùng biển Trung Bộ & Đông Nam Bộ",
+    "local": "Vùng khơi Khánh Hòa, Bình Thuận, Vịnh Bắc Bộ, Phú Quốc"
+  },
+  {
+    "id": 21,
+    "code": "FSH-CR-0021",
+    "slug": "ca-nham-bua-dau-bua",
+    "name": "Cá Nhám Búa",
+    "sci": "Sphyrna lewini",
+    "zone": "Vùng biển Trung Bộ & Hoàng Sa - Trường Sa",
+    "local": "Vùng biển mở Hoàng Sa, Trường Sa, đảo Phú Quý (Bình Thuận)"
+  },
+  {
+    "id": 22,
+    "code": "CRU-LC-0022",
+    "slug": "tom-hum-bong-sao",
+    "name": "Tôm Hùm Bông",
+    "sci": "Panulirus ornatus",
+    "zone": "Vùng biển Trung Bộ",
+    "local": "Vịnh Vân Phong, Cam Ranh (Khánh Hòa), Sông Cầu (Phú Yên), Bình Thuận"
+  },
+  {
+    "id": 23,
+    "code": "ECH-EN-0023",
+    "slug": "hai-sam-vu-dia-bien",
+    "name": "Hải Sâm Vú",
+    "sci": "Holothuria nobilis",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa",
+    "local": "Đảo Nam Yết, Sinh Tồn (Trường Sa), Côn Đảo, Thổ Chu"
+  },
+  {
+    "id": 24,
+    "code": "MAM-EN-0024",
+    "slug": "ca-heo-khong-vay-ca-nuoc",
+    "name": "Cá Heo Không Vây",
+    "sci": "Neophocaena phocaenoides",
+    "zone": "Vịnh Bắc Bộ",
+    "local": "Vịnh Hạ Long, Bái Tử Long, Đảo Cát Bà, Bạch Long Vĩ"
+  },
+  {
+    "id": 25,
+    "code": "MOL-CR-0025",
+    "slug": "trai-tai-tuong-khong-lo",
+    "name": "Trai Tai Tượng Khổng Lồ",
+    "sci": "Tridacna gigas",
+    "zone": "Quần đảo Trường Sa",
+    "local": "Các rạn san hô ngầm Quần đảo Trường Sa, Hoàng Sa, Hòn Mun"
+  },
+  {
+    "id": 26,
+    "code": "PLT-LC-0026",
+    "slug": "cay-duoc-doi-rung-ngap-man",
+    "name": "Cây Đước Đôi",
+    "sci": "Rhizophora apiculata",
+    "zone": "Rừng ngập mặn Cần Giờ & Cà Mau",
+    "local": "Rừng sác Cần Giờ (TP.HCM), Mũi Cà Mau, Tiên Yên (Quảng Ninh)"
+  },
+  {
+    "id": 27,
+    "code": "FSH-NT-0027",
+    "slug": "ca-ngu-vay-vang-dai-duong",
+    "name": "Cá Ngừ Vây Vàng",
+    "sci": "Thunnus albacares",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa",
+    "local": "Ngư trường Trường Sa, Hoàng Sa, vùng khơi Phú Yên, Bình Định"
+  },
+  {
+    "id": 28,
+    "code": "FSH-LC-0028",
+    "slug": "ca-trich-mai",
+    "name": "Cá Trích Mai",
+    "sci": "Dussumieria acuta",
+    "zone": "Vịnh Bắc Bộ & Vùng biển Nam Trung Bộ",
+    "local": "Khắp các vùng biển ven bờ từ Quảng Ninh đến Kiên Giang"
+  },
+  {
+    "id": 29,
+    "code": "CRU-LC-0029",
+    "slug": "cua-huynh-de",
+    "name": "Cua Huỳnh Đế",
+    "sci": "Ranina ranina",
+    "zone": "Vùng biển Trung Bộ",
+    "local": "Đảo Phú Quý (Bình Thuận), Sa Huỳnh (Quảng Ngãi), Cam Ranh"
+  },
+  {
+    "id": 30,
+    "code": "CRL-NT-0030",
+    "slug": "san-ho-nao",
+    "name": "San Hô Não",
+    "sci": "Platygyra daedalea",
+    "zone": "Vùng biển Trung Bộ & Nha Trang",
+    "local": "Hòn Mun (Nha Trang), Cù Lao Chàm, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 31,
+    "code": "FSH-VU-0031",
+    "slug": "ca-ngua-gai",
+    "name": "Cá Ngựa Gai",
+    "sci": "Hippocampus histrix",
+    "zone": "Vịnh Thái Lan & Phú Quốc",
+    "local": "Phú Quốc, Vịnh Nha Trang, Cù Lao Chàm, Vịnh Bắc Bộ"
+  },
+  {
+    "id": 32,
+    "code": "REP-LC-0032",
+    "slug": "ran-bien-mui-hech-den-bien",
+    "name": "Rắn Biển Mũi Hếch",
+    "sci": "Enhydrina schistosa",
+    "zone": "Vịnh Bắc Bộ & Vùng biển Nam Bộ",
+    "local": "Vùng biển ven bờ Cần Giờ, Vũng Tàu, Vịnh Bắc Bộ, Bình Thuận"
+  },
+  {
+    "id": 33,
+    "code": "REP-CR-0033",
+    "slug": "doi-moi-rua-bien",
+    "name": "Đồi Mồi",
+    "sci": "Eretmochelys imbricata",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Côn Đảo",
+    "local": "Côn Đảo, Cù Lao Chàm, Phú Quốc, Hoàng Sa, Trường Sa"
+  },
+  {
+    "id": 34,
+    "code": "MOL-VU-0034",
+    "slug": "trai-ngoc-moi-vang",
+    "name": "Trai Ngọc Môi Vàng",
+    "sci": "Pinctada maxima",
+    "zone": "Vịnh Thái Lan & Phú Quốc",
+    "local": "Phú Quốc, Nha Trang, Vân Đồn (Quảng Ninh), Côn Đảo"
+  },
+  {
+    "id": 35,
+    "code": "PLK-LC-0035",
+    "slug": "sinh-vat-phu-du-bien-dong",
+    "name": "Sinh Vật Phù Du",
+    "sci": "Planktonic ecosystem",
+    "zone": "Toàn vùng Biển Đông",
+    "local": "Phân bố khắp các tầng nước mặt Biển Đông, đặc biệt tại các vùng nước trồi Nam Trung Bộ"
+  },
+  {
+    "id": 41,
+    "code": "FSH-EN-0041",
+    "slug": "ca-duoi-nang-khong-lo-manta",
+    "name": "Cá Đuối Nạng Khổng Lồ",
+    "sci": "Mobula birostris",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Nha Trang",
+    "local": "Khu bảo tồn biển Nam Yết (Trường Sa), Hòn Mun (Nha Trang), Côn Đảo"
+  },
+  {
+    "id": 42,
+    "code": "MAM-VU-0042",
+    "slug": "ca-voi-bryde-de-gi",
+    "name": "Cá Voi Bryde",
+    "sci": "Balaenoptera edeni",
+    "zone": "Vùng biển Bình Định & Vườn quốc gia Côn Đảo",
+    "local": "Biển Đề Gi (Phù Cát, Bình Định), vịnh Nha Trang, Côn Đảo"
+  },
+  {
+    "id": 43,
+    "code": "FSH-LC-0043",
+    "slug": "ca-su-tu-do-mao-tien",
+    "name": "Cá Sư Tử Đỏ",
+    "sci": "Pterois volitans",
+    "zone": "Vùng biển Trung Bộ & Nha Trang",
+    "local": "Rạn san hô Hòn Mun (Nha Trang), Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 44,
+    "code": "FSH-LC-0044",
+    "slug": "ca-chinh-bong-khong-lo",
+    "name": "Cá Chình Bông Khổng Lồ",
+    "sci": "Gymnothorax javanicus",
+    "zone": "Vườn quốc gia Côn Đảo & Nha Trang",
+    "local": "Các rạn san hô ngầm Côn Đảo, Hòn Mun, đảo Nam Yết"
+  },
+  {
+    "id": 45,
+    "code": "REP-CR-0045",
+    "slug": "rua-da-khong-lo-rua-luyt",
+    "name": "Rùa Da Khổng Lồ",
+    "sci": "Dermochelys coriacea",
+    "zone": "Vùng biển Trung Bộ & Vịnh Bắc Bộ",
+    "local": "Vùng biển khơi Quảng Ninh, Thừa Thiên Huế, Quảng Ngãi, Bình Thuận"
+  },
+  {
+    "id": 46,
+    "code": "INV-LC-0046",
+    "slug": "muc-la-dai-duong",
+    "name": "Mực Lá Đại Dương",
+    "sci": "Sepioteuthis lessoniana",
+    "zone": "Khu bảo tồn biển Phú Quốc & Nam Trung Bộ",
+    "local": "Vùng biển Phú Quốc, Côn Đảo, vịnh Phan Thiết, vịnh Nha Trang"
+  },
+  {
+    "id": 47,
+    "code": "DPS-LC-0047",
+    "slug": "ca-can-cau-bien-sau-anglerfish",
+    "name": "Cá Cần Câu Biển Sâu",
+    "sci": "Melanocetus johnsonii",
+    "zone": "Hố sâu biển khơi Biển Đông",
+    "local": "Rãnh sâu phía đông Quần đảo Hoàng Sa và bồn trũng trung tâm Biển Đông"
+  },
+  {
+    "id": 48,
+    "code": "DPS-LC-0048",
+    "slug": "ca-rong-bien-sau-viperfish",
+    "name": "Cá Rồng Biển Sâu",
+    "sci": "Chauliodus sloani",
+    "zone": "Bồn trũng sâu trung tâm Biển Đông",
+    "local": "Tầng nước sâu 500m - 2800m ngoài khơi thềm lục địa miền Trung"
+  },
+  {
+    "id": 49,
+    "code": "DPS-LC-0049",
+    "slug": "muc-ma-ca-rong-bien-sau",
+    "name": "Mực Ma Cà Rồng",
+    "sci": "Vampyroteuthis infernalis",
+    "zone": "Vùng biển sâu tối vĩnh cửu Biển Đông",
+    "local": "Vùng nước tối thiếu oxy ở độ sâu 600m - 1200m Biển Đông"
+  },
+  {
+    "id": 50,
+    "code": "DPS-LC-0050",
+    "slug": "bo-bien-khong-lo-giant-isopod",
+    "name": "Bọ Biển Khổng Lồ",
+    "sci": "Bathynomus giganteus",
+    "zone": "Vùng sườn dốc thềm lục địa sâu Biển Đông",
+    "local": "Đáy bùn sâu 170m - 2140m vùng biển khơi Nam Trung Bộ"
+  },
+  {
+    "id": 51,
+    "code": "FSH-LC-0051",
+    "slug": "ca-thu-ngang",
+    "name": "Cá Thu Ngàng",
+    "sci": "Acanthocybium solandri",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Vùng khơi Trung Bộ",
+    "local": "Vùng biển khơi từ Quảng Trị đến Bình Thuận, ngư trường Trường Sa"
+  },
+  {
+    "id": 52,
+    "code": "FSH-LC-0052",
+    "slug": "ca-chim-trang",
+    "name": "Cá Chim Trắng",
+    "sci": "Pampus argenteus",
+    "zone": "Vịnh Bắc Bộ & Vịnh Thái Lan",
+    "local": "Vùng vịnh Bắc Bộ, biển Quảng Ninh, Hải Phòng, Cà Mau, Kiên Giang"
+  },
+  {
+    "id": 53,
+    "code": "FSH-LC-0053",
+    "slug": "ca-chim-den",
+    "name": "Cá Chim Đen",
+    "sci": "Parastromateus niger",
+    "zone": "Vùng biển Trung Bộ & Nam Bộ",
+    "local": "Đà Nẵng, Quảng Nam, Bình Định, Ninh Thuận, Côn Đảo"
+  },
+  {
+    "id": 54,
+    "code": "FSH-LC-0054",
+    "slug": "ca-mu-do",
+    "name": "Cá Mú Đỏ",
+    "sci": "Cephalopholis miniata",
+    "zone": "Vùng biển Trung Bộ & Trường Sa",
+    "local": "Rạn san hô Nha Trang, Cù Lao Chàm, Hòn Cau, Quần đảo Trường Sa"
+  },
+  {
+    "id": 55,
+    "code": "FSH-VU-0055",
+    "slug": "ca-mu-nghe",
+    "name": "Cá Mú Nghệ",
+    "sci": "Epinephelus lanceolatus",
+    "zone": "Quần đảo Trường Sa & Côn Đảo",
+    "local": "Các rạn đá sâu quanh đảo Phú Quý, Côn Đảo, quần đảo Trường Sa, Hoàng Sa"
+  },
+  {
+    "id": 56,
+    "code": "FSH-VU-0056",
+    "slug": "ca-mu-cop",
+    "name": "Cá Mú Cọp",
+    "sci": "Epinephelus fuscoguttatus",
+    "zone": "Vùng biển Trung Bộ & Hoàng Sa",
+    "local": "Rạn san hô Khánh Hòa, Ninh Thuận, Cù Lao Chàm, Hoàng Sa"
+  },
+  {
+    "id": 57,
+    "code": "FSH-LC-0057",
+    "slug": "ca-be-trang",
+    "name": "Cá Bè Trang",
+    "sci": "Scomberoides commersonnianus",
+    "zone": "Ven bờ vịnh Bắc Bộ & Trung Bộ",
+    "local": "Vùng biển Quảng Ninh, Thanh Hóa, Bình Thuận, Vũng Tàu"
+  },
+  {
+    "id": 58,
+    "code": "FSH-LC-0058",
+    "slug": "ca-chem",
+    "name": "Cá Chẽm",
+    "sci": "Lates calcarifer",
+    "zone": "Vùng ngập mặn & Ven bờ toàn quốc",
+    "local": "Cửa sông Bạch Đằng, Cần Giờ, Cà Mau, đầm phá Tam Giang"
+  },
+  {
+    "id": 59,
+    "code": "FSH-LC-0059",
+    "slug": "ca-hong-do",
+    "name": "Cá Hồng Đỏ",
+    "sci": "Lutjanus malabaricus",
+    "zone": "Vịnh Bắc Bộ & Vùng biển miền Trung",
+    "local": "Ngư trường Bạch Long Vĩ, Cát Bà, Bình Sơn (Quảng Ngãi), Phú Quý"
+  },
+  {
+    "id": 60,
+    "code": "FSH-LC-0060",
+    "slug": "ca-nuc-so",
+    "name": "Cá Nục Sồ",
+    "sci": "Decapterus maruadsi",
+    "zone": "Toàn vùng biển Việt Nam",
+    "local": "Vịnh Bắc Bộ, vùng biển miền Trung, thềm lục địa Nam Biển Đông"
+  },
+  {
+    "id": 61,
+    "code": "FSH-LC-0061",
+    "slug": "ca-nuc-gai",
+    "name": "Cá Nục Gai",
+    "sci": "Decapterus russelli",
+    "zone": "Vịnh Bắc Bộ & Trung Bộ",
+    "local": "Bạch Long Vĩ, Cô Tô, ven biển Đà Nẵng, Khánh Hòa, Bình Thuận"
+  },
+  {
+    "id": 62,
+    "code": "FSH-LC-0062",
+    "slug": "ca-moi-hoa",
+    "name": "Cá Mối Hoa",
+    "sci": "Synodus variegatus",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Vịnh Nha Trang, Ninh Thuận, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 63,
+    "code": "FSH-LC-0063",
+    "slug": "ca-nhong-van",
+    "name": "Cá Nhồng Vằn",
+    "sci": "Sphyraena barracuda",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Nha Trang",
+    "local": "Rạn san hô Hòn Mun, đảo Nam Yết, đảo Sinh Tồn, Côn Đảo"
+  },
+  {
+    "id": 64,
+    "code": "FSH-LC-0064",
+    "slug": "ca-chuon-canh-xanh",
+    "name": "Cá Chuồn Cánh Xanh",
+    "sci": "Cheilopogon cyanopterus",
+    "zone": "Vùng biển khơi Trung Bộ & Hoàng Sa",
+    "local": "Vùng biển Quảng Nam, Quảng Ngãi, Bình Định, Hoàng Sa"
+  },
+  {
+    "id": 65,
+    "code": "FSH-LC-0065",
+    "slug": "ca-noc-nhim",
+    "name": "Cá Nóc Nhím",
+    "sci": "Diodon hystrix",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Vịnh Nha Trang, Phú Quốc, Cù Lao Chàm, Côn Đảo"
+  },
+  {
+    "id": 66,
+    "code": "FSH-LC-0066",
+    "slug": "ca-noc-hom-dom",
+    "name": "Cá Nóc Hòm Đốm",
+    "sci": "Ostracion cubicus",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Hòn Cau, Côn Đảo, Cù Lao Chàm"
+  },
+  {
+    "id": 67,
+    "code": "FSH-EN-0067",
+    "slug": "ca-duoi-o-hoa",
+    "name": "Cá Đuối Ó Hoa",
+    "sci": "Aetobatus narinari",
+    "zone": "Vườn quốc gia Côn Đảo & Trường Sa",
+    "local": "Vùng nước quanh đảo Hòn Tre (Nha Trang), Bảy Cạnh (Côn Đảo), Trường Sa"
+  },
+  {
+    "id": 68,
+    "code": "FSH-VU-0068",
+    "slug": "ca-duoi-bong-doi",
+    "name": "Cá Đuối Bồng Dơi",
+    "sci": "Himantura uarnak",
+    "zone": "Vùng biển Trung Bộ & Côn Đảo",
+    "local": "Bãi rạn cát Ninh Thuận, Bình Thuận, Vũng Tàu, Côn Đảo"
+  },
+  {
+    "id": 69,
+    "code": "FSH-LC-0069",
+    "slug": "ca-buom-mo-dai",
+    "name": "Cá Bướm Mỏ Dài",
+    "sci": "Chelmon rostratus",
+    "zone": "Rạn san hô Vịnh Nha Trang & Phú Quốc",
+    "local": "Cù Lao Chàm, Vịnh Nha Trang, Côn Đảo, Thổ Chu"
+  },
+  {
+    "id": 70,
+    "code": "FSH-LC-0070",
+    "slug": "ca-thien-than-hoang-de",
+    "name": "Cá Thiên Thần Hoàng Đế",
+    "sci": "Pomacanthus imperator",
+    "zone": "Rạn san hô Hoàng Sa - Trường Sa & Nha Trang",
+    "local": "Khu bảo tồn biển Hòn Mun, đảo Nam Yết, Phú Quý"
+  },
+  {
+    "id": 71,
+    "code": "FSH-LC-0071",
+    "slug": "ca-bop",
+    "name": "Cá Bớp",
+    "sci": "Rachycentron canadum",
+    "zone": "Vịnh Bắc Bộ & Vùng biển Nam Bộ",
+    "local": "Vân Đồn (Quảng Ninh), Cát Bà, Phú Quốc (Kiên Giang), Bình Thuận"
+  },
+  {
+    "id": 72,
+    "code": "FSH-LC-0072",
+    "slug": "ca-bo-duoi-gai",
+    "name": "Cá Bò Đuôi Gai",
+    "sci": "Acanthurus triostegus",
+    "zone": "Rạn san hô ven biển Trung Bộ",
+    "local": "Nha Trang, Ninh Thuận, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 73,
+    "code": "FSH-LC-0073",
+    "slug": "ca-duc-bac",
+    "name": "Cá Đục Bạc",
+    "sci": "Sillago sihama",
+    "zone": "Bãi cát ven bờ biển cả nước",
+    "local": "Cửa Lò, Đồng Hới, Phan Thiết, Vũng Tàu, Rạch Giá"
+  },
+  {
+    "id": 74,
+    "code": "FSH-LC-0074",
+    "slug": "ca-ngu-chu",
+    "name": "Cá Ngừ Chù",
+    "sci": "Auxis thazard",
+    "zone": "Vùng biển khơi Trung Bộ & Hoàng Sa",
+    "local": "Bình Định, Phú Yên, Khánh Hòa, Ninh Thuận"
+  },
+  {
+    "id": 75,
+    "code": "FSH-LC-0075",
+    "slug": "ca-ngu-soc-dua",
+    "name": "Cá Ngừ Sọc Dưa",
+    "sci": "Katsuwonus pelamis",
+    "zone": "Ngư trường Hoàng Sa - Trường Sa",
+    "local": "Vùng biển khơi Trung Bộ, Hoàng Sa, Trường Sa"
+  },
+  {
+    "id": 76,
+    "code": "FSH-LC-0076",
+    "slug": "ca-khoai-bien",
+    "name": "Cá Khoai Biển",
+    "sci": "Harpadon nehereus",
+    "zone": "Vịnh Bắc Bộ & Ven biển Nam Bộ",
+    "local": "Cửa biển Thái Bình, Nam Định, Thanh Hóa, Cà Mau"
+  },
+  {
+    "id": 77,
+    "code": "FSH-NT-0077",
+    "slug": "ca-bong-bop",
+    "name": "Cá Bống Bớp",
+    "sci": "Bostrychus sinensis",
+    "zone": "Vùng rừng ngập mặn Bắc Bộ",
+    "local": "Rừng ngập mặn Tiên Yên (Quảng Ninh), Giao Thủy (Nam Định)"
+  },
+  {
+    "id": 78,
+    "code": "FSH-VU-0078",
+    "slug": "ca-map-san-ho-vay-trang",
+    "name": "Cá Mập San Hô Vây Trắng",
+    "sci": "Triaenodon obesus",
+    "zone": "Quần đảo Trường Sa & Côn Đảo",
+    "local": "Rạn san hô đảo Trường Sa Lớn, Nam Yết, Côn Đảo"
+  },
+  {
+    "id": 79,
+    "code": "FSH-VU-0079",
+    "slug": "ca-map-san-ho-vay-den",
+    "name": "Cá Mập San Hô Vây Đen",
+    "sci": "Carcharhinus melanopterus",
+    "zone": "Quần đảo Trường Sa & Côn Đảo",
+    "local": "Các rạn vòng Trường Sa, Hòn Cau, Côn Đảo, Phú Quốc"
+  },
+  {
+    "id": 80,
+    "code": "FSH-LC-0080",
+    "slug": "ca-map-tham",
+    "name": "Cá Mập Thảm",
+    "sci": "Orectolobus japonicus",
+    "zone": "Thềm lục địa miền Trung",
+    "local": "Vùng biển Bình Định, Ninh Thuận, quần đảo Hoàng Sa"
+  },
+  {
+    "id": 81,
+    "code": "FSH-NT-0081",
+    "slug": "ca-nham-meo",
+    "name": "Cá Nhám Mèo",
+    "sci": "Atelomycterus marmoratus",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Cù Lao Chàm, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 82,
+    "code": "FSH-DD-0082",
+    "slug": "ca-chia-voi-bien",
+    "name": "Cá Chìa Vôi Biển",
+    "sci": "Solenostomus cyanopterus",
+    "zone": "Thảm cỏ biển Côn Đảo & Phú Quốc",
+    "local": "Bãi cỏ biển Đầm Tre (Côn Đảo), Bãi Bổn (Phú Quốc)"
+  },
+  {
+    "id": 83,
+    "code": "FSH-LC-0083",
+    "slug": "ca-tai-tuong-tron",
+    "name": "Cá Tai Tượng Tròn",
+    "sci": "Platax orbicularis",
+    "zone": "Vịnh Nha Trang & Nam Trung Bộ",
+    "local": "Nha Trang, Cù Lao Chàm, Phú Quý, Côn Đảo"
+  },
+  {
+    "id": 84,
+    "code": "FSH-LC-0084",
+    "slug": "ca-ho-bien",
+    "name": "Cá Hố Biển",
+    "sci": "Trichiurus lepturus",
+    "zone": "Toàn vùng thềm lục địa Biển Đông",
+    "local": "Vịnh Bắc Bộ, Bình Định, Phú Yên, Vũng Tàu"
+  },
+  {
+    "id": 85,
+    "code": "FSH-LC-0085",
+    "slug": "ca-phen-hai-rau",
+    "name": "Cá Phèn Hai Râu",
+    "sci": "Parupeneus barberinus",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Vịnh Nha Trang, Ninh Thuận, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 86,
+    "code": "MAM-VU-0086",
+    "slug": "ca-heo-trang-trung-hoa",
+    "name": "Cá Heo Trắng Trung Hoa",
+    "sci": "Sousa chinensis",
+    "zone": "Vịnh Bắc Bộ & Ven biển Quảng Ninh",
+    "local": "Quần đảo Cát Bà (Hải Phòng), Vịnh Hạ Long, Cô Tô (Quảng Ninh)"
+  },
+  {
+    "id": 87,
+    "code": "MAM-LC-0087",
+    "slug": "ca-heo-dom-nhiet-doi",
+    "name": "Cá Heo Đốm Nhiệt Đới",
+    "sci": "Stenella attenuata",
+    "zone": "Vùng biển khơi Hoàng Sa - Trường Sa",
+    "local": "Vùng biển ngoài khơi Khánh Hòa, Bình Thuận, quần đảo Trường Sa"
+  },
+  {
+    "id": 88,
+    "code": "MAM-NT-0088",
+    "slug": "ca-heo-mui-chai-an-do-duong",
+    "name": "Cá Heo Mũi Chai Ấn Độ Dương",
+    "sci": "Tursiops aduncus",
+    "zone": "Vùng biển Nam Trung Bộ & Côn Đảo",
+    "local": "Vịnh Nha Trang, Cù Lao Chàm, Côn Đảo, Phú Quốc"
+  },
+  {
+    "id": 89,
+    "code": "MAM-LC-0089",
+    "slug": "ca-heo-spinner",
+    "name": "Cá Heo Spinner",
+    "sci": "Stenella longirostris",
+    "zone": "Vùng biển khơi Trung Bộ & Hoàng Sa",
+    "local": "Vùng biển sâu ngoài khơi Bình Định, Ninh Thuận, Hoàng Sa"
+  },
+  {
+    "id": 90,
+    "code": "MAM-LC-0090",
+    "slug": "ca-heo-rang-nham",
+    "name": "Cá Heo Răng Nhám",
+    "sci": "Steno bredanensis",
+    "zone": "Vùng biển thẳm Nam Biển Đông",
+    "local": "Vùng khơi sâu ngoài khơi đảo Phú Quý, Trường Sa"
+  },
+  {
+    "id": 91,
+    "code": "MAM-LC-0091",
+    "slug": "ca-heo-fraser",
+    "name": "Cá Heo Fraser",
+    "sci": "Lagenodelphis hosei",
+    "zone": "Vùng biển sâu Đông Nam Biển Đông",
+    "local": "Ngư trường ngoài khơi Trường Sa, thềm lục địa sâu phía đông"
+  },
+  {
+    "id": 92,
+    "code": "MAM-DD-0092",
+    "slug": "ca-voi-sat-thu-lun",
+    "name": "Cá Voi Sát Thủ Lùn",
+    "sci": "Feresa attenuata",
+    "zone": "Vùng biển khơi Trung Biển Đông",
+    "local": "Vùng biển sâu giữa Hoàng Sa và Trường Sa"
+  },
+  {
+    "id": 93,
+    "code": "MAM-LC-0093",
+    "slug": "ca-voi-dau-tron-vay-ngan",
+    "name": "Cá Voi Đầu Tròn Vây Ngắn",
+    "sci": "Globicephala macrorhynchus",
+    "zone": "Vùng khơi sâu Nam Trung Bộ & Trường Sa",
+    "local": "Vùng trũng sâu ngoài khơi Ninh Thuận, Bình Thuận, Trường Sa"
+  },
+  {
+    "id": 94,
+    "code": "MAM-NT-0094",
+    "slug": "ca-voi-sat-thu-gia",
+    "name": "Cá Voi Sát Thủ Giả",
+    "sci": "Pseudorca crassidens",
+    "zone": "Vùng biển khơi Trung Bộ & Hoàng Sa",
+    "local": "Ngư trường Hoàng Sa, vùng biển sâu Quảng Ngãi, Bình Định"
+  },
+  {
+    "id": 95,
+    "code": "MAM-LC-0095",
+    "slug": "ca-voi-minke",
+    "name": "Cá Voi Minke",
+    "sci": "Balaenoptera acutorostrata",
+    "zone": "Vùng biển mở miền Trung",
+    "local": "Vùng biển ngoài khơi Đà Nẵng, Quảng Nam, Bình Thuận"
+  },
+  {
+    "id": 96,
+    "code": "MAM-VU-0096",
+    "slug": "ca-voi-nha-tang",
+    "name": "Cá Voi Nhà Táng",
+    "sci": "Physeter macrocephalus",
+    "zone": "Rãnh trũng sâu Biển Đông",
+    "local": "Vùng trũng đại dương phía đông Trường Sa và Hoàng Sa"
+  },
+  {
+    "id": 97,
+    "code": "MAM-LC-0097",
+    "slug": "ca-voi-mo-cuvier",
+    "name": "Cá Voi Mỏ Cuvier",
+    "sci": "Ziphius cavirostris",
+    "zone": "Rãnh thềm lục địa sâu Biển Đông",
+    "local": "Khu vực rãnh biển sâu ngoài khơi cực Nam Trung Bộ"
+  },
+  {
+    "id": 98,
+    "code": "REP-VU-0098",
+    "slug": "vich-bien-dong",
+    "name": "Rùa Quản Đồng",
+    "sci": "Caretta caretta",
+    "zone": "Côn Đảo, Trường Sa, vùng biển Ninh Thuận, Bình Định",
+    "local": "Ghi nhận kiếm ăn tại vùng thềm lục địa miền Trung và di cư qua khu vực Côn Đảo, Trường Sa, vịnh Thái Lan."
+  },
+  {
+    "id": 99,
+    "code": "REP-VU-0099",
+    "slug": "rua-bien-quan-dong",
+    "name": "Rùa Biển Quản Đồng",
+    "sci": "Lepidochelys olivacea",
+    "zone": "Bãi biển miền Trung & Vịnh Bắc Bộ",
+    "local": "Bãi biển Quan Lạn (Quảng Ninh), Núi Chúa (Ninh Thuận)"
+  },
+  {
+    "id": 100,
+    "code": "REP-LC-0100",
+    "slug": "ran-bien-cap-nia",
+    "name": "Rắn Biển Cạp Nia",
+    "sci": "Laticauda colubrina",
+    "zone": "Rạn san hô Trung Bộ & Cù Lao Chàm",
+    "local": "Cù Lao Chàm, Vịnh Nha Trang, Hòn Cau, Côn Đảo"
+  },
+  {
+    "id": 101,
+    "code": "REP-LC-0101",
+    "slug": "ran-bien-vang",
+    "name": "Rắn Biển Vàng",
+    "sci": "Hydrophis spiralis",
+    "zone": "Vịnh Bắc Bộ & Ven biển Nam Trung Bộ",
+    "local": "Vịnh Bắc Bộ, Bình Thuận, Vũng Tàu, Kiên Giang"
+  },
+  {
+    "id": 102,
+    "code": "REP-LC-0102",
+    "slug": "ran-bien-bung-vang",
+    "name": "Rắn Biển Bụng Vàng",
+    "sci": "Hydrophis platurus",
+    "zone": "Vùng biển khơi toàn Biển Đông",
+    "local": "Trôi nổi theo dòng hải lưu ngoài khơi miền Trung, Hoàng Sa, Côn Đảo"
+  },
+  {
+    "id": 103,
+    "code": "REP-LC-0103",
+    "slug": "ran-bien-dom-den",
+    "name": "Rắn Biển Đốm Đen",
+    "sci": "Hydrophis ornatus",
+    "zone": "Vịnh Bắc Bộ & Vịnh Thái Lan",
+    "local": "Vùng biển ven bờ Quảng Ninh, Hải Phòng, Kiên Giang"
+  },
+  {
+    "id": 104,
+    "code": "REP-LC-0104",
+    "slug": "ran-bien-dai-soc",
+    "name": "Rắn Biển Dải Sọc",
+    "sci": "Hydrophis cyanocinctus",
+    "zone": "Ven biển miền Trung & Nam Bộ",
+    "local": "Ngư trường Phan Thiết, Vũng Tàu, Cà Mau, Phú Quốc"
+  },
+  {
+    "id": 105,
+    "code": "REP-LC-0105",
+    "slug": "ran-bien-vien-den",
+    "name": "Rắn Biển Viền Đen",
+    "sci": "Laticauda laticaudata",
+    "zone": "Quần đảo Côn Đảo & Trường Sa",
+    "local": "Các rạn đá ngầm Hòn Trứng, Hòn Cau, quần đảo Trường Sa"
+  },
+  {
+    "id": 106,
+    "code": "REP-LC-0106",
+    "slug": "ran-bien-dau-nho",
+    "name": "Rắn Biển Đầu Nhỏ",
+    "sci": "Microcephalophis gracilis",
+    "zone": "Vịnh Bắc Bộ & Vùng biển Nam Bộ",
+    "local": "Ven biển Hải Phòng, Nam Định, Tiền Giang, Bến Tre"
+  },
+  {
+    "id": 107,
+    "code": "REP-CR-0107",
+    "slug": "ca-sau-nuoc-man",
+    "name": "Cá Sấu Nước Mặn",
+    "sci": "Crocodylus porosus",
+    "zone": "Vườn quốc gia Côn Đảo & Rừng sác Cần Giờ",
+    "local": "Vườn quốc gia Côn Đảo, vùng cửa biển Nam Bộ"
+  },
+  {
+    "id": 108,
+    "code": "INV-LC-0108",
+    "slug": "bach-tuoc-dom-xanh",
+    "name": "Bạch Tuộc Đốm Xanh",
+    "sci": "Hapalochlaena lunulata",
+    "zone": "Rạn san hô Trung Bộ & Nha Trang",
+    "local": "Vịnh Nha Trang, Cù Lao Chàm, Côn Đảo, Phú Quốc"
+  },
+  {
+    "id": 109,
+    "code": "INV-LC-0109",
+    "slug": "muc-nang-van-ho",
+    "name": "Mực Nang Vân Hổ",
+    "sci": "Sepia pharaonis",
+    "zone": "Toàn vùng biển Việt Nam",
+    "local": "Bạch Long Vĩ, Quảng Bình, Bình Thuận, Cà Mau"
+  },
+  {
+    "id": 110,
+    "code": "INV-LC-0110",
+    "slug": "muc-ong-do-hoang-sa",
+    "name": "Mực Ống Đỏ Hoàng Sa",
+    "sci": "Loligo edulis",
+    "zone": "Quần đảo Hoàng Sa & Thềm lục địa Trung Bộ",
+    "local": "Quần đảo Hoàng Sa, vùng biển Quảng Ngãi, Bình Định"
+  },
+  {
+    "id": 111,
+    "code": "INV-LC-0111",
+    "slug": "muc-ong-trung-hoa",
+    "name": "Mực Ống Trung Hoa",
+    "sci": "Loligo chinensis",
+    "zone": "Vịnh Bắc Bộ & Ven biển miền Trung",
+    "local": "Vịnh Bắc Bộ, đảo Cô Tô, đảo Cát Bà, ven biển Nghệ An"
+  },
+  {
+    "id": 112,
+    "code": "MOL-VU-0112",
+    "slug": "oc-hoang-hau",
+    "name": "Ốc Hoàng Hậu",
+    "sci": "Cassis cornuta",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Côn Đảo",
+    "local": "Hoàng Sa, Trường Sa, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 113,
+    "code": "MOL-LC-0113",
+    "slug": "oc-nhay-do",
+    "name": "Ốc Nhảy Đỏ",
+    "sci": "Strombus luhuanus",
+    "zone": "Vịnh Nha Trang & Phú Yên",
+    "local": "Vịnh Xuân Đài (Phú Yên), Vịnh Vân Phong, Nha Trang, Phú Quốc"
+  },
+  {
+    "id": 114,
+    "code": "MOL-LC-0114",
+    "slug": "oc-huong-bien",
+    "name": "Ốc Hương Biển",
+    "sci": "Babylonia areolata",
+    "zone": "Bãi cát sạch Trung Bộ & Côn Đảo",
+    "local": "Bình Thuận, Khánh Hòa, Ninh Thuận, Phú Quốc"
+  },
+  {
+    "id": 115,
+    "code": "MOL-LC-0115",
+    "slug": "oc-gai-xoan",
+    "name": "Ốc Gai Xoắn",
+    "sci": "Chicoreus ramosus",
+    "zone": "Vịnh Nha Trang & Đảo Phú Quý",
+    "local": "Rạn san hô Hòn Mun, đảo Phú Quý, Côn Đảo"
+  },
+  {
+    "id": 116,
+    "code": "MOL-VU-0116",
+    "slug": "oc-dun-duc",
+    "name": "Ốc Đụn Đực",
+    "sci": "Trochus niloticus",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Côn Đảo",
+    "local": "Các rạn đá sóng lớn ở Hoàng Sa, Trường Sa, Côn Đảo"
+  },
+  {
+    "id": 117,
+    "code": "MOL-VU-0117",
+    "slug": "trai-coc-ngoc",
+    "name": "Trai Cọc Ngọc",
+    "sci": "Pinctada margaritifera",
+    "zone": "Quần đảo Côn Đảo & Phú Quốc",
+    "local": "Vườn quốc gia Côn Đảo, vùng biển An Thới (Phú Quốc)"
+  },
+  {
+    "id": 118,
+    "code": "MOL-LC-0118",
+    "slug": "hau-da-thai-binh-duong",
+    "name": "Hàu Đá Thái Bình Dương",
+    "sci": "Magallana gigas",
+    "zone": "Vịnh Hạ Long, Bái Tử Long & Cần Giờ",
+    "local": "Vân Đồn, Cát Bà, sông Chanh (Quảng Ninh), Long Sơn (Vũng Tàu)"
+  },
+  {
+    "id": 119,
+    "code": "MOL-LC-0119",
+    "slug": "ngao-hai-coi-ben-tre",
+    "name": "Ngao Hai Cồi Bến Tre",
+    "sci": "Meretrix lyrata",
+    "zone": "Bãi triều ven biển Nam Bộ",
+    "local": "Bình Đại, Ba Tri (Bến Tre), Gò Công (Tiền Giang), Trà Vinh"
+  },
+  {
+    "id": 120,
+    "code": "MOL-LC-0120",
+    "slug": "so-huyet-ben-tre",
+    "name": "Sò Huyết Bến Tre",
+    "sci": "Tegillarca granosa",
+    "zone": "Rừng ngập mặn & Bãi bùn Nam Bộ",
+    "local": "Đầm Ô Loan (Phú Yên), Bến Tre, Bạc Liêu, Cà Mau"
+  },
+  {
+    "id": 121,
+    "code": "MOL-LC-0121",
+    "slug": "so-duong-ran-san-ho",
+    "name": "Sò Dương Rạn San Hô",
+    "sci": "Anadara antiquata",
+    "zone": "Vịnh Nha Trang & Quần đảo Nam Du",
+    "local": "Khánh Hòa, Ninh Thuận, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 122,
+    "code": "ECH-LC-0122",
+    "slug": "cau-gai-den",
+    "name": "Cầu Gai Đen",
+    "sci": "Diadema setosum",
+    "zone": "Rạn san hô toàn bờ biển Việt Nam",
+    "local": "Vịnh Hạ Long, Cù Lao Chàm, Nha Trang, Phú Quốc"
+  },
+  {
+    "id": 123,
+    "code": "ECH-LC-0123",
+    "slug": "cau-gai-but-chi",
+    "name": "Cầu Gai Bút Chì",
+    "sci": "Heterocentrotus mammillatus",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Nha Trang",
+    "local": "Rạn san hô đảo Trường Sa, Hoàng Sa, Hòn Mun"
+  },
+  {
+    "id": 124,
+    "code": "ECH-VU-0124",
+    "slug": "hai-sam-cat",
+    "name": "Hải Sâm Cát",
+    "sci": "Holothuria scabra",
+    "zone": "Vịnh Cam Ranh & Đảo Phú Quý",
+    "local": "Đầm Nha Phu, Vịnh Vân Phong (Khánh Hòa), Phú Quốc"
+  },
+  {
+    "id": 125,
+    "code": "CRU-LC-0125",
+    "slug": "tom-hum-da",
+    "name": "Tôm Hùm Đá",
+    "sci": "Panulirus homarus",
+    "zone": "Vùng biển Trung Bộ & Côn Đảo",
+    "local": "Sông Cầu (Phú Yên), Vịnh Cam Ranh, Đảo Bé Lý Sơn"
+  },
+  {
+    "id": 126,
+    "code": "CRU-LC-0126",
+    "slug": "tom-hum-tre",
+    "name": "Tôm Hùm Tre",
+    "sci": "Panulirus polyphagus",
+    "zone": "Vịnh Bắc Bộ & Ven biển Nam Trung Bộ",
+    "local": "Quảng Ninh, Hải Phòng, Bình Định, Kiên Giang"
+  },
+  {
+    "id": 127,
+    "code": "CRU-LC-0127",
+    "slug": "tom-tit-bien-dong",
+    "name": "Tôm Tít Biển Đông",
+    "sci": "Lysiosquillina maculata",
+    "zone": "Bãi cát rạn Côn Đảo & Phú Quốc",
+    "local": "Côn Đảo, Phú Quốc, vịnh Nha Trang, Cù Lao Chàm"
+  },
+  {
+    "id": 128,
+    "code": "CRU-LC-0128",
+    "slug": "ghe-xanh-phan-thiet",
+    "name": "Ghẹ Xanh Phan Thiết",
+    "sci": "Portunus armatus",
+    "zone": "Vịnh Phan Thiết & Vịnh Thái Lan",
+    "local": "Phan Thiết, Hàm Tân (Bình Thuận), Phú Quốc (Kiên Giang)"
+  },
+  {
+    "id": 129,
+    "code": "CRU-LC-0129",
+    "slug": "cua-mat-quy",
+    "name": "Cua Mặt Quỷ",
+    "sci": "Carpilius maculatus",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Bình Thuận, Ninh Thuận, Côn Đảo, Cù Lao Chàm"
+  },
+  {
+    "id": 130,
+    "code": "INV-EN-0130",
+    "slug": "sam-bien",
+    "name": "Sam Biển",
+    "sci": "Tachypleus tridentatus",
+    "zone": "Bãi triều ven biển Bắc Bộ & Côn Đảo",
+    "local": "Quảng Ninh, Hải Phòng, Cần Giờ, Côn Đảo"
+  },
+  {
+    "id": 131,
+    "code": "CRL-CR-0131",
+    "slug": "san-ho-sung-huou",
+    "name": "San Hô Sừng Hươu",
+    "sci": "Acropora cervicornis",
+    "zone": "Vườn quốc gia Côn Đảo & Nha Trang",
+    "local": "Hòn Mun (Nha Trang), Côn Đảo, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 132,
+    "code": "CRL-NT-0132",
+    "slug": "san-ho-ban-khong-lo",
+    "name": "San Hô Bàn Khổng Lồ",
+    "sci": "Acropora hyacinthus",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Nha Trang",
+    "local": "Rạn san hô ngoài khơi Trường Sa, Hòn Mun, Cù Lao Chàm"
+  },
+  {
+    "id": 133,
+    "code": "CRL-LC-0133",
+    "slug": "san-ho-nam-dia",
+    "name": "San Hô Nấm Đĩa",
+    "sci": "Fungia fungites",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Hòn Tằm, đảo Nam Yết (Trường Sa)"
+  },
+  {
+    "id": 134,
+    "code": "CRL-LC-0134",
+    "slug": "san-ho-lo-dinh",
+    "name": "San Hô Lỗ Đỉnh",
+    "sci": "Porites lutea",
+    "zone": "Rạn san hô bờ cạn toàn quốc",
+    "local": "Cù Lao Chàm, vịnh Nha Trang, Côn Đảo, Trường Sa"
+  },
+  {
+    "id": 135,
+    "code": "CRL-LC-0135",
+    "slug": "san-ho-da-mem",
+    "name": "San Hô Da Mềm",
+    "sci": "Sarcophyton trocheliophorum",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Côn Đảo, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 136,
+    "code": "PLT-LC-0136",
+    "slug": "co-xoan-bien",
+    "name": "Cỏ Xoan Biển",
+    "sci": "Halophila ovalis",
+    "zone": "Thảm cỏ biển Côn Đảo & Phú Quốc",
+    "local": "Vườn quốc gia Côn Đảo, vịnh Nha Trang, Phú Quốc"
+  },
+  {
+    "id": 137,
+    "code": "PLT-LC-0137",
+    "slug": "co-nhut-bien",
+    "name": "Cỏ Nhút Biển",
+    "sci": "Enhalus acoroides",
+    "zone": "Vịnh Cam Ranh & Đảo Phú Quốc",
+    "local": "Phú Quốc, Đầm Bấy (Nha Trang), Côn Đảo"
+  },
+  {
+    "id": 138,
+    "code": "PLT-LC-0138",
+    "slug": "cay-vet-den",
+    "name": "Cây Vẹt Đen",
+    "sci": "Bruguiera sexangula",
+    "zone": "Rừng ngập mặn Cà Mau & Cần Giờ",
+    "local": "Mũi Cà Mau, Cần Giờ, cửa sông Trà Lý (Thái Bình)"
+  },
+  {
+    "id": 139,
+    "code": "PLT-LC-0139",
+    "slug": "cay-ban-trang",
+    "name": "Cây Bần Trắng",
+    "sci": "Sonneratia alba",
+    "zone": "Bãi bồi cửa sông Nam Bộ & Bắc Bộ",
+    "local": "Bãi bồi Cà Mau, cù lao Bến Tre, Tiên Yên (Quảng Ninh)"
+  },
+  {
+    "id": 140,
+    "code": "PLT-LC-0140",
+    "slug": "rong-mo-ran-bien",
+    "name": "Rong Mơ Rạn Biển",
+    "sci": "Sargassum polycystum",
+    "zone": "Rạn đá ven biển miền Trung",
+    "local": "Cù Lao Chàm, Nha Trang, Ninh Hải (Ninh Thuận), Phú Quốc"
+  },
+  {
+    "id": 141,
+    "code": "DPS-LC-0141",
+    "slug": "ca-den-long-bien-sau",
+    "name": "Cá Đèn Lồng Biển Sâu",
+    "sci": "Myctophum punctatum",
+    "zone": "Vùng trũng sâu thềm lục địa Biển Đông",
+    "local": "Vùng biển khơi sâu phía đông ngoài thềm lục địa miền Trung"
+  },
+  {
+    "id": 142,
+    "code": "DPS-LC-0142",
+    "slug": "muc-ong-phat-quang",
+    "name": "Mực Ống Phát Quang",
+    "sci": "Watasenia scintillans",
+    "zone": "Rãnh trũng thềm lục địa sâu Biển Đông",
+    "local": "Vùng nước sâu giữa Biển Đông ngoài khơi Khánh Hòa"
+  },
+  {
+    "id": 143,
+    "code": "DPS-LC-0143",
+    "slug": "ca-riu-bac-bien-sau",
+    "name": "Cá Rìu Bạc Biển Sâu",
+    "sci": "Argyropelecus aculeatus",
+    "zone": "Tầng chạng vạng Biển Đông",
+    "local": "Vùng biển sâu ngoài khơi Trường Sa và Hoàng Sa"
+  },
+  {
+    "id": 144,
+    "code": "DPS-LC-0144",
+    "slug": "ca-doc-mom-nhon",
+    "name": "Cá Dọc Mõm Nhọn",
+    "sci": "Nemichthys scolopaceus",
+    "zone": "Rãnh trũng sâu Biển Đông",
+    "local": "Tầng nước tối hoàn toàn phía đông rãnh ngầm miền Trung"
+  },
+  {
+    "id": 145,
+    "code": "DPS-LC-0145",
+    "slug": "cua-nhen-bien-sau",
+    "name": "Cua Nhện Biển Sâu",
+    "sci": "Macrocheira kaempferi",
+    "zone": "Thềm sườn dốc lục địa sâu Biển Đông",
+    "local": "Các rãnh sườn dốc ngoài khơi Hoàng Sa và Trường Sa"
+  },
+  {
+    "id": 146,
+    "code": "DPS-LC-0146",
+    "slug": "ca-map-yeu-tinh",
+    "name": "Cá Mập Yêu Tinh",
+    "sci": "Mitsukurina owstoni",
+    "zone": "Sườn dốc rãnh ngầm thềm lục địa Biển Đông",
+    "local": "Vùng đáy sâu ngoài khơi Bình Định và đảo Phú Quý"
+  },
+  {
+    "id": 147,
+    "code": "DPS-LC-0147",
+    "slug": "ca-map-mieng-to",
+    "name": "Cá Mập Miệng To",
+    "sci": "Megachasma pelagios",
+    "zone": "Vùng khơi sâu thềm lục địa Biển Đông",
+    "local": "Vùng biển khơi sâu phía đông nam Hoàng Sa"
+  },
+  {
+    "id": 148,
+    "code": "DPS-LC-0148",
+    "slug": "sua-den-khong-lo",
+    "name": "Sứa Đèn Khổng Lồ",
+    "sci": "Periphylla periphylla",
+    "zone": "Tầng sâu Biển Đông (1000 - 3000m)",
+    "local": "Các rãnh trũng sâu ngoài khơi Trường Sa"
+  },
+  {
+    "id": 149,
+    "code": "DPS-LC-0149",
+    "slug": "bot-bien-thuy-tinh",
+    "name": "Bọt Biển Thủy Tinh",
+    "sci": "Euplectella aspergillum",
+    "zone": "Đáy sâu rãnh thẳm Biển Đông",
+    "local": "Nền bùn đáy sâu phía đông quần đảo Trường Sa"
+  },
+  {
+    "id": 150,
+    "code": "DPS-LC-0150",
+    "slug": "ca-rang-nanh-bien-sau",
+    "name": "Cá Răng Nanh Biển Sâu",
+    "sci": "Anoplogaster cornuta",
+    "zone": "Rãnh vực thẳm sâu nhất Biển Đông",
+    "local": "Đáy rãnh trũng thẳm sâu phía đông Biển Đông"
+  },
+  {
+    "id": 151,
+    "code": "FSH-EN-0151",
+    "slug": "ca-mo-dau-gu",
+    "name": "Cá Mó Đầu Gù",
+    "sci": "Cheilinus undulatus",
+    "zone": "Quần đảo Trường Sa & Hoàng Sa",
+    "local": "Rạn san hô sâu đảo Nam Yết, đảo Phan Vinh, Côn Đảo"
+  },
+  {
+    "id": 152,
+    "code": "FSH-LC-0152",
+    "slug": "ca-mao-ech",
+    "name": "Cá Mao Ếch",
+    "sci": "Batrachomoeus trispinosus",
+    "zone": "Vịnh Bắc Bộ & Cửa sông Nam Bộ",
+    "local": "Rừng ngập mặn Cần Giờ, Cà Mau, cửa biển Hải Phòng"
+  },
+  {
+    "id": 153,
+    "code": "FSH-LC-0153",
+    "slug": "ca-chai-cat",
+    "name": "Cá Chai Cát",
+    "sci": "Platycephalus indicus",
+    "zone": "Bãi cát cửa biển ven bờ",
+    "local": "Quảng Bình, Đà Nẵng, Bình Thuận, Vũng Tàu"
+  },
+  {
+    "id": 154,
+    "code": "FSH-LC-0154",
+    "slug": "ca-doi-coi",
+    "name": "Cá Đối Cồi",
+    "sci": "Mugil cephalus",
+    "zone": "Vịnh ven bờ & Đầm phá miền Trung",
+    "local": "Phá Tam Giang (Thừa Thiên Huế), đầm Cù Mông, vịnh Cam Ranh"
+  },
+  {
+    "id": 155,
+    "code": "FSH-LC-0155",
+    "slug": "ca-phen-rau-vang",
+    "name": "Cá Phèn Râu Vàng",
+    "sci": "Parupeneus chrysopleuron",
+    "zone": "Vịnh Nha Trang & Ninh Thuận",
+    "local": "Nha Trang, Phan Thiết, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 156,
+    "code": "FSH-LC-0156",
+    "slug": "ca-liet-chi",
+    "name": "Cá Liệt Chỉ",
+    "sci": "Leiognathus equulus",
+    "zone": "Vịnh Bắc Bộ & Ven biển Nam Trung Bộ",
+    "local": "Vịnh Bái Tử Long, ven biển Nghệ An, Phan Thiết, Bến Tre"
+  },
+  {
+    "id": 157,
+    "code": "FSH-LC-0157",
+    "slug": "ca-dong-queo",
+    "name": "Cá Đổng Quéo",
+    "sci": "Nemipterus japonicus",
+    "zone": "Vùng biển thềm lục địa miền Trung",
+    "local": "Ngư trường Đà Nẵng, Quảng Ngãi, Bình Định, Vũng Tàu"
+  },
+  {
+    "id": 158,
+    "code": "FSH-LC-0158",
+    "slug": "ca-ho-bac",
+    "name": "Cá Hố Bạc",
+    "sci": "Trichiurus muticus",
+    "zone": "Vịnh Bắc Bộ & Thềm lục địa Trung Bộ",
+    "local": "Vùng khơi Bạch Long Vĩ, Bình Định, Khánh Hòa"
+  },
+  {
+    "id": 159,
+    "code": "FSH-LC-0159",
+    "slug": "ca-son-da",
+    "name": "Cá Sơn Đá",
+    "sci": "Ostorhinchus fleurieu",
+    "zone": "Rạn san hô Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Hòn Cau, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 160,
+    "code": "FSH-LC-0160",
+    "slug": "ca-kim-bien",
+    "name": "Cá Kìm Biển",
+    "sci": "Hemiramphus far",
+    "zone": "Vịnh Hạ Long & Nam Trung Bộ",
+    "local": "Hải Phòng, Nha Trang, Côn Đảo, Phú Quốc"
+  },
+  {
+    "id": 161,
+    "code": "FSH-LC-0161",
+    "slug": "ca-dia-bong",
+    "name": "Cá Dìa Bông",
+    "sci": "Siganus guttatus",
+    "zone": "Đầm phá miền Trung & Phú Quốc",
+    "local": "Phá Tam Giang, đầm Cù Mông, vịnh Cam Ranh, Phú Quốc"
+  },
+  {
+    "id": 162,
+    "code": "FSH-LC-0162",
+    "slug": "ca-dia-tam-giac",
+    "name": "Cá Dìa Tam Giác",
+    "sci": "Siganus canaliculatus",
+    "zone": "Vịnh ven bờ miền Trung & Côn Đảo",
+    "local": "Quảng Trị, Đà Nẵng, Quảng Nam, Bình Thuận"
+  },
+  {
+    "id": 163,
+    "code": "FSH-LC-0163",
+    "slug": "ca-chi-vang",
+    "name": "Cá Chỉ Vàng",
+    "sci": "Selaroides leptolepis",
+    "zone": "Toàn vùng biển ven bờ Việt Nam",
+    "local": "Vịnh Bắc Bộ, vùng biển miền Trung, vịnh Thái Lan"
+  },
+  {
+    "id": 164,
+    "code": "FSH-LC-0164",
+    "slug": "ca-com-than",
+    "name": "Cá Cơm Than",
+    "sci": "Stolephorus commersonnii",
+    "zone": "Vịnh Thái Lan & Vùng biển Nam Trung Bộ",
+    "local": "Phú Quốc (Kiên Giang), Phan Thiết (Bình Thuận), Nha Trang"
+  },
+  {
+    "id": 165,
+    "code": "FSH-LC-0165",
+    "slug": "ca-com-soc-tieu",
+    "name": "Cá Cơm Sọc Tiêu",
+    "sci": "Stolephorus indicus",
+    "zone": "Vịnh Bắc Bộ & Ven bờ miền Trung",
+    "local": "Vịnh Bắc Bộ, Đà Nẵng, Quảng Nam, Bình Định"
+  },
+  {
+    "id": 166,
+    "code": "FSH-LC-0166",
+    "slug": "ca-mo-xanh",
+    "name": "Cá Mó Xanh",
+    "sci": "Scarus ghobban",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Cù Lao Chàm, Nha Trang, Côn Đảo, Trường Sa"
+  },
+  {
+    "id": 167,
+    "code": "FSH-LC-0167",
+    "slug": "ca-chinh-bien-moray-dom",
+    "name": "Cá Chình Biển Moray Đốm",
+    "sci": "Gymnothorax flavimarginatus",
+    "zone": "Rạn san hô Trường Sa & Nha Trang",
+    "local": "Hòn Mun (Nha Trang), đảo Nam Yết, đảo Sinh Tồn"
+  },
+  {
+    "id": 168,
+    "code": "FSH-LC-0168",
+    "slug": "ca-chinh-bong-bien",
+    "name": "Cá Chình Bông Biển",
+    "sci": "Gymnothorax undulatus",
+    "zone": "Vịnh Nha Trang & Phú Quý",
+    "local": "Vịnh Vân Phong, Nha Trang, đảo Phú Quý, Côn Đảo"
+  },
+  {
+    "id": 169,
+    "code": "FSH-LC-0169",
+    "slug": "ca-bo-duoi-xanh",
+    "name": "Cá Bò Đuôi Xanh",
+    "sci": "Balistoides viridescens",
+    "zone": "Rạn san hô Hoàng Sa - Trường Sa & Nha Trang",
+    "local": "Hòn Mun, Cù Lao Chàm, quần đảo Trường Sa, Hoàng Sa"
+  },
+  {
+    "id": 170,
+    "code": "FSH-LC-0170",
+    "slug": "ca-bo-he",
+    "name": "Cá Bò Hề",
+    "sci": "Balistoides conspicillum",
+    "zone": "Rạn san hô Trường Sa & Côn Đảo",
+    "local": "Các rạn san hô dốc đứng Trường Sa, Côn Đảo, Nha Trang"
+  },
+  {
+    "id": 171,
+    "code": "FSH-LC-0171",
+    "slug": "ca-mao-tien-van",
+    "name": "Cá Mao Tiên Vằn",
+    "sci": "Pterois antennata",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Cù Lao Chàm, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 172,
+    "code": "FSH-LC-0172",
+    "slug": "ca-buom-gai-den",
+    "name": "Cá Bướm Gai Đen",
+    "sci": "Chaetodon kleinii",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Nha Trang, Cù Lao Chàm, Hòn Cau, Côn Đảo"
+  },
+  {
+    "id": 173,
+    "code": "FSH-LC-0173",
+    "slug": "ca-buom-chu-thap",
+    "name": "Cá Bướm Chữ Thập",
+    "sci": "Chaetodon auriga",
+    "zone": "Rạn san hô Trường Sa & Nha Trang",
+    "local": "Rạn san hô Hòn Mun, đảo Nam Yết, Côn Đảo"
+  },
+  {
+    "id": 174,
+    "code": "FSH-LC-0174",
+    "slug": "ca-he-ca-chua",
+    "name": "Cá Hề Cà Chua",
+    "sci": "Amphiprion frenatus",
+    "zone": "Rạn san hô Vịnh Nha Trang & Côn Đảo",
+    "local": "Hòn Mun, Hòn Tằm, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 175,
+    "code": "FSH-LC-0175",
+    "slug": "ca-he-khoang-co",
+    "name": "Cá Hề Khoang Cổ",
+    "sci": "Amphiprion percula",
+    "zone": "Quần đảo Trường Sa & Hoàng Sa",
+    "local": "Rạn san hô quanh các đảo đá ngầm Trường Sa, Hoàng Sa"
+  },
+  {
+    "id": 176,
+    "code": "FSH-VU-0176",
+    "slug": "ca-duoi-buom",
+    "name": "Cá Đuối Bướm",
+    "sci": "Gymnura poecilura",
+    "zone": "Vịnh Bắc Bộ & Ven bờ Nam Bộ",
+    "local": "Quảng Ninh, Thanh Hóa, Bình Thuận, Vũng Tàu"
+  },
+  {
+    "id": 177,
+    "code": "FSH-DD-0177",
+    "slug": "ca-duoi-chich",
+    "name": "Cá Đuối Chích",
+    "sci": "Neotrygon kuhlii",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Bãi cát rạn Nha Trang, Cù Lao Chàm, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 178,
+    "code": "FSH-NT-0178",
+    "slug": "ca-nham-nau",
+    "name": "Cá Nhám Nâu",
+    "sci": "Chiloscyllium punctatum",
+    "zone": "Rạn san hô bờ cạn toàn quốc",
+    "local": "Vịnh Hạ Long, Cù Lao Chàm, Nha Trang, Phú Quốc"
+  },
+  {
+    "id": 179,
+    "code": "FSH-LC-0179",
+    "slug": "ca-nham-goc",
+    "name": "Cá Nhám Góc",
+    "sci": "Chiloscyllium griseum",
+    "zone": "Vịnh Bắc Bộ & Ven biển miền Trung",
+    "local": "Hải Phòng, Đà Nẵng, Quảng Ngãi, Bình Thuận"
+  },
+  {
+    "id": 180,
+    "code": "FSH-DD-0180",
+    "slug": "ca-nham-cao",
+    "name": "Cá Nhám Cào",
+    "sci": "Squalus japonicus",
+    "zone": "Thềm lục địa sâu miền Trung",
+    "local": "Vùng biển khơi sâu Bình Định, Ninh Thuận, quần đảo Hoàng Sa"
+  },
+  {
+    "id": 181,
+    "code": "FSH-LC-0181",
+    "slug": "ca-noc-gai-nhim-nho",
+    "name": "Cá Nóc Gai Nhím Nhỏ",
+    "sci": "Cyclichthys orbicularis",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Nha Trang, Cù Lao Chàm, Phú Quý, Côn Đảo"
+  },
+  {
+    "id": 182,
+    "code": "FSH-LC-0182",
+    "slug": "ca-thia-san-ho-xanh",
+    "name": "Cá Thia San Hô Xanh",
+    "sci": "Chrysiptera cyanea",
+    "zone": "Rạn san hô Nha Trang & Trường Sa",
+    "local": "Hòn Mun, Cù Lao Chàm, quần đảo Trường Sa"
+  },
+  {
+    "id": 183,
+    "code": "FSH-LC-0183",
+    "slug": "ca-bong-cat-mat-to",
+    "name": "Cá Bống Cát Mắt To",
+    "sci": "Amblygobius phalaena",
+    "zone": "Bãi cát rạn Trung Bộ & Phú Quốc",
+    "local": "Cù Lao Chàm, Nha Trang, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 184,
+    "code": "FSH-LC-0184",
+    "slug": "ca-son-ga",
+    "name": "Cá Sơn Gà",
+    "sci": "Apogonichthys ocellatus",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm"
+  },
+  {
+    "id": 185,
+    "code": "FSH-VU-0185",
+    "slug": "ca-co-xanh",
+    "name": "Cá Cờ Xanh",
+    "sci": "Makaira mazara",
+    "zone": "Vùng biển khơi Hoàng Sa & Trường Sa",
+    "local": "Ngư trường Hoàng Sa, Trường Sa, vùng biển sâu ngoài khơi Phú Yên"
+  },
+  {
+    "id": 186,
+    "code": "FSH-LC-0186",
+    "slug": "ca-co-gon",
+    "name": "Cá Cờ Gòn",
+    "sci": "Istiophorus platypterus",
+    "zone": "Vùng biển khơi Trung Bộ & Hoàng Sa",
+    "local": "Bình Định, Phú Yên, Khánh Hòa, Hoàng Sa"
+  },
+  {
+    "id": 187,
+    "code": "FSH-LC-0187",
+    "slug": "ca-nuc-gai-tron",
+    "name": "Cá Nục Gai Tròn",
+    "sci": "Decapterus macarellus",
+    "zone": "Quần đảo Trường Sa & Hoàng Sa",
+    "local": "Vùng khơi Trường Sa, Hoàng Sa, bãi ngầm Phúc Tần"
+  },
+  {
+    "id": 188,
+    "code": "FSH-LC-0188",
+    "slug": "ca-bac-ma",
+    "name": "Cá Bạc Má",
+    "sci": "Rastrelliger kanagurta",
+    "zone": "Toàn vùng biển ven bờ Việt Nam",
+    "local": "Vịnh Bắc Bộ, vùng biển miền Trung, Cà Mau, Kiên Giang"
+  },
+  {
+    "id": 189,
+    "code": "FSH-DD-0189",
+    "slug": "ca-ngu-bo",
+    "name": "Cá Ngừ Bò",
+    "sci": "Thunnus tonggol",
+    "zone": "Thềm lục địa vịnh Bắc Bộ & miền Trung",
+    "local": "Vịnh Bắc Bộ, Đà Nẵng, Quảng Ngãi, Bình Thuận"
+  },
+  {
+    "id": 190,
+    "code": "FSH-LC-0190",
+    "slug": "ca-song-bien",
+    "name": "Cá Sòng Biển",
+    "sci": "Trachurus japonicus",
+    "zone": "Vịnh Thái Lan & Vịnh Bắc Bộ",
+    "local": "Phú Quốc, Kiên Hải (Kiên Giang), đảo Bạch Long Vĩ"
+  },
+  {
+    "id": 191,
+    "code": "MAM-CR-0191",
+    "slug": "ca-heo-chuot-khong-vay",
+    "name": "Cá Heo Chuột Không Vây",
+    "sci": "Neophocaena asiaeorientalis",
+    "zone": "Vịnh Bắc Bộ & Ven biển Hải Phòng",
+    "local": "Khu dự trữ sinh quyển Cát Bà, ven biển đảo Cô Tô, Bạch Long Vĩ"
+  },
+  {
+    "id": 192,
+    "code": "MAM-LC-0192",
+    "slug": "ca-voi-dau-dua",
+    "name": "Cá Voi Đầu Dưa",
+    "sci": "Peponocephala electra",
+    "zone": "Vùng biển khơi sâu Trường Sa",
+    "local": "Ngư trường Trường Sa, vùng biển sâu ngoài khơi Ninh Thuận"
+  },
+  {
+    "id": 193,
+    "code": "MAM-LC-0193",
+    "slug": "ca-heo-rang-khia",
+    "name": "Cá Heo Răng Khía",
+    "sci": "Lagenorhynchus obliquidens",
+    "zone": "Vùng khơi phía Bắc Biển Đông",
+    "local": "Vùng nước sâu ngoài khơi vịnh Bắc Bộ và Hoàng Sa"
+  },
+  {
+    "id": 194,
+    "code": "MAM-DD-0194",
+    "slug": "ca-voi-sat-thu",
+    "name": "Cá Voi Sát Thủ",
+    "sci": "Orcinus orca",
+    "zone": "Vùng biển mở Hoàng Sa & Trường Sa",
+    "local": "Ngư trường ngoài khơi Hoàng Sa, vùng biển sâu Trung Bộ"
+  },
+  {
+    "id": 195,
+    "code": "MAM-DD-0195",
+    "slug": "ca-voi-omura",
+    "name": "Cá Voi Omura",
+    "sci": "Balaenoptera omurai",
+    "zone": "Vùng biển miền Trung & Côn Đảo",
+    "local": "Vùng biển sâu ngoài khơi Côn Đảo, Khánh Hòa, Bình Thuận"
+  },
+  {
+    "id": 196,
+    "code": "REP-LC-0196",
+    "slug": "ran-bien-vay-nham",
+    "name": "Rắn Biển Vảy Nhám",
+    "sci": "Hydrophis curtus",
+    "zone": "Vịnh Bắc Bộ & Ven biển Nam Bộ",
+    "local": "Hải Phòng, ven biển Thái Bình, Tiền Giang, Cà Mau"
+  },
+  {
+    "id": 197,
+    "code": "REP-LC-0197",
+    "slug": "ran-bien-duoi-gai",
+    "name": "Rắn Biển Đuôi Gai",
+    "sci": "Aipysurus eydouxii",
+    "zone": "Vịnh Thái Lan & Thảm cỏ biển Phú Quốc",
+    "local": "Phú Quốc, Kiên Giang, vùng rạn san hô cạn Côn Đảo"
+  },
+  {
+    "id": 198,
+    "code": "REP-LC-0198",
+    "slug": "ran-bien-bung-bac",
+    "name": "Rắn Biển Bụng Bạc",
+    "sci": "Hydrophis brookii",
+    "zone": "Vùng biển Trung Bộ & Côn Đảo",
+    "local": "Khánh Hòa, Ninh Thuận, Côn Đảo, Thổ Chu"
+  },
+  {
+    "id": 199,
+    "code": "REP-LC-0199",
+    "slug": "ran-bien-co-ngong",
+    "name": "Rắn Biển Cổ Ngỗng",
+    "sci": "Microcephalophis cantoris",
+    "zone": "Vịnh Bắc Bộ & Ven bờ Nam Bộ",
+    "local": "Hải Phòng, Nam Định, Tiền Giang, Cà Mau"
+  },
+  {
+    "id": 200,
+    "code": "REP-NT-0200",
+    "slug": "ran-bien-dom-xanh",
+    "name": "Rắn Biển Đốm Xanh",
+    "sci": "Laticauda semifasciata",
+    "zone": "Quần đảo Hoàng Sa & Cù Lao Chàm",
+    "local": "Hoàng Sa, Cù Lao Chàm, Hòn Cau (Bình Thuận)"
+  },
+  {
+    "id": 201,
+    "code": "REP-LC-0201",
+    "slug": "ran-bien-chop-den",
+    "name": "Rắn Biển Chóp Đen",
+    "sci": "Hydrophis atriceps",
+    "zone": "Vịnh Thái Lan & Vùng biển Nam Bộ",
+    "local": "Phú Quốc, Kiên Lương, Côn Đảo"
+  },
+  {
+    "id": 202,
+    "code": "REP-LC-0202",
+    "slug": "ran-bien-van-nau",
+    "name": "Rắn Biển Vằn Nâu",
+    "sci": "Hydrophis fasciatus",
+    "zone": "Vịnh Bắc Bộ & Ven biển miền Trung",
+    "local": "Thanh Hóa, Nghệ An, Quảng Trị, Bình Thuận"
+  },
+  {
+    "id": 203,
+    "code": "MAM-DD-0203",
+    "slug": "ca-voi-mo-blainville",
+    "name": "Cá Voi Mỏ Blainville",
+    "sci": "Mesoplodon densirostris",
+    "zone": "Rãnh trũng thung lũng ngầm Biển Đông",
+    "local": "Khu vực vực thẳm sâu phía đông Trường Sa"
+  },
+  {
+    "id": 204,
+    "code": "MAM-DD-0204",
+    "slug": "ca-voi-mo-ginkgo",
+    "name": "Cá Voi Mỏ Ginkgo",
+    "sci": "Mesoplodon ginkgodens",
+    "zone": "Rãnh trũng thềm lục địa sâu Biển Đông",
+    "local": "Vùng nước sâu ngoài thềm lục địa miền Trung"
+  },
+  {
+    "id": 205,
+    "code": "MAM-LC-0205",
+    "slug": "ca-voi-eden",
+    "name": "Cá Voi Eden",
+    "sci": "Balaenoptera edeni",
+    "zone": "Vùng biển Đề Gi (Bình Định) & Phú Quốc",
+    "local": "Biển Đề Gi (Bình Định), đảo Phú Quý, Phú Quốc"
+  },
+  {
+    "id": 206,
+    "code": "INV-LC-0206",
+    "slug": "bach-tuoc-dua",
+    "name": "Bạch Tuộc Dừa",
+    "sci": "Amphioctopus marginatus",
+    "zone": "Bãi cát rạn Côn Đảo & Phú Quốc",
+    "local": "Côn Đảo, Nha Trang, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 207,
+    "code": "INV-LC-0207",
+    "slug": "bach-tuoc-bien-hinh",
+    "name": "Bạch Tuộc Biến Hình",
+    "sci": "Thaumoctopus mimicus",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Đáy bùn cát vịnh Nha Trang, Côn Đảo, Cù Lao Chàm"
+  },
+  {
+    "id": 208,
+    "code": "INV-LC-0208",
+    "slug": "muc-coc-san-ho",
+    "name": "Mực Cóc San Hô",
+    "sci": "Sepia latimanus",
+    "zone": "Rạn san hô Trường Sa & Côn Đảo",
+    "local": "Rạn san hô đảo Trường Sa, Côn Đảo, Hòn Mun"
+  },
+  {
+    "id": 209,
+    "code": "INV-LC-0209",
+    "slug": "muc-nang-ti-hon",
+    "name": "Mực Nang Tí Hon",
+    "sci": "Euprymna berryi",
+    "zone": "Bãi cát rạn Nha Trang & Côn Đảo",
+    "local": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm"
+  },
+  {
+    "id": 210,
+    "code": "MOL-VU-0210",
+    "slug": "oc-ban-tay",
+    "name": "Ốc Bàn Tay",
+    "sci": "Lambis chiragra",
+    "zone": "Quần đảo Hoàng Sa - Trường Sa & Côn Đảo",
+    "local": "Hoàng Sa, Trường Sa, đảo Cù Lao Chàm, Côn Đảo"
+  },
+  {
+    "id": 211,
+    "code": "MOL-LC-0211",
+    "slug": "oc-vu-nang",
+    "name": "Ốc Vú Nàng",
+    "sci": "Cellana testudinaria",
+    "zone": "Vách đá Cù Lao Chàm & Côn Đảo",
+    "local": "Cù Lao Chàm (Quảng Nam), Côn Đảo, đảo Phú Quý"
+  },
+  {
+    "id": 212,
+    "code": "CRU-LC-0212",
+    "slug": "oc-muon-hon-bien",
+    "name": "Ốc Mượn Hồn Biển",
+    "sci": "Coenobita perlatus",
+    "zone": "Bãi cát đảo Côn Đảo & Trường Sa",
+    "local": "Vườn quốc gia Côn Đảo, đảo Nam Yết, đảo Song Tử Tây"
+  },
+  {
+    "id": 213,
+    "code": "MOL-LC-0213",
+    "slug": "diep-quat-bien",
+    "name": "Điệp Quạt Biển",
+    "sci": "Mimachlamys senatoria",
+    "zone": "Vịnh Phan Thiết & Vịnh Nha Trang",
+    "local": "Phan Thiết, Hàm Thuận Nam (Bình Thuận), vịnh Nha Trang"
+  },
+  {
+    "id": 214,
+    "code": "MOL-LC-0214",
+    "slug": "so-mai-ran-san-ho",
+    "name": "Sò Mai Rạn San Hô",
+    "sci": "Atrina pectinata",
+    "zone": "Vùng biển Phú Quốc & Côn Đảo",
+    "local": "Quần đảo An Thới (Phú Quốc), Côn Đảo, Cù Lao Chàm"
+  },
+  {
+    "id": 215,
+    "code": "MOL-VU-0215",
+    "slug": "tu-hai-cat-ba",
+    "name": "Tu Hài Cát Bà",
+    "sci": "Lutraria philippinarum",
+    "zone": "Quần đảo Cát Bà & Vịnh Bái Tử Long",
+    "local": "Vườn quốc gia Cát Bà (Hải Phòng), Vân Đồn (Quảng Ninh)"
+  },
+  {
+    "id": 216,
+    "code": "MOL-EN-0216",
+    "slug": "bao-ngu-chin-lo",
+    "name": "Bào Ngư Chín Lỗ",
+    "sci": "Haliotis diversicolor",
+    "zone": "Đảo Bạch Long Vĩ & Cô Tô",
+    "local": "Đảo Bạch Long Vĩ (Hải Phòng), Cô Tô (Quảng Ninh), Phú Quý"
+  },
+  {
+    "id": 217,
+    "code": "MOL-VU-0217",
+    "slug": "bao-ngu-vanh-dai",
+    "name": "Bào Ngư Vành Dài",
+    "sci": "Haliotis asinina",
+    "zone": "Vịnh Nha Trang & Đảo Phú Quý",
+    "local": "Nha Trang, Ninh Thuận, đảo Phú Quý, Côn Đảo"
+  },
+  {
+    "id": 218,
+    "code": "CRU-LC-0218",
+    "slug": "cua-huynh-de-da",
+    "name": "Cua Huỳnh Đế Đá",
+    "sci": "Daldorfia horrida",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Hòn Mun, Cù Lao Chàm, Phú Quý, Côn Đảo"
+  },
+  {
+    "id": 219,
+    "code": "CRU-LC-0219",
+    "slug": "cua-nhen-ran",
+    "name": "Cua Nhện Rạn",
+    "sci": "Schizophrys aspera",
+    "zone": "Rạn san hô ven biển Trung Bộ",
+    "local": "Nha Trang, Cù Lao Chàm, Côn Đảo, Phú Quốc"
+  },
+  {
+    "id": 220,
+    "code": "CRU-LC-0220",
+    "slug": "ghe-nhan-bien",
+    "name": "Ghẹ Nhàn Biển",
+    "sci": "Charybdis feriata",
+    "zone": "Toàn vùng biển ven bờ Việt Nam",
+    "local": "Vịnh Bắc Bộ, Bình Thuận, Vũng Tàu, Kiên Giang"
+  },
+  {
+    "id": 221,
+    "code": "CRU-LC-0221",
+    "slug": "tom-tich-trang",
+    "name": "Tôm Tích Trắng",
+    "sci": "Oratosquilla oratoria",
+    "zone": "Vịnh Bắc Bộ & Ven biển miền Trung",
+    "local": "Quảng Ninh, Hải Phòng, Nam Định, Nghệ An"
+  },
+  {
+    "id": 222,
+    "code": "ECH-LC-0222",
+    "slug": "cau-gai-bo-duc",
+    "name": "Cầu Gai Bồ Dục",
+    "sci": "Echinometra mathaei",
+    "zone": "Rạn san hô bờ cạn toàn quốc",
+    "local": "Hạ Long, Cát Bà, Nha Trang, Côn Đảo, Phú Quốc"
+  },
+  {
+    "id": 223,
+    "code": "ECH-LC-0223",
+    "slug": "sao-bien-xanh",
+    "name": "Sao Biển Xanh",
+    "sci": "Linckia laevigata",
+    "zone": "Rạn san hô Trường Sa & Côn Đảo",
+    "local": "Đảo Nam Yết (Trường Sa), Côn Đảo, Cù Lao Chàm, Hòn Mun"
+  },
+  {
+    "id": 224,
+    "code": "ECH-LC-0224",
+    "slug": "sao-bien-dem-cat",
+    "name": "Sao Biển Đệm Cát",
+    "sci": "Culcita novaeguineae",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Hòn Cau, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 225,
+    "code": "ECH-LC-0225",
+    "slug": "hai-sam-den",
+    "name": "Hải Sâm Đen",
+    "sci": "Holothuria atra",
+    "zone": "Rạn san hô toàn bờ cạn Việt Nam",
+    "local": "Cát Bà, Cù Lao Chàm, Nha Trang, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 226,
+    "code": "ECH-EN-0226",
+    "slug": "hai-sam-gai-dua",
+    "name": "Hải Sâm Gai Dứa",
+    "sci": "Thelenota ananas",
+    "zone": "Quần đảo Trường Sa & Hoàng Sa",
+    "local": "Các rạn sâu đảo Trường Sa Lớn, Nam Yết, Hoàng Sa"
+  },
+  {
+    "id": 227,
+    "code": "INV-LC-0227",
+    "slug": "sua-lua-bien-dong",
+    "name": "Sứa Lửa Biển Đông",
+    "sci": "Cyanea capillata",
+    "zone": "Ven biển miền Trung & Vịnh Bắc Bộ",
+    "local": "Sầm Sơn, Cửa Lò, Đà Nẵng, Quy Nhơn, Nha Trang"
+  },
+  {
+    "id": 228,
+    "code": "INV-LC-0228",
+    "slug": "sua-mat-trang",
+    "name": "Sứa Mặt Trăng",
+    "sci": "Aurelia aurita",
+    "zone": "Vịnh Hạ Long & Toàn vùng biển Việt Nam",
+    "local": "Vịnh Hạ Long, Cát Bà, vịnh Nha Trang, Côn Đảo"
+  },
+  {
+    "id": 229,
+    "code": "INV-LC-0229",
+    "slug": "sua-do-hai-cau",
+    "name": "Sứa Đỏ Hải Cẩu",
+    "sci": "Rhopilema esculentum",
+    "zone": "Vịnh Bắc Bộ & Ven biển Thanh Hóa",
+    "local": "Cô Tô (Quảng Ninh), Cát Bà (Hải Phòng), Nam Định, Thanh Hóa"
+  },
+  {
+    "id": 230,
+    "code": "INV-VU-0230",
+    "slug": "so-bien",
+    "name": "So Biển",
+    "sci": "Carcinoscorpius rotundicauda",
+    "zone": "Rừng ngập mặn & Bãi bùn ven biển",
+    "local": "Quảng Ninh, Hải Phòng, Cần Giờ, Bến Tre, Kiên Giang"
+  },
+  {
+    "id": 231,
+    "code": "CRL-NT-0231",
+    "slug": "san-ho-lo-dia",
+    "name": "San Hô Lỗ Đĩa",
+    "sci": "Montipora digitata",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Cù Lao Chàm, Phú Quốc, Côn Đảo"
+  },
+  {
+    "id": 232,
+    "code": "CRL-VU-0232",
+    "slug": "san-ho-hoa-cuc",
+    "name": "San Hô Hoa Cúc",
+    "sci": "Goniopora stokesi",
+    "zone": "Vịnh Nha Trang & Đảo Phú Quý",
+    "local": "Hòn Mun, Côn Đảo, Cù Lao Chàm"
+  },
+  {
+    "id": 233,
+    "code": "CRL-NT-0233",
+    "slug": "san-ho-quat-bien",
+    "name": "San Hô Quạt Biển",
+    "sci": "Melithaea ochracea",
+    "zone": "Vách đá rạn sâu Nha Trang & Trường Sa",
+    "local": "Vách đá ngầm Hòn Mun, đảo Nam Yết, Côn Đảo"
+  },
+  {
+    "id": 234,
+    "code": "CRL-LC-0234",
+    "slug": "san-ho-than",
+    "name": "San Hô Thận",
+    "sci": "Turbinaria reniformis",
+    "zone": "Rạn san hô Trung Bộ & Côn Đảo",
+    "local": "Nha Trang, Ninh Thuận, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 235,
+    "code": "CRL-NT-0235",
+    "slug": "san-ho-bong-bong",
+    "name": "San Hô Bong Bóng",
+    "sci": "Plerogyra sinuosa",
+    "zone": "Vịnh Nha Trang & Phú Quốc",
+    "local": "Hòn Mun, Hòn Tằm, Cù Lao Chàm, Côn Đảo"
+  },
+  {
+    "id": 236,
+    "code": "PLT-LC-0236",
+    "slug": "rong-nho-bien",
+    "name": "Rong Nho Biển",
+    "sci": "Caulerpa lentillifera",
+    "zone": "Vịnh Cam Ranh & Vịnh Vân Phong",
+    "local": "Khánh Hòa, Ninh Thuận, Phú Yên, Kiên Giang"
+  },
+  {
+    "id": 237,
+    "code": "PLT-LC-0237",
+    "slug": "rong-cau-chi-vang",
+    "name": "Rong Câu Chỉ Vàng",
+    "sci": "Gracilaria verrucosa",
+    "zone": "Đầm phá ven biển miền Trung",
+    "local": "Tam Giang - Cầu Hai (Thừa Thiên Huế), đầm Ô Loan, Cần Giờ"
+  },
+  {
+    "id": 238,
+    "code": "PLT-LC-0238",
+    "slug": "co-he-bien",
+    "name": "Cỏ Hẹ Biển",
+    "sci": "Cymodocea rotundata",
+    "zone": "Thảm cỏ biển Côn Đảo & Phú Quốc",
+    "local": "Côn Đảo, Cù Lao Chàm, vịnh Nha Trang, Phú Quốc"
+  },
+  {
+    "id": 239,
+    "code": "PLT-LC-0239",
+    "slug": "co-kieu-bien",
+    "name": "Cỏ Kiệu Biển",
+    "sci": "Halodule pinifolia",
+    "zone": "Bãi triều Côn Đảo & Khánh Hòa",
+    "local": "Vườn quốc gia Côn Đảo, đầm Nha Phu (Khánh Hòa)"
+  },
+  {
+    "id": 240,
+    "code": "PLT-LC-0240",
+    "slug": "rong-duoi-cong",
+    "name": "Rong Đuôi Công",
+    "sci": "Padina gymnospora",
+    "zone": "Rạn đá ven biển miền Trung",
+    "local": "Bình Định, Ninh Thuận, Cù Lao Chàm, Phú Quốc"
+  },
+  {
+    "id": 241,
+    "code": "DPS-LC-0241",
+    "slug": "ca-mat-quy-bien-sau",
+    "name": "Cá Mặt Quỷ Biển Sâu",
+    "sci": "Synanceia alula",
+    "zone": "Sườn dốc ngầm thềm lục địa Biển Đông",
+    "local": "Vùng dốc thềm lục địa ngoài khơi Ninh Thuận và Phú Quý"
+  },
+  {
+    "id": 242,
+    "code": "DPS-LC-0242",
+    "slug": "ca-duoi-chuot-bien-sau",
+    "name": "Cá Đuôi Chuột Biển Sâu",
+    "sci": "Coryphaenoides armatus",
+    "zone": "Đồng bằng đáy thẳm Biển Đông",
+    "local": "Nền bùn sâu phía đông quần đảo Hoàng Sa và Trường Sa"
+  },
+  {
+    "id": 243,
+    "code": "DPS-LC-0243",
+    "slug": "cua-da-bien-sau",
+    "name": "Cua Đá Biển Sâu",
+    "sci": "Chaceon granulatus",
+    "zone": "Rãnh trũng sườn dốc Biển Đông",
+    "local": "Sườn dốc lục địa ngoài khơi Bình Định và Khánh Hòa"
+  },
+  {
+    "id": 244,
+    "code": "DPS-LC-0244",
+    "slug": "tom-do-bien-sau",
+    "name": "Tôm Đỏ Biển Sâu",
+    "sci": "Aristaeopsis edwardsiana",
+    "zone": "Thung lũng ngầm sâu thềm lục địa Biển Đông",
+    "local": "Vùng nước sâu phía đông nam Hoàng Sa"
+  },
+  {
+    "id": 245,
+    "code": "DPS-LC-0245",
+    "slug": "bach-tuoc-dumbo",
+    "name": "Bạch Tuộc Dumbo",
+    "sci": "Grimpoteuthis discoveryi",
+    "zone": "Đồng bằng thẳm sâu nhất Biển Đông",
+    "local": "Rãnh trũng thẳm sâu phía đông Trường Sa"
+  },
+  {
+    "id": 246,
+    "code": "DPS-LC-0246",
+    "slug": "sua-chuong-bien-sau",
+    "name": "Sứa Chuông Biển Sâu",
+    "sci": "Atolla wyvillei",
+    "zone": "Tầng sâu Biển Đông (1000 - 4000m)",
+    "local": "Các rãnh trũng thung lũng ngầm ngoài khơi miền Trung"
+  },
+  {
+    "id": 247,
+    "code": "DPS-LC-0247",
+    "slug": "muc-mat-choi-lac",
+    "name": "Mực Mắt Chọi Lác",
+    "sci": "Histioteuthis pacifica",
+    "zone": "Tầng chạng vạng Biển Đông (400 - 1000m)",
+    "local": "Vùng nước sâu giữa Biển Đông"
+  },
+  {
+    "id": 248,
+    "code": "DPS-LC-0248",
+    "slug": "ca-dau-riu-bung-bac",
+    "name": "Cá Đầu Rìu Bụng Bạc",
+    "sci": "Sternoptyx diaphana",
+    "zone": "Tầng chạng vạng thềm lục địa Biển Đông",
+    "local": "Vùng biển sâu ngoài khơi Trường Sa và Hoàng Sa"
+  },
+  {
+    "id": 249,
+    "code": "DPS-LC-0249",
+    "slug": "ca-cuc-sau-ranh-tham",
+    "name": "Cá Cực Sâu Rãnh Thẳm",
+    "sci": "Pseudoliparis belyaevi",
+    "zone": "Vực thẳm sâu nhất Biển Đông (Hadal Zone)",
+    "local": "Rãnh trũng thẳm sâu thềm đông Biển Đông"
+  },
+  {
+    "id": 250,
+    "code": "DPS-LC-0250",
+    "slug": "trung-lo-khong-lo",
+    "name": "Trùng Lỗ Khổng Lồ",
+    "sci": "Syringammina fragilissima",
+    "zone": "Đáy thẳm đại dương Biển Đông",
+    "local": "Nền bùn thẳm sâu ngoài khơi Trường Sa"
+  },
+  {
+    "id": 251,
+    "code": "FSH-LC-0255",
+    "slug": "ca-khe-khong-lo",
+    "name": "Cá Khế Khổng Lồ",
+    "sci": "Caranx ignobilis",
+    "zone": "Côn Đảo, Phú Quốc, Trường Sa, đảo Bạch Long Vĩ",
+    "local": "Bơi tuần tra thành từng nhóm quanh các rạn đá dốc, bãi cạn và vùng nước chảy xiết tại Côn Đảo, Trường Sa, Phú Quốc và Bạch Long Vĩ."
+  },
+  {
+    "id": 252,
+    "code": "MAM-EN-0256",
+    "slug": "ca-voi-xanh",
+    "name": "Cá Voi Xanh",
+    "sci": "Balaenoptera musculus",
+    "zone": "Vùng biển khơi sâu Tây Thái Bình Dương và thềm Biển Đông",
+    "local": "Di cư qua vùng nước sâu ngoài khơi Biển Đông và Tây Thái Bình Dương vào mùa di chuyển tìm nguồn thức ăn và sinh sản."
+  },
+  {
+    "id": 253,
+    "code": "MAM-LC-0257",
+    "slug": "ca-heo-mui-chai",
+    "name": "Cá Heo Mũi Chai",
+    "sci": "Tursiops truncatus",
+    "zone": "Vịnh Bắc Bộ, vùng biển Côn Đảo, Phú Quốc, vịnh Vân Phong",
+    "local": "Thường bắt gặp bơi theo đàn gần tàu thuyền ở vùng biển Côn Đảo, Phú Quốc, Bình Thuận, Khánh Hòa và vịnh Bắc Bộ."
+  },
+  {
+    "id": 254,
+    "code": "INV-LC-0259",
+    "slug": "tom-tit-bay-mau",
+    "name": "Tôm Tít Bảy Màu",
+    "sci": "Odontodactylus scyllarus",
+    "zone": "Rạn san hô Nha Trang, Cù Lao Chàm, Phú Quốc, Côn Đảo",
+    "local": "Làm hang hình chữ U trong nền cát sỏi gần chân rạn san hô tại Hòn Mun (Nha Trang), Phú Quốc, Côn Đảo và Cù Lao Chàm."
+  },
+  {
+    "id": 255,
+    "code": "INV-LC-0260",
+    "slug": "tom-bac-si-van-do",
+    "name": "Tôm Bác Sĩ Vằn Đỏ",
+    "sci": "Lysmata amboinensis",
+    "zone": "Rạn san hô vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Trường Sa",
+    "local": "Sống thành đôi hoặc nhóm nhỏ trong các hốc đá san hô trên toàn bộ hệ thống rạn san hô Biển Đông."
+  },
+  {
+    "id": 256,
+    "code": "INV-LC-0258",
+    "slug": "sen-bien-rong-xanh",
+    "name": "Sên Biển Rồng Xanh",
+    "sci": "Glaucus atlanticus",
+    "zone": "Vùng biển khơi Trung Bộ, Hoàng Sa, Trường Sa",
+    "local": "Trôi nổi theo các dòng hải lưu nước ấm ngoài khơi Đà Nẵng, Quảng Nam, Bình Thuận và hai quần đảo Hoàng Sa, Trường Sa."
+  },
+  {
+    "id": 257,
+    "code": "FSH-CR-0261",
+    "slug": "ca-map-dau-bua-lon",
+    "name": "Cá Mập Đầu Búa Lớn",
+    "sci": "Sphyrna mokarran",
+    "zone": "Vùng biển khơi xa bờ Trường Sa, Hoàng Sa, Bình Thuận",
+    "local": "Tuần tra các bãi rạn dốc ngoài khơi Trường Sa, Hoàng Sa và vùng biển nước sâu Nam Trung Bộ."
+  },
+  {
+    "id": 258,
+    "code": "FSH-EN-0262",
+    "slug": "ca-nham-bao",
+    "name": "Cá Nhám Báo",
+    "sci": "Stegostoma tigrinum",
+    "zone": "Rạn san hô Nha Trang, Côn Đảo, Cù Lao Chàm, Phú Quốc",
+    "local": "Thường nằm nghỉ trên nền cát phẳng quanh các rạn san hô Hòn Mun (Nha Trang), Côn Đảo và đảo Nam Yết (Trường Sa)."
+  },
+  {
+    "id": 259,
+    "code": "FSH-VU-0263",
+    "slug": "ca-duoi-o-dai-bang",
+    "name": "Cá Đuối Ó Đại Bàng",
+    "sci": "Aetobatus ocellatus",
+    "zone": "Vịnh Nha Trang, Côn Đảo, quần đảo Trường Sa, Hoàng Sa",
+    "local": "Bơi thành đàn lướt trên các thảm san hô ngoài khơi vịnh Nha Trang, Côn Đảo và các đảo san hô Trường Sa."
+  },
+  {
+    "id": 260,
+    "code": "FSH-LC-0264",
+    "slug": "ca-duoi-dien-thai-binh-duong",
+    "name": "Cá Đuối Điện Thái Bình Dương",
+    "sci": "Torpedo californica",
+    "zone": "Vùng thềm lục địa sâu Tây Thái Bình Dương và Biển Đông",
+    "local": "Phân bố ở các sườn thềm lục địa cát bùn sâu ngoài khơi vùng biển Nam Trung Bộ."
+  },
+  {
+    "id": 261,
+    "code": "FSH-LC-0265",
+    "slug": "ca-mat-quy-san-ho",
+    "name": "Cá Mặt Quỷ San Hô",
+    "sci": "Synanceia verrucosa",
+    "zone": "Rạn san hô Hòn Mun, Côn Đảo, Cù Lao Chàm, Phú Quốc",
+    "local": "Ngụy trang bất động trên nền san hô chết và vụn đá tại Hòn Mun (Nha Trang), Côn Đảo và Phú Quốc."
+  },
+  {
+    "id": 262,
+    "code": "FSH-LC-0266",
+    "slug": "ca-mao-tien-canh-quat",
+    "name": "Cá Mao Tiên Cánh Quạt",
+    "sci": "Pterois radiata",
+    "zone": "Vách rạn san hô Nha Trang, Côn Đảo, quần đảo Trường Sa",
+    "local": "Ẩn mình trong các hang vòm và gờ đá san hô sâu tại Côn Đảo, Hòn Mun và Trường Sa."
+  },
+  {
+    "id": 263,
+    "code": "FSH-CR-0267",
+    "slug": "ca-dao-rang-nhon",
+    "name": "Cá Đao Răng Nhọn",
+    "sci": "Pristis pristis",
+    "zone": "Cửa sông rừng ngập mặn Cần Giờ, vịnh Bắc Bộ, Cà Mau",
+    "local": "Từng ghi nhận tại vùng nước lợ ven biển Hải Phòng, cửa sông Cần Giờ và vịnh Thái Lan."
+  },
+  {
+    "id": 264,
+    "code": "FSH-LC-0268",
+    "slug": "ca-buom-yen-ngua",
+    "name": "Cá Bướm Yên Ngựa",
+    "sci": "Chaetodon ephippium",
+    "zone": "Rạn san hô Hoàng Sa, Trường Sa, Côn Đảo, Nha Trang",
+    "local": "Bơi thành cặp gắn kết suốt đời quanh các bãi san hô cành phát triển mạnh ở Côn Đảo và Trường Sa."
+  },
+  {
+    "id": 265,
+    "code": "FSH-NT-0269",
+    "slug": "ca-rong-bien-la",
+    "name": "Cá Rồng Biển Lá",
+    "sci": "Phycodurus eques",
+    "zone": "Vùng nước mát thềm lục địa Thái Bình Dương",
+    "local": "Ẩn mình trong các thảm cỏ biển sâu và rạn đá ngầm có dòng hải lưu mát giàu dinh dưỡng."
+  },
+  {
+    "id": 266,
+    "code": "FSH-LC-0270",
+    "slug": "ca-he-lua",
+    "name": "Cá Hề Lửa",
+    "sci": "Amphiprion melanopus",
+    "zone": "Quần đảo Hoàng Sa, Trường Sa, Côn Đảo",
+    "local": "Sống cộng sinh trong các bụi hải quỳ thảm tại các rạn san hô đảo Trường Sa và Hoàng Sa."
+  },
+  {
+    "id": 267,
+    "code": "FSH-LC-0271",
+    "slug": "ca-bap-ne-xanh",
+    "name": "Cá Bắp Nẻ Xanh",
+    "sci": "Paracanthurus hepatus",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, quần đảo Trường Sa",
+    "local": "Bơi thành đàn nhỏ trên đỉnh các nhánh san hô cành Acropora ở Hòn Mun, Côn Đảo và Trường Sa."
+  },
+  {
+    "id": 268,
+    "code": "FSH-LC-0272",
+    "slug": "ca-ngua-lun-pygmy",
+    "name": "Cá Ngựa Lùn Pygmy",
+    "sci": "Hippocampus bargibanti",
+    "zone": "Vách rạn san hô sâu vịnh Nha Trang, Côn Đảo",
+    "local": "Sống bám cố định trên các quạt biển Muricella tại các sườn dốc san hô ngoài khơi Côn Đảo và Nha Trang."
+  },
+  {
+    "id": 269,
+    "code": "DPS-LC-0273",
+    "slug": "ca-phu-thuy-hagfish",
+    "name": "Cá Phù Thủy Biển Sâu",
+    "sci": "Eptatretus stoutii",
+    "zone": "Vực thẳm đáy bùn Biển Đông và Tây Thái Bình Dương",
+    "local": "Sinh sống ở tầng đáy bùn lạnh sâu từ 300m đến hơn 900m ngoài khơi thềm lục địa miền Trung."
+  },
+  {
+    "id": 270,
+    "code": "INV-LC-0274",
+    "slug": "bach-tuoc-dom-xanh-lon",
+    "name": "Bạch Tuộc Đốm Xanh Lớn",
+    "sci": "Hapalochlaena fasciata",
+    "zone": "Vùng vũng triều đá ngầm ven biển miền Trung và hải đảo",
+    "local": "Thường ẩn mình trong vỏ sò rỗng, khe đá vũng triều ở Côn Đảo, Nha Trang và vịnh Thái Lan."
+  },
+  {
+    "id": 271,
+    "code": "MOL-LC-0275",
+    "slug": "oc-non-dia-ly",
+    "name": "Ốc Nón Địa Lý",
+    "sci": "Conus geographus",
+    "zone": "Rạn san hô quần đảo Hoàng Sa, Trường Sa, Côn Đảo",
+    "local": "Vùi mình dưới lớp cát mịn gần rạn san hô ở Côn Đảo, Trường Sa và vịnh Nha Trang."
+  },
+  {
+    "id": 272,
+    "code": "MOL-LC-0276",
+    "slug": "sen-bien-tho-bien",
+    "name": "Sên Biển Thỏ Biển",
+    "sci": "Jorunna parva",
+    "zone": "Rạn san hô vịnh Nha Trang, Côn Đảo, Cù Lao Chàm",
+    "local": "Bò trên các mảng hải miên bám vách đá ngầm tại Côn Đảo và đảo Hòn Mun (Nha Trang)."
+  },
+  {
+    "id": 273,
+    "code": "MOL-LC-0277",
+    "slug": "sen-bien-vu-cong-tay-ban-nha",
+    "name": "Sên Biển Vũ Công Tây Ban Nha",
+    "sci": "Hexabranchus sanguineus",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, quần đảo Trường Sa",
+    "local": "Gặp khi lặn đêm trên các rạn san hô dốc ở Côn Đảo, Hòn Mun và đảo Nam Yết (Trường Sa)."
+  },
+  {
+    "id": 274,
+    "code": "INV-LC-0278",
+    "slug": "cau-gai-lua",
+    "name": "Cầu Gai Lửa Hoa Phấn",
+    "sci": "Asthenosoma varium",
+    "zone": "Rạn san hô vịnh Nha Trang, Côn Đảo, Cù Lao Chàm",
+    "local": "Di chuyển chậm chạp trên các bãi vụn san hô chân rạn tại Hòn Mun và Côn Đảo."
+  },
+  {
+    "id": 275,
+    "code": "CRU-LC-0279",
+    "slug": "cua-khong-lo-tasmania",
+    "name": "Cua Khổng Lồ Tasmania",
+    "sci": "Pseudocarcinus gigas",
+    "zone": "Thềm lục địa biển sâu Tây Thái Bình Dương",
+    "local": "Sinh sống ở các sườn thềm đá ngầm biển sâu lạnh từ 150m đến hơn 600m."
+  },
+  {
+    "id": 276,
+    "code": "CRL-LC-0280",
+    "slug": "hai-quy-tham-san-ho",
+    "name": "Hải Quỳ Thảm San Hô",
+    "sci": "Stichodactyla haddoni",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, quần đảo Trường Sa",
+    "local": "Cắm chân sâu vào nền cát sỏi quanh rạn san hô Hòn Mun, Côn Đảo và Trường Sa."
+  },
+  {
+    "id": 277,
+    "code": "FSH-LC-0284",
+    "slug": "ca-nham-ma-ghost-shark",
+    "name": "Cá Nhám Ma (Cá Mập Thỏ)",
+    "sci": "Hydrolagus mitsukurii",
+    "zone": "Sườn dốc lục địa ngoài khơi Quy Nhơn, Tuy Hòa và bồn trũng Biển Đông",
+    "local": "Tuần tra các sườn dốc đá sâu ngoài khơi duyên hải Nam Trung Bộ."
+  },
+  {
+    "id": 278,
+    "code": "FSH-LC-0285",
+    "slug": "ca-rong-den-bien-sau",
+    "name": "Cá Rồng Đen Biển Sâu",
+    "sci": "Stomias nebulosus",
+    "zone": "Vùng nước sâu bồn trũng trung tâm Biển Đông",
+    "local": "Tầng nước sâu 500 - 1500m vùng biển khơi xa bờ Trường Sa và Hoàng Sa."
+  },
+  {
+    "id": 279,
+    "code": "MOL-LC-0286",
+    "slug": "muc-thuy-tinh-glass-squid",
+    "name": "Mực Thủy Tinh Trong Suốt",
+    "sci": "Cranchia scabra",
+    "zone": "Vùng biển khơi sâu phía đông bờ biển miền Trung và quần đảo Hoàng Sa",
+    "local": "Lơ lửng trong cột nước sâu ngoài khơi bồn trũng Biển Đông."
+  },
+  {
+    "id": 280,
+    "code": "CRU-LC-0287",
+    "slug": "giap-xac-boi-khong-lo-gigantocypris",
+    "name": "Giáp Xác Bơi Khổng Lồ",
+    "sci": "Gigantocypris agassizii",
+    "zone": "Bồn trũng trung tâm Biển Đông, rãnh sâu phía tây Philippines",
+    "local": "Trôi nổi tự do ở tầng sâu 600 - 1300m vùng bồn trũng Biển Đông."
+  },
+  {
+    "id": 281,
+    "code": "WOR-LC-0288",
+    "slug": "giun-ong-mieng-lanh-haima",
+    "name": "Giun Ống Miệng Lạnh Haima",
+    "sci": "Paraescarpia echinospica",
+    "zone": "Hệ sinh thái Miệng phun lạnh Hải Mã (Haima Cold Seep), sườn dốc phía tây bắc bồn trũng Biển Đông",
+    "local": "Tập trung thành 'rừng giun ống' quanh các vết nứt thoát khí metan ở đáy sâu 1.400m Biển Đông."
+  },
+  {
+    "id": 282,
+    "code": "MOL-LC-0289",
+    "slug": "trai-bien-sau-haima",
+    "name": "Trai Biển Sâu Haima",
+    "sci": "Gigantidas haimaensis",
+    "zone": "Khu vực miệng rỉ khí lạnh Hải Mã, sườn dốc bồn trũng Biển Đông",
+    "local": "Thảm trai đáy bùn sâu 1.400m ngoài khơi bồn trũng Biển Đông."
+  },
+  {
+    "id": 283,
+    "code": "FSH-LC-0291",
+    "slug": "ca-ba-chan-tripod-fish",
+    "name": "Cá Ba Chân Vực Sâu",
+    "sci": "Bathypterois grallator",
+    "zone": "Nền bồn trũng đáy biển sâu trung tâm Biển Đông",
+    "local": "Đứng bất động trên lớp bùn trầm tích mịn ở độ sâu 2.500 - 4.000m Biển Đông."
+  },
+  {
+    "id": 284,
+    "code": "ECH-LC-0292",
+    "slug": "heo-bien-sau-sea-pig",
+    "name": "Heo Biển Sâu (Sea Pig)",
+    "sci": "Scotoplanes globosa",
+    "zone": "Vực thẳm trung tâm Biển Đông và thềm đáy dốc Rãnh Manila",
+    "local": "Bò trên lớp bùn đáy vực thẳm bồn trũng Biển Đông và đáy Rãnh Manila."
+  },
+  {
+    "id": 285,
+    "code": "ECH-LC-0293",
+    "slug": "sao-gion-vuc-tham",
+    "name": "Sao Giòn Vực Thẳm",
+    "sci": "Ophiura sarsii",
+    "zone": "Vách đá bazan Rãnh Manila và đáy thẳm Biển Đông",
+    "local": "Bám trên vách dốc bazan Rãnh Manila từ 4.200m xuống tới đáy rãnh."
+  },
+  {
+    "id": 286,
+    "code": "FSH-LC-0294",
+    "slug": "ca-oc-ranh-sau-hadal-snailfish",
+    "name": "Cá Ốc Rãnh Sâu Manila",
+    "sci": "Pseudoliparis amblystomopsis",
+    "zone": "Rãnh Manila - Vực sâu nhất Biển Đông",
+    "local": "Sống sát nền đáy đá và bùn tại các độ sâu 4.500m - 5.016m của Rãnh Manila."
+  },
+  {
+    "id": 287,
+    "code": "CRU-LC-0295",
+    "slug": "giap-xac-chan-hai-ranh-manila",
+    "name": "Giáp Xác Chân Hai Rãnh Manila",
+    "sci": "Paralicella caperesca",
+    "zone": "Điểm sâu nhất Biển Đông: Đáy Rãnh Manila (5,016m)",
+    "local": "Tập trung với mật độ cao tại lớp bùn đáy của Rãnh Manila ở độ sâu 5,016m."
+  },
+  {
+    "id": 288,
+    "code": "FSH-LC-0296",
+    "slug": "ca-buom-mat-gau-truc",
+    "name": "Cá Bướm Mặt Gấu Trúc",
+    "sci": "Chaetodon lunula",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, quần đảo Trường Sa, Hoàng Sa",
+    "local": "Phổ biến tại các rạn san hô nông dốc viền đảo Hòn Mun, Côn Đảo và bãi cạn san hô Trường Sa."
+  },
+  {
+    "id": 289,
+    "code": "FSH-LC-0297",
+    "slug": "ca-thu-lu-mo-nhon-moorish-idol",
+    "name": "Cá Thù Lù Mỏ Nhọn (Moorish Idol)",
+    "sci": "Zanclus cornutus",
+    "zone": "Vịnh Nha Trang, quần đảo Trường Sa, Hoàng Sa, Phú Quốc",
+    "local": "Tuần tra các sườn rạn san hô dốc ngoài khơi Hòn Mun, đảo Nam Yết và đảo Phú Quý."
+  },
+  {
+    "id": 290,
+    "code": "FSH-LC-0298",
+    "slug": "ca-noc-hom-dom-vang",
+    "name": "Cá Nóc Hòm Đốm Vàng",
+    "sci": "Ostracion cubicum",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Phú Quốc, Trường Sa",
+    "local": "Ẩn mình trong các hốc san hô sừng hươu và khe đá ngầm quanh Hòn Cau, Côn Đảo và đảo Song Tử Tây."
+  },
+  {
+    "id": 291,
+    "code": "FSH-LC-0299",
+    "slug": "ca-doi-vay-dai",
+    "name": "Cá Dơi Vây Dài",
+    "sci": "Platax teira",
+    "zone": "Vịnh Bắc Bộ, Nha Trang, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Tụ tập thành đàn lớn quanh xác tàu đắm và các cụm rạn nhân tạo ở Nha Trang, Vũng Tàu và Côn Đảo."
+  },
+  {
+    "id": 292,
+    "code": "FSH-LC-0300",
+    "slug": "ca-nuc-heo-mahi-mahi",
+    "name": "Cá Nục Heo (Mahi-Mahi)",
+    "sci": "Coryphaena hippurus",
+    "zone": "Vùng biển khơi xa bờ Nam Trung Bộ, Trường Sa, Hoàng Sa",
+    "local": "Di cư theo đàn lớn tại vùng biển khơi ngoài khơi Phú Yên, Khánh Hòa, Bình Thuận và quần đảo Hoàng Sa."
+  },
+  {
+    "id": 293,
+    "code": "FSH-LC-0301",
+    "slug": "ca-bo-sao-bien-dong",
+    "name": "Cá Bò Sao Biển Đông",
+    "sci": "Abalistes stellatus",
+    "zone": "Vịnh Bắc Bộ, vùng biển miền Trung, Côn Đảo, Trường Sa",
+    "local": "Sống ở đáy cát sỏi quanh đảo Bạch Long Vĩ, Cồn Cỏ, Hòn Mê và quần đảo Trường Sa."
+  },
+  {
+    "id": 294,
+    "code": "FSH-LC-0302",
+    "slug": "ca-hong-hoang-de",
+    "name": "Cá Hồng Hoàng Đế",
+    "sci": "Lutjanus sebae",
+    "zone": "Vịnh Bắc Bộ, Trường Sa, Hoàng Sa, bãi ngầm Tư Chính",
+    "local": "Phân bố tại các bãi đá rạn sâu và sườn đồi ngầm quanh đảo Bạch Long Vĩ, quần đảo Hoàng Sa và Trường Sa."
+  },
+  {
+    "id": 295,
+    "code": "FSH-LC-0303",
+    "slug": "ca-kem-dom-he",
+    "name": "Cá Kẽm Đốm Hề",
+    "sci": "Plectorhinchus chaetodonoides",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Phú Quốc, Trường Sa",
+    "local": "Ban ngày nằm nghỉ dưới các mái vòm san hô Acropora khổng lồ tại vịnh Nha Trang và Côn Đảo."
+  },
+  {
+    "id": 296,
+    "code": "FSH-LC-0304",
+    "slug": "ca-dia-mom-cao",
+    "name": "Cá Dìa Mõm Cáo",
+    "sci": "Siganus vulpinus",
+    "zone": "Vịnh Nha Trang, Cù Lao Chàm, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Kiếm ăn miệt mài trên các vách đá san hô quanh bãi bàng Cù Lao Chàm và rạn cạn Hòn Mun."
+  },
+  {
+    "id": 297,
+    "code": "FSH-LC-0305",
+    "slug": "ca-buom-co-san-ho",
+    "name": "Cá Bướm Cờ San Hô",
+    "sci": "Heniochus acuminatus",
+    "zone": "Vịnh Nha Trang, quần đảo Hoàng Sa, Trường Sa, Côn Đảo",
+    "local": "Bơi thành từng đôi uyên ương hoặc đàn nhỏ dọc theo sườn dốc san hô ngoài khơi Nha Trang và Trường Sa."
+  },
+  {
+    "id": 298,
+    "code": "FSH-LC-0306",
+    "slug": "ca-ky-lan-moi-cam",
+    "name": "Cá Kỳ Lân Môi Cam",
+    "sci": "Naso lituratus",
+    "zone": "Vịnh Nha Trang, Côn Đảo, quần đảo Trường Sa, Hoàng Sa",
+    "local": "Tuần tra các dốc rạn đón sóng ngoài khơi Hòn Mun, đảo Nam Yết và Hòn Cau Côn Đảo."
+  },
+  {
+    "id": 299,
+    "code": "FSH-LC-0307",
+    "slug": "ca-thia-do-bien-san-ho",
+    "name": "Cá Thia Đỏ Biển San Hô",
+    "sci": "Pseudanthias squamipinnis",
+    "zone": "Vịnh Nha Trang, quần đảo Trường Sa, Hoàng Sa, Côn Đảo",
+    "local": "Tập hợp thành đàn rực rỡ trên đỉnh các khối san hô Acropora tại Hòn Mun, đảo Trường Sa Lớn và Hòn Cau."
+  },
+  {
+    "id": 300,
+    "code": "FSH-LC-0308",
+    "slug": "ca-noc-chuot-yen-ngua",
+    "name": "Cá Nóc Chuột Yên Ngựa",
+    "sci": "Canthigaster valentini",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Phú Quốc, Trường Sa",
+    "local": "Bơi lượn chậm rãi quanh các cụm san hô khối và bãi đá cạn tại Hòn Mun, đảo Thổ Chu và Côn Đảo."
+  },
+  {
+    "id": 301,
+    "code": "FSH-LC-0309",
+    "slug": "ca-luoi-dao-cao-san-ho",
+    "name": "Cá Lưỡi Dao Cạo San Hô",
+    "sci": "Aeoliscus strigatus",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Phú Quốc, Trường Sa",
+    "local": "Tập hợp thành đàn bơi chúc đầu giữa các bụi cầu gai đen tại rạn san hô Hòn Mun, bãi Đầm Trầu Côn Đảo."
+  },
+  {
+    "id": 302,
+    "code": "FSH-EN-0310",
+    "slug": "ca-map-ran-san-ho-xam",
+    "name": "Cá Mập Rạn San Hô Xám",
+    "sci": "Carcharhinus amblyrhynchos",
+    "zone": "Quần đảo Trường Sa, Hoàng Sa, bãi ngầm Tư Chính",
+    "local": "Tuần tra các sườn rạn đón sóng ngoài khơi đảo Nam Yết, Song Tử Tây và rạn đá ngầm Hoàng Sa."
+  },
+  {
+    "id": 303,
+    "code": "FSH-EN-0311",
+    "slug": "ca-nham-duoi-dai-bien-khoi",
+    "name": "Cá Nhám Đuôi Dài Biển Khơi",
+    "sci": "Alopias pelagicus",
+    "zone": "Vùng biển khơi xa bờ miền Trung, Trường Sa, Hoàng Sa",
+    "local": "Săn mồi ngoài khơi các rãnh sâu Bình Thuận, bãi ngầm ngoài khơi Trường Sa và Hoàng Sa."
+  },
+  {
+    "id": 304,
+    "code": "FSH-VU-0312",
+    "slug": "ca-duoi-nang-ran-san-ho",
+    "name": "Cá Đuối Nạng Rạn San Hô",
+    "sci": "Mobula alfredi",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Thường xuyên ghé thăm các 'trạm làm sạch' tại Hòn Mun, bãi rạn ngoài Côn Đảo và đảo Nam Yết."
+  },
+  {
+    "id": 305,
+    "code": "FSH-VU-0313",
+    "slug": "ca-map-dau-bua-tron",
+    "name": "Cá Mập Đầu Búa Trơn",
+    "sci": "Sphyrna zygaena",
+    "zone": "Vịnh Bắc Bộ, vùng biển miền Trung, Trường Sa, Hoàng Sa",
+    "local": "Tuần tra các vùng nước ven thềm lục địa từ đảo Bạch Long Vĩ xuôi vào vùng biển Trường Sa."
+  },
+  {
+    "id": 306,
+    "code": "FSH-VU-0314",
+    "slug": "ca-ngu-mat-to-bien-khoi",
+    "name": "Cá Ngừ Mắt To Biển Khơi",
+    "sci": "Thunnus obesus",
+    "zone": "Vùng nước sâu rãnh Biển Đông, Trường Sa, Hoàng Sa",
+    "local": "Phân bố tại các vùng biển nước sâu ngoài khơi Bình Định, Khánh Hòa và quần đảo Trường Sa."
+  },
+  {
+    "id": 307,
+    "code": "FSH-NT-0315",
+    "slug": "ca-thu-vach-hoang-gia",
+    "name": "Cá Thu Vạch Hoàng Gia",
+    "sci": "Scomberomorus commerson",
+    "zone": "Vịnh Bắc Bộ, vùng biển miền Trung, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Săn mồi dọc theo mép ngoài rạn san hô quanh đảo Bạch Long Vĩ, Côn Đảo, Nha Trang và Hoàng Sa."
+  },
+  {
+    "id": 308,
+    "code": "MAM-LC-0316",
+    "slug": "ca-heo-risso-xam-tro",
+    "name": "Cá Heo Risso Xám Tro",
+    "sci": "Grampus griseus",
+    "zone": "Vùng nước sâu dốc lục địa ngoài khơi miền Trung, Trường Sa, Hoàng Sa",
+    "local": "Tuần tra các rìa thềm lục địa sâu ngoài khơi Nha Trang, Côn Đảo và bồn trũng Biển Đông."
+  },
+  {
+    "id": 309,
+    "code": "MAM-LC-0317",
+    "slug": "ca-nha-tang-lun",
+    "name": "Cá Nhà Táng Lùn",
+    "sci": "Kogia sima",
+    "zone": "Vùng biển sâu thềm lục địa ngoài khơi Nam Trung Bộ và Trường Sa",
+    "local": "Ghi nhận ngoài khơi vùng dốc sâu Bình Thuận, Khánh Hòa và quần đảo Trường Sa."
+  },
+  {
+    "id": 310,
+    "code": "FSH-LC-0318",
+    "slug": "ca-duoi-gai-bot-xanh",
+    "name": "Cá Đuôi Gai Bột Xanh",
+    "sci": "Acanthurus leucosternon",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Phú Quốc, quần đảo Trường Sa",
+    "local": "Tuần tra các đỉnh rạn san hô cạn nhiều sóng tại Hòn Mun, đảo Nam Yết và Côn Đảo."
+  },
+  {
+    "id": 311,
+    "code": "FSH-LC-0319",
+    "slug": "ca-thien-than-lua",
+    "name": "Cá Thiên Thần Lửa",
+    "sci": "Centropyge loricula",
+    "zone": "Vịnh Nha Trang, quần đảo Trường Sa, Hoàng Sa",
+    "local": "Len lỏi trong các khe nứt rạn san hô ngầm tại Hòn Mun, bãi đá ngầm đảo Nam Yết và Phú Quý."
+  },
+  {
+    "id": 312,
+    "code": "FSH-LC-0320",
+    "slug": "ca-chinh-bong-sao-tuyet",
+    "name": "Cá Chình Bông Sao Tuyết",
+    "sci": "Echidna nebulosa",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Trường Sa, Hoàng Sa",
+    "local": "Trú ẩn trong các hốc đá và rạn san hô nông tại Hòn Mun, Côn Đảo và đảo Song Tử Tây."
+  },
+  {
+    "id": 313,
+    "code": "FSH-LC-0321",
+    "slug": "ca-ngat-vach-soc-bien",
+    "name": "Cá Ngát Vạch Sọc Biển",
+    "sci": "Plotosus lineatus",
+    "zone": "Vịnh Hạ Long, Cần Giờ, Phú Quốc, Nha Trang, Côn Đảo",
+    "local": "Kiếm ăn quanh bãi bùn rạn cạn và rừng ngập mặn Cần Giờ, Côn Đảo và Phú Quốc."
+  },
+  {
+    "id": 314,
+    "code": "FSH-LC-0322",
+    "slug": "ca-rong-canh-mong",
+    "name": "Cá Rồng Cánh Mỏng",
+    "sci": "Pegasus volitans",
+    "zone": "Vịnh Nha Trang, Cù Lao Chàm, Phú Quốc",
+    "local": "Bò trên đáy bùn cát ven các thảm cỏ biển Cù Lao Chàm, Phú Quốc và đầm Nha Phu."
+  },
+  {
+    "id": 315,
+    "code": "FSH-LC-0323",
+    "slug": "ca-luoi-guom-loe-loet",
+    "name": "Cá Lưỡi Gươm Lòe Loẹt",
+    "sci": "Solenostomus paradoxus",
+    "zone": "Vịnh Nha Trang, quần đảo Trường Sa, Côn Đảo",
+    "local": "Ngụy trang bên cạnh các bụi huệ biển tại Hòn Mun và vách đá ngầm đảo Nam Yết."
+  },
+  {
+    "id": 316,
+    "code": "FSH-LC-0324",
+    "slug": "ca-do-lua-ran-san-ho",
+    "name": "Cá Đỏ Lửa Rạn San Hô",
+    "sci": "Neocirrhites armatus",
+    "zone": "Vịnh Nha Trang, quần đảo Trường Sa, Hoàng Sa",
+    "local": "Đậu trên các khối san hô Acropora và Pocillopora tại Hòn Mun và rạn san hô Trường Sa."
+  },
+  {
+    "id": 317,
+    "code": "FSH-LC-0325",
+    "slug": "ca-ken-san-ho-bien-dong",
+    "name": "Cá Kèn San Hô Biển Đông",
+    "sci": "Aulostomus chinensis",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Ẩn mình giữa các nhánh quạt biển hoặc nép mình sau lưng cá vẹt tại Hòn Mun và Côn Đảo."
+  },
+  {
+    "id": 318,
+    "code": "FSH-LC-0326",
+    "slug": "ca-doc-dua-mieng-ken",
+    "name": "Cá Dọc Dưa Miệng Kèn",
+    "sci": "Fistularia commersonii",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Trường Sa, Hoàng Sa",
+    "local": "Lơ lửng ngay dưới mặt nước trên các rạn san hô Hòn Mun, đảo Phú Quý và Côn Đảo."
+  },
+  {
+    "id": 319,
+    "code": "FSH-LC-0327",
+    "slug": "ca-ep-co-lon",
+    "name": "Cá Ép Cỡ Lớn",
+    "sci": "Echeneis naucrates",
+    "zone": "Vịnh Bắc Bộ, Nha Trang, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Bám theo các loài cá mập và cá đuối tại Nha Trang, Côn Đảo và vùng biển khơi Trường Sa."
+  },
+  {
+    "id": 320,
+    "code": "FSH-LC-0328",
+    "slug": "ca-coc-khong-lo",
+    "name": "Cá Cóc Khổng Lồ",
+    "sci": "Antennarius commerson",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Trường Sa",
+    "local": "Ngụy trang hoàn hảo bên cạnh các khối bọt biển tại Hòn Mun và rạn san hô Côn Đảo."
+  },
+  {
+    "id": 321,
+    "code": "MOL-DD-0329",
+    "slug": "muc-nang-loe-loet",
+    "name": "Mực Nang Lòe Loẹt",
+    "sci": "Metasepia pfefferi",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Phú Quốc, Trường Sa",
+    "local": "Bò trên nền đáy cát pha vụn vỏ ốc tại Hòn Mun, đảo Hòn Tre Nha Trang và vịnh Côn Đảo."
+  },
+  {
+    "id": 322,
+    "code": "MOL-LC-0330",
+    "slug": "so-tuong-vay-ran-san-ho",
+    "name": "Sò Tượng Vảy Rạn San Hô",
+    "sci": "Tridacna squamosa",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, quần đảo Trường Sa, Hoàng Sa",
+    "local": "Bám chặt vào các khối san hô sống tại Hòn Mun, đảo Nam Yết và Hòn Cau Côn Đảo."
+  },
+  {
+    "id": 323,
+    "code": "MOL-LC-0331",
+    "slug": "sen-bien-mun-com-soc",
+    "name": "Sên Biển Mụn Cơm Sọc",
+    "sci": "Phyllidia varicosa",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Trường Sa",
+    "local": "Bò trên các vách đá ngầm và khối san hô bám đầy bọt biển tại Hòn Mun và Côn Đảo."
+  },
+  {
+    "id": 324,
+    "code": "MOL-LC-0332",
+    "slug": "sen-bien-willan-vien-trang",
+    "name": "Sên Biển Willan Viền Trắng",
+    "sci": "Chromodoris willani",
+    "zone": "Vịnh Nha Trang, quần đảo Trường Sa, Côn Đảo",
+    "local": "Bò trên các vách đá dốc có bọt biển bao phủ tại Hòn Mun và đảo Nam Yết."
+  },
+  {
+    "id": 325,
+    "code": "MOL-LC-0333",
+    "slug": "tho-bien-dom-den",
+    "name": "Thỏ Biển Đốm Đen",
+    "sci": "Aplysia dactylomela",
+    "zone": "Vịnh Nha Trang, Cù Lao Chàm, Côn Đảo, Phú Quốc",
+    "local": "Gặm tảo trên các bãi rạn cạn và đầm rong tại Cù Lao Chàm, Hòn Mun và đảo Phú Quốc."
+  },
+  {
+    "id": 326,
+    "code": "MOL-LC-0334",
+    "slug": "oc-su-van-ho-bien-dong",
+    "name": "Ốc Sứ Vằn Hổ Biển Đông",
+    "sci": "Cypraea tigris",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Ẩn mình dưới các gờ đá san hô vào ban ngày tại Hòn Mun, đảo Nam Yết và quần đảo Hoàng Sa."
+  },
+  {
+    "id": 327,
+    "code": "MOL-LC-0335",
+    "slug": "oc-coi-vai-det-doc",
+    "name": "Ốc Cối Vải Dệt Độc",
+    "sci": "Conus textile",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Trường Sa, Hoàng Sa",
+    "local": "Vùi mình dưới lớp cát mỏng gần chân rạn san hô Hòn Mun, đảo Nam Yết và Côn Đảo."
+  },
+  {
+    "id": 328,
+    "code": "CRU-LC-0336",
+    "slug": "cua-an-si-chan-xanh-dien",
+    "name": "Cua Ẩn Sĩ Chân Xanh Điện",
+    "sci": "Calcinus elegans",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Phú Quốc, Trường Sa",
+    "local": "Bò trên các vách đá san hô cạn tại Hòn Mun, bãi rạn Côn Đảo và đảo Nam Yết."
+  },
+  {
+    "id": 329,
+    "code": "CRU-LC-0337",
+    "slug": "tom-san-ho-rau-trang",
+    "name": "Tôm San Hô Râu Trắng",
+    "sci": "Stenopus hispidus",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Cù Lao Chàm, Trường Sa, Hoàng Sa",
+    "local": "Trú ngụ trong các hốc đá tối tại Hòn Mun, Cù Lao Chàm và rạn ngầm Côn Đảo."
+  },
+  {
+    "id": 330,
+    "code": "ECH-LC-0338",
+    "slug": "sao-bien-banh-socola",
+    "name": "Sao Biển Bánh Socola",
+    "sci": "Protoreaster nodosus",
+    "zone": "Vịnh Nha Trang, Cù Lao Chàm, Phú Quốc, vịnh Vân Phong",
+    "local": "Bò trên đáy cát ven thảm cỏ biển tại Hòn Rơm, bãi Chàm và đảo Phú Quốc."
+  },
+  {
+    "id": 331,
+    "code": "CRU-LC-0339",
+    "slug": "tom-he-dom-tim-an-sao-bien",
+    "name": "Tôm Hề Đốm Tím Ăn Sao Biển",
+    "sci": "Hymenocera picta",
+    "zone": "Vịnh Nha Trang, quần đảo Trường Sa, Côn Đảo",
+    "local": "Săn mồi theo cặp dưới các nhánh san hô Acropora tại Hòn Mun và đảo Nam Yết."
+  },
+  {
+    "id": 332,
+    "code": "CRU-LC-0340",
+    "slug": "tom-sung-ruc-ro-giao-hao",
+    "name": "Tôm Súng Rực Rỡ Giao Hảo",
+    "sci": "Alpheus bellulus",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Phú Quốc, Trường Sa",
+    "local": "Đào hang dưới đáy cát cùng cá bống tại Hòn Mun, đảo Nam Yết và Côn Đảo."
+  },
+  {
+    "id": 333,
+    "code": "CRU-LC-0341",
+    "slug": "cua-an-si-mat-trang-dom-do",
+    "name": "Cua Ẩn Sĩ Mắt Trắng Đốm Đỏ",
+    "sci": "Dardanus megistos",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Tuần tra đáy rạn san hô và gờ đá ngầm ngoài khơi Hòn Mun, đảo Côn Sơn và Song Tử Tây."
+  },
+  {
+    "id": 334,
+    "code": "ECH-LC-0342",
+    "slug": "hai-sam-day-ran-khong-lo",
+    "name": "Hải Sâm Dây Rắn Khổng Lồ",
+    "sci": "Synapta maculata",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Phú Quốc, Trường Sa",
+    "local": "Trườn trên đáy cát quanh các rạn san hô Hòn Mun, bãi Đầm Trầu Côn Đảo và quần đảo Trường Sa."
+  },
+  {
+    "id": 335,
+    "code": "COR-LC-0343",
+    "slug": "san-ho-mat-troi-cam",
+    "name": "San Hô Mặt Trời Cam",
+    "sci": "Tubastraea coccinea",
+    "zone": "Vịnh Nha Trang, Côn Đảo, Trường Sa, Hoàng Sa",
+    "local": "Phủ kín các vách đá ngầm và mái vòm hang tối tại Hòn Mun, Hòn Cau Côn Đảo và đảo Nam Yết."
+  },
+  {
+    "id": 336,
+    "code": "COR-NT-0344",
+    "slug": "san-ho-bua-neo-ran",
+    "name": "San Hô Búa Neo Rạn",
+    "sci": "Euphyllia ancora",
+    "zone": "Vịnh Nha Trang, Côn Đảo, quần đảo Trường Sa",
+    "local": "Phát triển thành các thảm lớn tại sườn rạn đón dòng chảy Hòn Mun, đảo Nam Yết và Côn Đảo."
+  },
+  {
+    "id": 337,
+    "code": "COR-VU-0345",
+    "slug": "san-ho-hoa-thanh-lich",
+    "name": "San Hô Hoa Thanh Lịch",
+    "sci": "Catalaphyllia jardinei",
+    "zone": "Vịnh Nha Trang, Côn Đảo, quần đảo Trường Sa",
+    "local": "Sống tại chân sườn dốc cát bùn quanh rạn Hòn Mun, đảo Phú Quý và Côn Đảo."
+  }
+]
