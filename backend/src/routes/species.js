@@ -269,6 +269,122 @@ router.get("/:idOrSlug/locations", async (req, res) => {
   }
 });
 
+// GET /api/species/depth-distribution - Phân bố sinh vật theo độ sâu đại dương (Thước đo độ sâu Biển Đông)
+router.get("/depth-distribution", async (req, res) => {
+  try {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    const { default: prisma } = await import("../lib/prisma.js");
+
+    const [dbZones, dbSpecies] = await Promise.all([
+      prisma.ocean_zones.findMany({
+        orderBy: { depth_min_m: "asc" },
+      }),
+      prisma.species.findMany({
+        where: {
+          is_visible: true,
+          deleted_at: null,
+          OR: [
+            { depth_min_m: { not: null } },
+            { depth_max_m: { not: null } },
+          ],
+        },
+        select: {
+          id: true,
+          slug: true,
+          code: true,
+          common_name: true,
+          scientificName: true,
+          description: true,
+          depth_min_m: true,
+          depth_max_m: true,
+          ocean_zone_id: true,
+          ocean_zones: {
+            select: { id: true, name: true, depth_min_m: true, depth_max_m: true, description: true },
+          },
+          species_groups: {
+            select: { id: true, name: true, slug: true },
+          },
+          species_media: {
+            where: { type: "image" },
+            take: 1,
+            select: { url: true },
+          },
+          conservation_statuses: {
+            select: { id: true, code: true, name: true },
+          },
+          vietnam_red_list_status: true,
+          east_sea_zone: true,
+        },
+        orderBy: [
+          { depth_min_m: "asc" },
+          { depth_max_m: "asc" },
+        ],
+      }),
+    ]);
+
+    // Chuẩn hóa và tính độ sâu đặc trưng cho từng sinh vật (tối đa 5,016m - Rãnh Manila)
+    const allCreatures = dbSpecies.map((sp) => {
+      const minD = sp.depth_min_m != null ? Number(sp.depth_min_m) : 0;
+      const maxD = sp.depth_max_m != null ? Number(sp.depth_max_m) : minD;
+
+      let displayDepth = minD;
+      if (maxD > minD && maxD <= 200) {
+        displayDepth = Math.round(minD + (maxD - minD) * 0.4);
+      } else if (maxD > 200) {
+        displayDepth = Math.round((minD + maxD) / 2);
+      }
+      displayDepth = Math.min(5016, Math.max(1, displayDepth));
+
+      return {
+        id: sp.id.toString(),
+        slug: sp.slug,
+        code: sp.code,
+        nameVi: sp.common_name,
+        nameEn: sp.scientificName,
+        sciName: sp.scientificName,
+        descVi: sp.description || "",
+        descEn: sp.description || "",
+        depth: displayDepth,
+        depthMin: minD,
+        depthMax: maxD,
+        depthText: `${minD}m – ${maxD}m`,
+        image: sp.species_media[0]?.url || "",
+        groupId: sp.species_groups?.slug || "ca-bien",
+        groupName: sp.species_groups?.name || "Cá biển",
+        redList: sp.vietnam_red_list_status || sp.conservation_statuses?.code || "LC",
+        conservationName: sp.conservation_statuses?.name || (sp.vietnam_red_list_status ? `Sách Đỏ VN (${sp.vietnam_red_list_status})` : "Ít lo ngại"),
+        oceanZone: sp.ocean_zones?.name || "Tầng mặt (Epipelagic)",
+      };
+    });
+
+    // Sắp xếp sinh vật theo độ sâu tăng dần từ 0m đến 5,016m
+    const sortedCreatures = allCreatures.sort((a, b) => a.depth - b.depth);
+
+    // Tính toán phân bổ 4 làn hiển thị rộng khắp màn hình (18%, 38%, 58%, 78%)
+    const lanePositions = [18, 38, 58, 78];
+    const distributedCreatures = sortedCreatures.map((c, idx) => ({
+      ...c,
+      left: lanePositions[idx % 4],
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalSpecies: allCreatures.length,
+        species: distributedCreatures,
+        zones: dbZones,
+        maxDepth: 5016,
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi lấy phân bố độ sâu sinh vật:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // GET /api/species/map-distribution - Phân bố sinh vật và địa điểm trên bản đồ Biển Đông
 router.get("/map-distribution", async (req, res) => {
   try {
@@ -555,9 +671,22 @@ router.get("/map-distribution", async (req, res) => {
         finalLng = Number((107.3000 + Math.abs(r * Math.cos(angle)) + 0.02).toFixed(4));
       } else {
         const goldenAngle = count * 2.39996;
-        const radius = count === 0 ? 0 : (spreadScale * 0.20 + spreadScale * 0.12 * Math.sqrt(count));
+        // Bán kính an toàn để luôn nằm gọn trong lòng chảo biển sâu Biển Đông
+        const radius = count === 0 ? 0 : Math.min(1.8, (spreadScale * 0.15 + spreadScale * 0.08 * Math.sqrt(count)));
         finalLat = Number((centerLat + radius * Math.sin(goldenAngle)).toFixed(4));
         finalLng = Number((centerLng + radius * Math.cos(goldenAngle) * 1.05).toFixed(4));
+      }
+
+      // HÀNG RÀO KIỂM TRA HẢI PHẬN AN TOÀN (100% NGOÀI BIỂN, KHÔNG CHẠM ĐẤT LIỀN)
+      // Khắc phục triệt để hiện tượng sinh vật biển xuất hiện trên các dãy núi đất liền duyên hải miền Trung
+      if (finalLat >= 11.0 && finalLat <= 13.5) {
+        if (finalLng < 109.3400) finalLng = Number((109.3500 + ((count % 6) * 0.025)).toFixed(4));
+      } else if (finalLat > 13.5 && finalLat <= 15.0) {
+        if (finalLng < 109.3000) finalLng = Number((109.3200 + ((count % 6) * 0.025)).toFixed(4));
+      } else if (finalLat > 15.0 && finalLat <= 16.5) {
+        if (finalLng < 108.5500) finalLng = Number((108.6000 + ((count % 6) * 0.025)).toFixed(4));
+      } else if (finalLat > 16.5 && finalLat <= 18.5) {
+        if (finalLng < 107.2000) finalLng = Number((107.4000 + ((count % 6) * 0.030)).toFixed(4));
       }
 
       return {
