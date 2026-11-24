@@ -8,6 +8,7 @@ import prisma from "../lib/prisma.js";
 import taxonomyService from "./taxonomyService.js";
 import apiProviderService from "./apiProviderService.js";
 import vectorSearchService from "./vectorSearchService.js";
+import ecosystemAutoLinker from "./ecosystemAutoLinker.js";
 
 function toFloatOrNull(val) {
   if (val === undefined || val === null || val === "") return null;
@@ -267,6 +268,11 @@ export class SpeciesService {
       console.warn("[VectorSearch] Auto sync on createSpecies failed:", err.message)
     );
 
+    // Tự động phân tích sinh thái & dệt liên kết chuỗi thức ăn (Food Web Auto-Linker)
+    ecosystemAutoLinker.autoLinkSingleSpecies(newSpecies.id).catch((err) =>
+      console.warn("[AutoLinker] Auto sync on createSpecies failed:", err.message)
+    );
+
     return created;
   }
 
@@ -391,6 +397,11 @@ export class SpeciesService {
     // Tự động cập nhật vector ngữ nghĩa cho loài được chỉnh sửa trong nền
     vectorSearchService.syncSingleSpeciesEmbedding(id).catch((err) =>
       console.warn("[VectorSearch] Auto sync on updateSpecies failed:", err.message)
+    );
+
+    // Tự động phân tích & cập nhật liên kết sinh thái khi thông tin thay đổi
+    ecosystemAutoLinker.autoLinkSingleSpecies(id).catch((err) =>
+      console.warn("[AutoLinker] Auto sync on updateSpecies failed:", err.message)
     );
 
     return finalRecord;

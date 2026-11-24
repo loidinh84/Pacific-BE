@@ -585,6 +585,18 @@ router.get("/ecosystem/graph", async (req, res) => {
   }
 });
 
+// POST /api/species/ecosystem/auto-link - Quét và tự động dệt liên kết chuỗi thức ăn cho toàn bộ loài chưa có liên kết
+router.post("/ecosystem/auto-link", async (req, res) => {
+  try {
+    const { default: ecosystemAutoLinker } = await import("../services/ecosystemAutoLinker.js");
+    const result = await ecosystemAutoLinker.autoLinkAllUnlinkedSpecies();
+    return res.status(200).json({ success: true, ...result });
+  } catch (error) {
+    console.error("Lỗi khi tự động liên kết sinh thái:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // GET /api/species/ecosystem/stats - Thống kê đa dạng sinh học & Sách Đỏ Biển Đông
 router.get("/ecosystem/stats", async (req, res) => {
   try {

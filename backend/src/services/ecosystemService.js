@@ -168,7 +168,7 @@ class EcosystemService {
    * Lấy dữ liệu đồ thị sinh thái
    */
   async getKnowledgeGraph(filters = {}) {
-    const { zone, groupId, redList, limit = 500 } = filters;
+    const { zone, groupId, redList, limit = 5000 } = filters;
 
     // Điều kiện lọc liên kết
     const whereRel = {};
@@ -261,7 +261,38 @@ class EcosystemService {
       });
     };
 
-    // Nạp tất cả species liên quan
+    // Nạp toàn bộ danh mục loài trong CSDL thỏa mãn bộ lọc để luôn hiển thị đầy đủ
+    const speciesWhere = {};
+    if (groupId) speciesWhere.group_id = BigInt(groupId);
+    if (redList) speciesWhere.vietnam_red_list_status = redList;
+    if (zone) speciesWhere.east_sea_zone = { contains: zone, mode: "insensitive" };
+
+    const allMatchingSpecies = await prisma.species.findMany({
+      where: speciesWhere,
+      select: {
+        id: true,
+        code: true,
+        common_name: true,
+        scientificName: true,
+        slug: true,
+        group_id: true,
+        vietnam_red_list_status: true,
+        east_sea_zone: true,
+        depth_min_m: true,
+        depth_max_m: true,
+        species_media: {
+          where: { is_primary: true },
+          select: { url: true },
+          take: 1,
+        },
+      },
+    });
+
+    for (const sp of allMatchingSpecies) {
+      addNode(sp);
+    }
+
+    // Nạp thêm các species từ relationships nếu có
     for (const rel of relationships) {
       addNode(rel.source_species);
       addNode(rel.target_species);
