@@ -315,6 +315,10 @@ router.get("/map-distribution", async (req, res) => {
         depth_min_m: true,
         depth_max_m: true,
         east_sea_zone: true,
+        vietnam_red_list_status: true,
+        conservation_statuses: {
+          select: { id: true, code: true, name: true },
+        },
         group_id: true,
         species_groups: {
           select: { id: true, name: true, slug: true },
@@ -538,6 +542,8 @@ router.get("/map-distribution", async (req, res) => {
             image: sp.species_media[0]?.url || "",
             groupId: sp.species_groups?.slug || "ca-bien",
             groupName: sp.species_groups?.name || "Cá biển",
+            redList: sp.vietnam_red_list_status || sp.conservation_statuses?.code || "LC",
+            conservationName: sp.conservation_statuses?.name || (sp.vietnam_red_list_status ? `Sách Đỏ VN (${sp.vietnam_red_list_status})` : "Ít lo ngại"),
           };
         }),
       },
