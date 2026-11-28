@@ -1,5 +1,6 @@
 import speciesService from "../services/speciesService.js";
 import taxonomyService from "../services/taxonomyService.js";
+import adminRepository from "../repositories/adminRepository.js";
 
 export class SpeciesAdminController {
   /**
@@ -38,6 +39,27 @@ export class SpeciesAdminController {
       return res.status(error.statusCode || 500).json({
         success: false,
         message: error.message || "Có lỗi xảy ra khi lấy danh sách sinh vật",
+      });
+    }
+  }
+
+  /**
+   * GET /api/admin/species/:id/views?days=7
+   * Lấy thống kê lượt xem theo ngày của 1 sinh vật từ bảng species_views
+   */
+  async getSpeciesViews(req, res) {
+    try {
+      const days = Number(req.query.days) || 7;
+      const viewsByDay = await adminRepository.getSpeciesViewChart(req.params.id, days);
+      return res.status(200).json({
+        success: true,
+        data: viewsByDay,
+      });
+    } catch (error) {
+      console.error("Lỗi khi lấy thống kê lượt xem sinh vật:", error);
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Có lỗi xảy ra khi lấy thống kê lượt xem sinh vật",
       });
     }
   }

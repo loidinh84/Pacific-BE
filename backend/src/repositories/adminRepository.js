@@ -172,6 +172,34 @@ export class AdminRepository {
   }
 
   /**
+   * Thống kê lượt xem theo ngày cho 1 sinh vật cụ thể
+   */
+  async getSpeciesViewChart(speciesId, days = 7) {
+    const safeDays = Math.min(Math.max(Number(days) || 7, 1), 90);
+    const offsetDays = safeDays - 1;
+    const targetId = BigInt(speciesId);
+
+    const rows = await prisma.$queryRaw`
+      SELECT 
+        TO_CHAR(d.day, 'YYYY-MM-DD') AS date,
+        TO_CHAR(d.day, 'DD/MM') AS label,
+        COUNT(sv.id)::int AS count
+      FROM generate_series(
+        CURRENT_DATE - (${offsetDays} || ' days')::interval,
+        CURRENT_DATE,
+        '1 day'::interval
+      ) d(day)
+      LEFT JOIN species_views sv 
+        ON DATE(sv.viewed_at) = DATE(d.day)
+        AND sv.species_id = ${targetId}
+      GROUP BY d.day
+      ORDER BY d.day ASC;
+    `;
+
+    return rows;
+  }
+
+  /**
    * Top 5 sinh vật xem nhiều nhất
    */
   async getTopViewedSpecies(limit = 5) {

@@ -52,6 +52,9 @@ router.post("/species/sync-all", (req, res) => speciesAdminController.syncAllInc
 // POST /api/admin/species/sync - Đồng bộ tự động từ API ngoài
 router.post("/species/sync", (req, res) => speciesAdminController.syncFromExternalAPI(req, res));
 
+// GET /api/admin/species/:id/views - Thống kê lượt xem theo ngày của 1 sinh vật
+router.get("/species/:id/views", (req, res) => speciesAdminController.getSpeciesViews(req, res));
+
 // GET /api/admin/species/:id - Chi tiết 1 sinh vật
 router.get("/species/:id", (req, res) => speciesAdminController.getSpeciesById(req, res));
 
