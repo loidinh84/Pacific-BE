@@ -809,8 +809,38 @@ router.get("/:idOrSlug/ecosystem", async (req, res) => {
 // GET /api/species/search/semantic - Tìm kiếm Ngữ nghĩa Sinh thái Biển Đông
 router.get("/search/semantic", async (req, res) => {
   try {
-    const query = req.query.q || req.query.query || "";
+    const query = String(req.query.q || req.query.query || "").trim();
     const result = await ecosystemService.searchSemantic(query);
+
+    // Ghi nhận lượt tìm kiếm vào search_logs không chặn phản hồi
+    if (query.length >= 2) {
+      import("../lib/prisma.js")
+        .then(async ({ default: prisma }) => {
+          let userId = null;
+          const authHeader = req.headers.authorization;
+          if (authHeader && authHeader.startsWith("Bearer ")) {
+            try {
+              const jwt = (await import("jsonwebtoken")).default;
+              const decoded = jwt.verify(
+                authHeader.slice(7),
+                process.env.JWT_SECRET || "pacific_ocean_secret_key_2026"
+              );
+              if (decoded?.id) userId = BigInt(decoded.id);
+            } catch {
+              // Bỏ qua token hết hạn cho tìm kiếm công khai
+            }
+          }
+          await prisma.search_logs.create({
+            data: {
+              keyword: query.slice(0, 255),
+              result_count: Number(result?.count || 0),
+              user_id: userId,
+            },
+          });
+        })
+        .catch(() => {});
+    }
+
     return res.status(200).json(result);
   } catch (error) {
     console.error("Lỗi tìm kiếm ngữ nghĩa:", error);

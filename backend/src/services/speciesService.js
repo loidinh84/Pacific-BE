@@ -9,6 +9,7 @@ import taxonomyService from "./taxonomyService.js";
 import apiProviderService from "./apiProviderService.js";
 import vectorSearchService from "./vectorSearchService.js";
 import ecosystemAutoLinker from "./ecosystemAutoLinker.js";
+import ecosystemService from "./ecosystemService.js";
 
 function toFloatOrNull(val) {
   if (val === undefined || val === null || val === "") return null;
@@ -263,7 +264,8 @@ export class SpeciesService {
 
     const created = await speciesRepository.findById(newSpecies.id);
 
-    // Sinh vector ngữ nghĩa chạy ngầm
+    // Sinh vector ngữ nghĩa chạy ngầm & làm mới cache tìm kiếm
+    ecosystemService.invalidateSpeciesCache();
     vectorSearchService.syncSingleSpeciesEmbedding(newSpecies.id).catch((err) =>
       console.warn("[VectorSearch] Auto sync on createSpecies failed:", err.message)
     );
@@ -394,7 +396,8 @@ export class SpeciesService {
 
     const finalRecord = await speciesRepository.findById(id);
 
-    // Tự động cập nhật vector ngữ nghĩa cho loài được chỉnh sửa trong nền
+    // Tự động cập nhật vector ngữ nghĩa & làm mới cache tìm kiếm
+    ecosystemService.invalidateSpeciesCache();
     vectorSearchService.syncSingleSpeciesEmbedding(id).catch((err) =>
       console.warn("[VectorSearch] Auto sync on updateSpecies failed:", err.message)
     );
@@ -412,7 +415,12 @@ export class SpeciesService {
    */
   async toggleVisibility(id, is_visible) {
     await this.getSpeciesById(id);
-    return speciesRepository.updateVisibility(id, is_visible);
+    const updated = await speciesRepository.updateVisibility(id, is_visible);
+    ecosystemService.invalidateSpeciesCache();
+    vectorSearchService.syncSingleSpeciesEmbedding(id).catch((err) =>
+      console.warn("[VectorSearch] Auto sync on toggleVisibility failed:", err.message)
+    );
+    return updated;
   }
 
   /**
@@ -422,7 +430,8 @@ export class SpeciesService {
     await this.getSpeciesById(id);
     const result = await speciesRepository.softDelete(id);
 
-    // Tự động gỡ bỏ vector của loài đã xóa trong nền
+    // Tự động gỡ bỏ vector của loài đã xóa & làm mới cache tìm kiếm
+    ecosystemService.invalidateSpeciesCache();
     vectorSearchService.removeSpeciesEmbedding(id).catch((err) =>
       console.warn("[VectorSearch] Auto remove on deleteSpecies failed:", err.message)
     );
