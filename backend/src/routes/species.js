@@ -1720,6 +1720,8 @@ router.get("/:idOrSlug", async (req, res) => {
           content: f.content,
         })),
         viewCount: Number(species.view_count || 0),
+        soundUrl: species.sound_url || null,
+        model3dUrl: species.model_3d_url || null,
       },
     });
   } catch (error) {
